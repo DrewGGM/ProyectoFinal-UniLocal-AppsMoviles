@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Primer Aplicacion Prueba</string>
+
+//TEXTOS LOGIN
+
+    <string name="txt_email">Correo electorinico</string>
+    <string name="txtPassword">Contraseña</string>
+    <string name="btn_login">Iniciar seccion</string>
+    <string name="img_imagen">Imagen</string>
+    <string name="txt_email_error">El correo no es valido</string>
+    <string name="txt_password_error">La contraseña no es valido</string>
+    <string name="txt_Register">Crear cuenta</string>
+    
+    //TEXTOS RESGISTRO
+    <string name="txt_name">Ingrese un nombre</string>
+    <string name="txt_phone_number">Numero de telefono</string>
+    <string name="txt_city">Selecione la ciudad</string>
+    <string name="txt_country">Selecione el pais</string>
+    <string name="txt_confirm_password">Selecione el pais</string>
+    <string name="txt_errorGeneral">Este espacio es obligatorio</string>
+    <string name="btn_Register">Registrarse</string>
+
+    //TEXTO HOME USER
+    <string name="txt_titule_home">Inicio Usuario</string>
+    <string name="txt_menuhome">Inicio</string>
+    <string name="txt_menusearch">Busqueda</string>
+    <string name="txt_menumyplaces">Mis lugares   </string>
+
+
+</resources>
