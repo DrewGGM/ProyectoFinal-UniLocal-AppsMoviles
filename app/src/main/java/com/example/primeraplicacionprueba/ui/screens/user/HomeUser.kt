@@ -8,9 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
-import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.ui.screens.user.bottonbas.BottomBarUser
 import com.example.primeraplicacionprueba.ui.screens.user.nav.ContentUser
+import com.example.primeraplicacionprueba.R
 
 
 @Composable

@@ -14,9 +14,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.ui.screens.user.nav.RouteTab
-
+import com.example.primeraplicacionprueba.R
 
 @Composable
 fun BottomBarUser(

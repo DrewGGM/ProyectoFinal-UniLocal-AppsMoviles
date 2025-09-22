@@ -12,21 +12,28 @@ import com.example.primeraplicacionprueba.ui.screens.user.HomeUser
 fun Navigation(){
     val navController = rememberNavController()
     NavHost(
-       navController = navController,
+        navController = navController,
         startDestination = RouteScreem.HomeUser
-    //RouteScreem.Login
     ){
         composable<RouteScreem.Login> {
             LoginScreen(
                 onNavigateToRegister = {
                     navController.navigate(RouteScreem.Register)
-                }, onNavigateToHome = {
+                },
+                onNavigateToHome = {
                     navController.navigate(RouteScreem.HomeUser)
                 }
             )
         }
         composable<RouteScreem.Register> {
-            RegisterScreem()
+            RegisterScreem(
+                onNavigateToLogin = {
+                    navController.navigate(RouteScreem.Login)
+                },
+                onNavigateToHome = {
+                    navController.navigate(RouteScreem.HomeUser)
+                }
+            )
         }
         composable<RouteScreem.HomeUser>{
             HomeUser()
