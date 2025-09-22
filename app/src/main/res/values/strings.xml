@@ -51,5 +51,31 @@
     <string name="txt_menumyplaces">Mis lugares   </string>
     <string name="txt_name_error_short">a</string>
 
+    <!-- TEXTOS EDITAR PERFIL -->
+    <string name="txt_edit_profile">Editar Perfil</string>
+    <string name="txt_full_name_label">Nombre Completo</string>
+    <string name="txt_username_label">Nombre de Usuario</string>
+    <string name="txt_city_residence">Ciudad de Residencia</string>
+    <string name="txt_account_info_not_editable">Información de la cuenta (no editable)</string>
+    <string name="txt_electronic_mail">Correo Electrónico</string>
+    <string name="txt_password_label">Contraseña</string>
+    <string name="btn_save_changes">Guardar Cambios</string>
+    <string name="txt_back">Atrás</string>
+
+    <!-- TEXTOS AÑADIR NUEVO LUGAR -->
+    <string name="txt_add_new_place">Añadir Nuevo Lugar</string>
+    <string name="txt_step_2_location_contact">2. Ubicación y Contacto</string>
+    <string name="txt_location">Ubicación</string>
+    <string name="txt_tap_to_select_map">Toca para seleccionar en el mapa</string>
+    <string name="txt_contact_phone">Teléfono de Contacto</string>
+    <string name="txt_phone_placeholder">Ej: +57 320 123 4567</string>
+    <string name="txt_website">Sitio Web</string>
+    <string name="txt_website_placeholder">Ej: www.ejemplo.com</string>
+    <string name="txt_social_networks">Redes Sociales</string>
+    <string name="txt_social_placeholder">Ej: @cafe_organico</string>
+    <string name="btn_previous">Anterior</string>
+    <string name="btn_next">Siguiente</string>
+    <string name="txt_close">Cerrar</string>
+
 
 </resources>
