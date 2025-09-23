@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 sealed class RouteScreem{
     @Serializable
-    data object HomeUser: RouteScreem()
+    data object Home : RouteScreem()
     @Serializable
     data object HomeAdmin: RouteScreem()
     @Serializable
