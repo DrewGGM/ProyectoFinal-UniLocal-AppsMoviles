@@ -7,29 +7,35 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.primeraplicacionprueba.ui.screens.user.tabs.Map
-import com.example.primeraplicacionprueba.ui.screens.user.tabs.Places
-import com.example.primeraplicacionprueba.ui.screens.user.tabs.Search
+import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.Home
+import com.example.primeraplicacionprueba.ui.screens.user.tabs.map.Map
+import com.example.primeraplicacionprueba.ui.screens.user.tabs.profile.Profile
 
 @Composable
 fun ContentUser(
     padding: PaddingValues,
-    navController: NavHostController
+    navController: NavHostController,
+    onNavigateToCreatePlace: () -> Unit = {},
+    onNavigateToEditProfile: () -> Unit = {},
+    onNavigateToLogin: () -> Unit = {}
 ){
 
     NavHost(
         modifier = Modifier.padding(padding),
         navController=navController,
-        startDestination = RouteTab.Map
+        startDestination = RouteTab.Home
     ){
+        composable <RouteTab.Home>{
+            Home(onNavigateToCreatePlace = onNavigateToCreatePlace)
+        }
         composable <RouteTab.Map>{
             Map()
         }
-        composable <RouteTab.Search>{
-            Search()
-        }
-        composable <RouteTab.Places>{
-            Places()
+        composable <RouteTab.Profile>{
+            Profile(
+                onNavigateToEditProfile = onNavigateToEditProfile,
+                onNavigateToLogin = onNavigateToLogin
+            )
         }
     }
 }
