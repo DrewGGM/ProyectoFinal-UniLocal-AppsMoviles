@@ -6,15 +6,16 @@ import androidx.navigation.compose.rememberNavController
 import com.example.primeraplicacionprueba.ui.config.RouteScreem
 import androidx.navigation.compose.composable
 import com.example.primeraplicacionprueba.ui.screens.admin.HomeAdmin
-import com.example.primeraplicacionprueba.ui.screens.user.AddNewPlace
-import com.example.primeraplicacionprueba.ui.screens.user.HomeUser
+import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.AddNewPlace
+import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.Home
+import com.example.primeraplicacionprueba.ui.screens.user.UserScreen
 
 @Composable
 fun Navigation(){
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = RouteScreem.CreatePlace
+        startDestination = RouteScreem.Home
     ){
         composable<RouteScreem.Login> {
             LoginScreen(
@@ -22,7 +23,7 @@ fun Navigation(){
                     navController.navigate(RouteScreem.Register)
                 },
                 onNavigateToHome = {
-                    navController.navigate(RouteScreem.HomeUser)
+                    navController.navigate(RouteScreem.Home)
                 }
             )
         }
@@ -32,12 +33,26 @@ fun Navigation(){
                     navController.navigate(RouteScreem.Login)
                 },
                 onNavigateToHome = {
-                    navController.navigate(RouteScreem.HomeUser)
+                    navController.navigate(RouteScreem.Home)
                 }
             )
         }
-        composable<RouteScreem.HomeUser>{
-            HomeUser()
+        composable<RouteScreem.Home>{
+            UserScreen(
+                onNavigateToCreatePlace = {
+                    navController.navigate(RouteScreem.CreatePlace)
+                },
+                onNavigateToEditProfile = {
+                    navController.navigate(RouteScreem.EditProfile)
+                },
+                onNavigateToLogin = {
+                    // Limpiar el back stack y navegar al login
+                    navController.navigate(RouteScreem.Login) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
         composable<RouteScreem.HomeAdmin>{
             HomeAdmin()
@@ -67,7 +82,7 @@ fun Navigation(){
                 onNavigateToNext = {
                     // Navegar al siguiente paso (puedes crear la siguiente pantalla)
                     // Por ahora solo muestra un mensaje o navega a otra pantalla
-                    navController.navigate(RouteScreem.HomeUser)
+                    navController.navigate(RouteScreem.Home)
                 }
             )
         }

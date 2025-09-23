@@ -47,6 +47,8 @@
     //TEXTO HOME USER
     <string name="txt_titule_home">Inicio Usuario</string>
     <string name="txt_menuhome">Inicio</string>
+    <string name="txt_menumap">Mapa</string>
+    <string name="txt_menuprofile">Perfil</string>
     <string name="txt_menusearch">Busqueda</string>
     <string name="txt_menumyplaces">Mis lugares   </string>
     <string name="txt_name_error_short">a</string>
@@ -76,6 +78,47 @@
     <string name="btn_previous">Anterior</string>
     <string name="btn_next">Siguiente</string>
     <string name="txt_close">Cerrar</string>
+
+    <!-- HOME -->
+    <string name="txt_categories">Categorías</string>
+    <string name="txt_popular_places">Lugares Populares</string>
+    <string name="txt_hello_user">Hola, %1$s 👋</string>
+    <string name="txt_discover_places">Descubre los mejores lugares de tu ciudad.</string>
+    <string name="txt_search">Buscar</string>
+    <string name="txt_search_hint">Buscar lugares o categorías...</string>
+    <string name="txt_rating">Calificación</string>
+    <string name="txt_distance">Distancia</string>
+
+    <!-- CATEGORIES -->
+    <string name="category_restaurant">Restaurantes</string>
+    <string name="category_cafe">Cafeterías</string>
+    <string name="category_fastfood">Comida Rápida</string>
+    <string name="category_museum">Museos</string>
+    <string name="category_hotel">Hoteles</string>
+
+    <!-- PLACES -->
+    <string name="place_cafe_jardin">Café El Jardín</string>
+    <string name="place_casona">La Casona</string>
+    <string name="distance_1_2">1.2 km</string>
+    <string name="distance_2_5">2.5 km</string>
+
+    <!-- PROFILE -->
+    <string name="txt_avatar">Avatar</string>
+    <string name="txt_user_name_sample">Carlos Rodríguez</string>
+    <string name="txt_role_explorer">Explorador</string>
+    <string name="txt_my_content">Mi Contenido</string>
+    <string name="txt_account_options">Opciones de la Cuenta</string>
+    <string name="txt_my_places">Mis Lugares</string>
+    <string name="txt_my_favorites">Mis Favoritos</string>
+    <string name="txt_my_achievements">Mis Logros</string>
+    <string name="txt_delete_account">Eliminar mi cuenta</string>
+    <string name="txt_logout">Cerrar Sesión</string>
+
+    <!-- STATS -->
+    <string name="txt_stat_reputation">Puntos\nde reputación</string>
+    <string name="txt_stat_places">Lugares\ncreados</string>
+    <string name="txt_stat_reviews">Reseñas\nescritas</string>
+    <string name="txt_stat_badges">Badges\nganados</string>
 
 
 </resources>

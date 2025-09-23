@@ -1,4 +1,4 @@
-package com.example.primeraplicacionprueba.ui.screens.user
+package com.example.primeraplicacionprueba.ui.screens.user.tabs.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

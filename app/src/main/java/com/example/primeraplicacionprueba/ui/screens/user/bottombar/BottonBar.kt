@@ -1,9 +1,9 @@
-package com.example.primeraplicacionprueba.ui.screens.user.bottonbas
+package com.example.primeraplicacionprueba.ui.screens.user.bottombar
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -57,7 +57,7 @@ enum class Destination(
     val label:Int,
     val icon: ImageVector
 ){
-    HOME(RouteTab.Map,R.string.txt_menuhome,Icons.Default.Home),
-    SEARCH(RouteTab.Search,R.string.txt_menusearch,Icons.Default.Search),
-    MY_PLACES(RouteTab.Places, R.string.txt_menumyplaces,Icons.Default.ThumbUp)
+    HOME(RouteTab.Home,R.string.txt_menuhome,Icons.Default.Home),
+    MAP(RouteTab.Map,R.string.txt_menumap,Icons.Default.Map),
+    PROFILE(RouteTab.Profile,R.string.txt_menuprofile,Icons.Default.AccountCircle),
 }
