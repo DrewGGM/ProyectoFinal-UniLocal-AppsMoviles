@@ -12,4 +12,9 @@ sealed class RouteScreem{
     @Serializable
     data object Register: RouteScreem()
 
+    @Serializable
+    data object EditProfile: RouteScreem();
+
+    @Serializable
+    data object CreatePlace: RouteScreem();
 }
