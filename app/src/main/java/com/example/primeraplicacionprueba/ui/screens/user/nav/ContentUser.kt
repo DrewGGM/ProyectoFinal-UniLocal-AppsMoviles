@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.primeraplicacionprueba.model.User
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.Home
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.map.Map
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.profile.Profile
@@ -20,7 +21,8 @@ fun ContentUser(
     onNavigateToCreatePlace: () -> Unit = {},
     onNavigateToEditProfile: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
-    onNavigateToPlace: () -> Unit = {}
+    onNavigateToPlace: () -> Unit = {},
+    user: User
 ) {
 
     val placesViewModel: PlacesViewModel = viewModel()
@@ -34,7 +36,8 @@ fun ContentUser(
             Home(
                 placesViewModel = placesViewModel,
                 onNavigateToCreatePlace = onNavigateToCreatePlace,
-                onNavigateToPlace = onNavigateToPlace
+                onNavigateToPlace = onNavigateToPlace,
+                user = user
             )
         }
         composable<RouteTab.Map> {

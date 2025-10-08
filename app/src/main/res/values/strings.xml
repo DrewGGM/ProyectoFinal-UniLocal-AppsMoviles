@@ -32,6 +32,7 @@
     <string name="txt_username_error">El nombre de usuario es obligatorio</string>
     <string name="txt_username_error_short">El nombre de usuario debe tener al menos 3 caracteres</string>
     <string name="txt_city_error">La ciudad es obligatoria</string>
+    <string name="txt_country_error">El pais es obligatorio</string>
     <string name="txt_email_error_invalid">Ingresa un correo válido</string>
     <string name="txt_password_error_short">La contraseña debe tener al menos 6 caracteres</string>
     <string name="txt_password_error_required">La contraseña es obligatoria</string>
@@ -43,6 +44,8 @@
     <string name="txt_show">Ver</string>
     <string name="txt_hide">Ocultar</string>
     <string name="txt_username">Nombre de Usuario</string>
+    <string name="txt_username_error_exists">El nombre de usuario ya existe</string>
+    <string name="txt_email_error_exists">El correo ya existe</string>
 
     //TEXTO HOME USER
     <string name="txt_titule_home">Inicio Usuario</string>

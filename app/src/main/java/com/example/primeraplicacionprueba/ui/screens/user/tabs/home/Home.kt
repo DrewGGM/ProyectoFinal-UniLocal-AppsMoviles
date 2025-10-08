@@ -32,6 +32,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.PlaceType
+import com.example.primeraplicacionprueba.model.User
 import com.example.primeraplicacionprueba.ui.theme.*
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 import com.example.primeraplicacionprueba.viewmodel.UsersViewModel
@@ -40,7 +41,8 @@ import com.example.primeraplicacionprueba.viewmodel.UsersViewModel
 fun Home(
     onNavigateToCreatePlace: () -> Unit = {},
     onNavigateToPlace: () -> Unit = {},
-    placesViewModel: PlacesViewModel
+    placesViewModel: PlacesViewModel,
+    user: User
 ) {
 
     val places by placesViewModel.places.collectAsState()
@@ -54,7 +56,7 @@ fun Home(
             // Header
             item {
                 HeaderSection(
-                    userName = "Carlos", // 👈 pasar este nombre dinámico en el futuro
+                    userName = user.nombre,
                     onSearchClick = { }
                 )
             }

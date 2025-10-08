@@ -11,6 +11,9 @@ class UsersViewModel : ViewModel() {
 
     private val _users = MutableStateFlow(emptyList<User>())
     val users: StateFlow<List<User>> = _users.asStateFlow()
+    
+    private val _currentUser = MutableStateFlow<User?>(null)
+    val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
 
     init {
         loadUsers()
@@ -54,8 +57,20 @@ class UsersViewModel : ViewModel() {
         return _users.value.find { it.username == username }
     }
 
-    fun login(email: String, password: String): User? {
-        return _users.value.find { it.email == email && it.password == password }
+    fun findByEmail(email: String): User? {
+        return _users.value.find { it.email == email }
+    }
+
+    fun login(emialOrUsername: String, password: String): User? {
+        val user = _users.value.find { (it.email == emialOrUsername || it.username == emialOrUsername) && it.password == password }
+        if (user != null) {
+            _currentUser.value = user
+        }
+        return user
+    }
+    
+    fun logout() {
+        _currentUser.value = null
     }
 
 }

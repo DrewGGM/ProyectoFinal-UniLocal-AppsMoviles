@@ -3,9 +3,13 @@ package com.example.primeraplicacionprueba.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,16 +27,27 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
+import com.example.primeraplicacionprueba.model.Rol
+import com.example.primeraplicacionprueba.model.User
 import java.util.regex.Pattern
+import com.example.primeraplicacionprueba.viewmodel.UsersViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreem(
+    usersViewModel: UsersViewModel,
     onNavigateToLogin: () -> Unit = {},
     onNavigateToHome: () -> Unit = {}
 ) {
     var nombreCompleto by remember { mutableStateOf("") }
     var nombreUsuario by remember { mutableStateOf("") }
     var ciudad by remember { mutableStateOf("") }
+    var pais by remember { mutableStateOf("") }
+    var ciudadExpanded by remember { mutableStateOf(false) }
+    var paisExpanded by remember { mutableStateOf(false) }
+    
+    val ciudades = listOf("Bogotá", "Medellín", "Cali", "Barranquilla", "Cartagena", "Cúcuta", "Bucaramanga", "Pereira", "Santa Marta", "Ibagué", "Pasto", "Manizales", "Neiva", "Villavicencio", "Armenia")
+    val paises = listOf("Colombia", "México", "Argentina", "Chile", "Perú", "Ecuador", "Venezuela", "Bolivia", "Paraguay", "Uruguay", "Brasil", "Estados Unidos", "España", "Francia", "Italia")
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -41,6 +56,7 @@ fun RegisterScreem(
     var nombreCompletoError by remember { mutableStateOf("") }
     var nombreUsuarioError by remember { mutableStateOf("") }
     var ciudadError by remember { mutableStateOf("") }
+    var paisError by remember { mutableStateOf("") }
     var correoError by remember { mutableStateOf("") }
     var contrasenaError by remember { mutableStateOf("") }
 
@@ -80,6 +96,14 @@ fun RegisterScreem(
             ciudadError = ""
         }
 
+        // Validar pais
+        if (pais.isBlank()) {
+            paisError = context.getString(R.string.txt_country_error)
+            isValid = false
+        } else {
+            paisError = ""
+        }
+
         // Validar correo
         val emailPattern = Pattern.compile(
             "[a-zA-Z0-9+_.-]+@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})"
@@ -105,6 +129,16 @@ fun RegisterScreem(
             contrasenaError = ""
         }
 
+        if (usersViewModel.findByEmail(correo) != null) {
+            correoError = context.getString(R.string.txt_email_error_exists)
+            isValid = false
+        }
+
+        if (usersViewModel.findByUsername(nombreUsuario) != null) {
+            nombreUsuarioError = context.getString(R.string.txt_username_error_exists)
+            isValid = false
+        }
+
         return isValid
     }
 
@@ -116,6 +150,7 @@ fun RegisterScreem(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -230,23 +265,91 @@ fun RegisterScreem(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    OutlinedTextField(
-                        value = ciudad,
-                        onValueChange = {
-                            ciudad = it
-                            if (ciudadError.isNotEmpty()) ciudadError = ""
-                        },
-                        label = { Text(stringResource(R.string.txt_city)) },
-                        modifier = Modifier.fillMaxWidth(),
-                        isError = ciudadError.isNotEmpty(),
-                        supportingText = if (ciudadError.isNotEmpty()) {
-                            { Text(ciudadError, color = MaterialTheme.colorScheme.error) }
-                        } else null,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF4ECDC4),
-                            focusedLabelColor = Color(0xFF4ECDC4)
+                    // Dropdown para Ciudad
+                    ExposedDropdownMenuBox(
+                        expanded = ciudadExpanded,
+                        onExpandedChange = { ciudadExpanded = !ciudadExpanded }
+                    ) {
+                        OutlinedTextField(
+                            value = ciudad,
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text(stringResource(R.string.txt_city)) },
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = ciudadExpanded)
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .menuAnchor(),
+                            isError = ciudadError.isNotEmpty(),
+                            supportingText = if (ciudadError.isNotEmpty()) {
+                                { Text(ciudadError, color = MaterialTheme.colorScheme.error) }
+                            } else null,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color(0xFF4ECDC4),
+                                focusedLabelColor = Color(0xFF4ECDC4)
+                            )
                         )
-                    )
+                        ExposedDropdownMenu(
+                            expanded = ciudadExpanded,
+                            onDismissRequest = { ciudadExpanded = false }
+                        ) {
+                            ciudades.forEach { ciudadOption ->
+                                DropdownMenuItem(
+                                    text = { Text(ciudadOption) },
+                                    onClick = {
+                                        ciudad = ciudadOption
+                                        ciudadExpanded = false
+                                        if (ciudadError.isNotEmpty()) ciudadError = ""
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Dropdown para País
+                    ExposedDropdownMenuBox(
+                        expanded = paisExpanded,
+                        onExpandedChange = { paisExpanded = !paisExpanded }
+                    ) {
+                        OutlinedTextField(
+                            value = pais,
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text(stringResource(R.string.txt_country)) },
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = paisExpanded)
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .menuAnchor(),
+                            isError = paisError.isNotEmpty(),
+                            supportingText = if (paisError.isNotEmpty()) {
+                                { Text(paisError, color = MaterialTheme.colorScheme.error) }
+                            } else null,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color(0xFF4ECDC4),
+                                focusedLabelColor = Color(0xFF4ECDC4)
+                            )
+                        )
+                        ExposedDropdownMenu(
+                            expanded = paisExpanded,
+                            onDismissRequest = { paisExpanded = false }
+                        ) {
+                            paises.forEach { paisOption ->
+                                DropdownMenuItem(
+                                    text = { Text(paisOption) },
+                                    onClick = {
+                                        pais = paisOption
+                                        paisExpanded = false
+                                        if (paisError.isNotEmpty()) paisError = ""
+                                    }
+                                )
+                            }
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -309,9 +412,18 @@ fun RegisterScreem(
                     Button(
                         onClick = {
                             if (validarCampos()) {
-                                // Aquí puedes agregar la lógica para crear la cuenta
-                                // Por ahora solo navegamos al home
-                                onNavigateToHome()
+                                val user = User(
+                                    id = (usersViewModel.users.value.size + 1).toString(),
+                                    nombre = nombreCompleto,
+                                    username = nombreUsuario,
+                                    city = ciudad,
+                                    country = pais,
+                                    email = correo,
+                                    password = contrasena,
+                                    rol = Rol.USER
+                                )
+                                usersViewModel.create(user)
+                                onNavigateToLogin()
                             }
                         },
                         modifier = Modifier
