@@ -5,22 +5,24 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
-import com.example.primeraplicacionprueba.ui.config.RouteScreem
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.example.primeraplicacionprueba.ui.config.RouteScreem
 import com.example.primeraplicacionprueba.ui.screens.admin.HomeAdmin
-import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.AddNewPlace
 import com.example.primeraplicacionprueba.ui.screens.user.UserScreen
+import com.example.primeraplicacionprueba.ui.screens.user.tabs.PlaceDetail
+import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.AddNewPlace
 import com.example.primeraplicacionprueba.viewmodel.UsersViewModel
 
 @Composable
-fun Navigation(){
+fun Navigation() {
     val navController = rememberNavController()
     val usersViewModel: UsersViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = RouteScreem.Login
-    ){
+    ) {
         composable<RouteScreem.Login> {
             LoginScreen(
                 usersViewModel = usersViewModel,
@@ -43,7 +45,7 @@ fun Navigation(){
                 }
             )
         }
-        composable<RouteScreem.Home>{
+        composable<RouteScreem.Home> {
             val currentUser by usersViewModel.currentUser.collectAsState()
             currentUser?.let { user ->
                 UserScreen(
@@ -60,11 +62,14 @@ fun Navigation(){
                             launchSingleTop = true
                         }
                     },
+                    onNavigateToPlace = { placeId ->
+                        navController.navigate(RouteScreem.PlaceDetail(placeId))
+                    },
                     user = user
                 )
             }
         }
-        composable<RouteScreem.HomeAdmin>{
+        composable<RouteScreem.HomeAdmin> {
             HomeAdmin()
         }
 
@@ -94,6 +99,13 @@ fun Navigation(){
                     // Por ahora solo muestra un mensaje o navega a otra pantalla
                     navController.navigate(RouteScreem.Home)
                 }
+            )
+        }
+
+        composable<RouteScreem.PlaceDetail> {
+            val args = it.toRoute<RouteScreem.PlaceDetail>()
+            PlaceDetail(
+                id = args.id
             )
         }
 

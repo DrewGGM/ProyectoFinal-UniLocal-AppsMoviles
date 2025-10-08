@@ -40,7 +40,7 @@ import com.example.primeraplicacionprueba.viewmodel.UsersViewModel
 @Composable
 fun Home(
     onNavigateToCreatePlace: () -> Unit = {},
-    onNavigateToPlace: () -> Unit = {},
+    onNavigateToPlace: (String) -> Unit = {},
     placesViewModel: PlacesViewModel,
     user: User
 ) {
@@ -93,7 +93,7 @@ fun Home(
                     rating = it.rating ,
                     distance = it.getDistanceFromUser(),
                     imageUrl = it.imagenes[0],
-                    onClick = { onNavigateToPlace() }
+                    onClick = { onNavigateToPlace(it.id) }
                 )
             }
         }

@@ -17,4 +17,7 @@ sealed class RouteScreem{
 
     @Serializable
     data object CreatePlace: RouteScreem();
+
+    @Serializable
+    data class PlaceDetail(val id: String): RouteScreem();
 }
