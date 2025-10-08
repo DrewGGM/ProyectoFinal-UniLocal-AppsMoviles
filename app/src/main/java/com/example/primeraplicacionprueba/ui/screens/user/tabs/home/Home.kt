@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,24 +13,38 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.primeraplicacionprueba.R
+import com.example.primeraplicacionprueba.model.PlaceType
 import com.example.primeraplicacionprueba.ui.theme.*
+import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
+import com.example.primeraplicacionprueba.viewmodel.UsersViewModel
 
 @Composable
 fun Home(
-    onNavigateToCreatePlace: () -> Unit = {}
+    onNavigateToCreatePlace: () -> Unit = {},
+    onNavigateToPlace: () -> Unit = {},
+    placesViewModel: PlacesViewModel
 ) {
+
+    val places by placesViewModel.places.collectAsState()
+
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier
@@ -69,13 +84,14 @@ fun Home(
             }
 
             // Lista de lugares (placeholder)
-            items(2) { index ->
+            items(places) {
                 PlaceCard(
-                    name = if (index == 0) stringResource(R.string.place_cafe_jardin) else stringResource(R.string.place_casona),
-                    category = if (index == 0) stringResource(R.string.category_cafe) else stringResource(R.string.category_restaurant),
-                    rating = if (index == 0) 4.8f else 4.5f,
-                    distance = if (index == 0) stringResource(R.string.distance_1_2) else stringResource(R.string.distance_2_5),
-                    color = if (index == 0) Secondary else Primary
+                    name = it.title ,
+                    category = it.type ,
+                    rating = it.rating ,
+                    distance = it.getDistanceFromUser(),
+                    imageUrl = it.imagenes[0],
+                    onClick = { onNavigateToPlace() }
                 )
             }
         }
@@ -232,40 +248,36 @@ fun CategoryItem(
     }
 }
 
+
 @Composable
 fun PlaceCard(
     name: String,
-    category: String,
+    category: PlaceType,
     rating: Float,
     distance: String,
-    color: Color
+    imageUrl: String,
+    onClick: () -> Unit = {}
 ) {
     Card(
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 12.dp)
-            .clickable { },
+            .padding(horizontal = 24.dp, vertical = 12.dp),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column {
-            // Imagen placeholder
-            Box(
+            // Imagen desde URL
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = name,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(180.dp)
                     .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                    .background(color.copy(alpha = 0.3f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Image,
-                    contentDescription = stringResource(R.string.img_imagen),
-                    tint = color,
-                    modifier = Modifier.size(48.dp)
-                )
-            }
+            )
 
             // Contenido
             Column(
@@ -279,7 +291,7 @@ fun PlaceCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = category,
+                    text = category.toString(),
                     fontSize = 14.sp,
                     color = TextMuted
                 )
@@ -320,3 +332,4 @@ fun PlaceCard(
         }
     }
 }
+

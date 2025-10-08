@@ -6,8 +6,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.primeraplicacionprueba.ui.config.RouteScreem
 import androidx.navigation.compose.composable
 import com.example.primeraplicacionprueba.ui.screens.admin.HomeAdmin
-import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.AddNewPlace
-import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.Home
+import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.AddNewPlace
 import com.example.primeraplicacionprueba.ui.screens.user.UserScreen
 
 @Composable
