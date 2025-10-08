@@ -1,10 +1,9 @@
-package com.example.primeraplicacionprueba.ui.screens.user.tabs
+package com.example.primeraplicacionprueba.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,11 +23,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.primeraplicacionprueba.R
-import com.example.primeraplicacionprueba.model.Place
 import com.example.primeraplicacionprueba.ui.theme.*
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
 fun PlaceDetail(
@@ -82,7 +83,7 @@ fun PlaceDetail(
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF2C3E50),
                     modifier = Modifier.weight(1f),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    textAlign = TextAlign.Center
                 )
                 
                 // Espacio para balancear el layout
@@ -90,7 +91,7 @@ fun PlaceDetail(
             }
             
             // Línea divisoria
-            androidx.compose.material3.Divider(
+            Divider(
                 color = Color(0xFFE0E0E0),
                 thickness = 1.dp
             )
@@ -407,7 +408,7 @@ fun ContactItem(
                 fontSize = 13.sp,
                 color = TextDark,
                 maxLines = 2,
-                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -427,7 +428,7 @@ fun MapPlaceholder() {
             text = stringResource(R.string.txt_menumap),
             fontSize = 14.sp,
             color = Color(0xFF95A5A6),
-            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+            fontStyle = FontStyle.Italic
         )
     }
 }

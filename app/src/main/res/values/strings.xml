@@ -68,19 +68,11 @@
     <string name="txt_back">Atrás</string>
 
     <!-- TEXTOS AÑADIR NUEVO LUGAR -->
-    <string name="txt_add_new_place">Añadir Nuevo Lugar</string>
     <string name="txt_step_2_location_contact">2. Ubicación y Contacto</string>
-    <string name="txt_location">Ubicación</string>
-    <string name="txt_tap_to_select_map">Toca para seleccionar en el mapa</string>
-    <string name="txt_contact_phone">Teléfono de Contacto</string>
-    <string name="txt_phone_placeholder">Ej: +57 320 123 4567</string>
-    <string name="txt_website">Sitio Web</string>
-    <string name="txt_website_placeholder">Ej: www.ejemplo.com</string>
     <string name="txt_social_networks">Redes Sociales</string>
     <string name="txt_social_placeholder">Ej: @cafe_organico</string>
     <string name="btn_previous">Anterior</string>
     <string name="btn_next">Siguiente</string>
-    <string name="txt_close">Cerrar</string>
 
     <!-- HOME -->
     <string name="txt_categories">Categorías</string>
@@ -135,9 +127,83 @@
     <string name="txt_favorites">Favoritos</string>
     <string name="txt_share">Compartir</string>
     <string name="txt_directions">Direcciones</string>
-    <string name="txt_place_image">Imagen del lugar</string>
     <string name="txt_amenities">Servicios</string>
     <string name="txt_no_reviews">Aún no hay reseñas para este lugar</string>
+
+    <!-- PLACE TYPES -->
+    <string name="place_type_restaurant">Restaurante</string>
+    <string name="place_type_bar">Bar</string>
+    <string name="place_type_cafe">Cafetería</string>
+    <string name="place_type_hotel">Hotel</string>
+    <string name="place_type_museum">Museo</string>
+    <string name="place_type_fast_food">Comida Rápida</string>
+    <string name="place_type_shopping">Centro Comercial</string>
+    <string name="place_type_park">Parque</string>
+    <string name="place_type_gas_station">Gasolinera</string>
+    <string name="place_type_pharmacy">Farmacia</string>
+    <string name="place_type_hospital">Hospital</string>
+    <string name="place_type_bank">Banco</string>
+    <string name="place_type_gym">Gimnasio</string>
+    <string name="place_type_cinema">Cine</string>
+    <string name="place_type_other">Otro</string>
+
+    <!-- CREATE PLACE STEPS -->
+    <string name="txt_add_new_place">Añadir Nuevo Lugar</string>
+    <string name="txt_close">Cerrar</string>
+    <string name="txt_next">Siguiente</string>
+    <string name="txt_previous">Anterior</string>
+    <string name="txt_submit_place">Enviar Lugar</string>
+    
+    <!-- STEP ONE -->
+    <string name="txt_step_one_title">1. Detalles Principales</string>
+    <string name="txt_place_name">Nombre del Lugar</string>
+    <string name="txt_place_name_placeholder">Ej: Café Orgánico El Jardín</string>
+    <string name="txt_detailed_description">Descripción Detallada</string>
+    <string name="txt_description_placeholder">Describe la historia, el ambiente y las características únicas del lugar...</string>
+    <string name="txt_category">Categoría</string>
+
+    <!-- STEP TWO -->
+    <string name="txt_step_two_title">2. Ubicación y Contacto</string>
+    <string name="txt_location">Ubicación</string>
+    <string name="txt_tap_to_select_map">Toca para seleccionar en el mapa</string>
+    <string name="txt_contact_phone">Teléfono de Contacto</string>
+    <string name="txt_phone_placeholder">Ej: +57 320 123 4567</string>
+    <string name="txt_website">Sitio Web</string>
+    <string name="txt_website_placeholder">Ej: www.ejemplo.com</string>
+    <string name="txt_social_media">Redes Sociales</string>
+    <string name="txt_social_media_placeholder">Ej: @cafe_organico</string>
+    
+    <!-- STEP THREE -->
+    <string name="txt_step_three_title">3. Horarios de Atención</string>
+    <string name="txt_schedule_description">Selecciona los horarios de apertura y cierre para cada día.</string>
+    <string name="txt_monday">Lunes</string>
+    <string name="txt_tuesday">Martes</string>
+    <string name="txt_wednesday">Miércoles</string>
+    <string name="txt_thursday">Jueves</string>
+    <string name="txt_friday">Viernes</string>
+    <string name="txt_saturday">Sábado</string>
+    <string name="txt_sunday">Domingo</string>
+    <string name="txt_opening_time">Apertura</string>
+    <string name="txt_closing_time">Cierre</string>
+    
+    <!-- STEP FOUR -->
+    <string name="txt_step_four_title">4. Galería de Imágenes</string>
+    <string name="txt_gallery_description">Agrega al menos una foto del lugar para que otros la descubran.</string>
+    <string name="txt_tap_to_upload">Toca para subir fotos</string>
+    <string name="txt_add_photo">Agregar foto</string>
+    <string name="txt_add_more_photos">Agregar más fotos</string>
+    <string name="txt_place_image">Imagen del lugar</string>
+    <string name="txt_remove">Eliminar</string>
+    <string name="txt_or_add_urls">O agrega URLs de imágenes</string>
+    <string name="txt_image_url">URL de imagen</string>
+    <string name="txt_image_url_placeholder">https://ejemplo.com/imagen.jpg</string>
+    <string name="txt_add_url">Agregar URL</string>
+    <string name="txt_preview">Vista previa</string>
+    <string name="txt_no_images_added">No hay imágenes agregadas</string>
+    <string name="txt_url_error_invalid">URL debe comenzar con http:// o https://</string>
+    <string name="txt_url_error_empty">Ingresa una URL válida</string>
+    <string name="txt_see_more_categories">Ver más categorías</string>
+    <string name="txt_see_less_categories">Ver menos</string>
 
 
 </resources>
