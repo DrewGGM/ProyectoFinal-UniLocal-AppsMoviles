@@ -32,7 +32,7 @@ class PlacesViewModel : ViewModel() {
                 ),
                 description = "Un café acogedor con postres artesanales y ambiente relajado perfecto para trabajar o estudiar.",
                 phones = listOf("+57 300 111 2233", "+57 6 123 4567"),
-                type = PlaceType.CAFETERIA,
+                type = PlaceType.CAFE,
                 shedule = listOf(
                     Shedule(Day.MONDAY, java.time.LocalTime.of(8, 0), java.time.LocalTime.of(20, 0)),
                     Shedule(Day.TUESDAY, java.time.LocalTime.of(8, 0), java.time.LocalTime.of(20, 0)),
@@ -68,7 +68,7 @@ class PlacesViewModel : ViewModel() {
                 ),
                 description = "Restaurante especializado en carnes a la brasa con más de 15 años de experiencia.",
                 phones = listOf("+57 310 555 8899"),
-                type = PlaceType.RESTAURANTE,
+                type = PlaceType.RESTAURANT,
                 shedule = listOf(
                     Shedule(Day.MONDAY, java.time.LocalTime.of(12, 0), java.time.LocalTime.of(22, 0)),
                     Shedule(Day.TUESDAY, java.time.LocalTime.of(12,  0), java.time.LocalTime.of(22, 0)),

@@ -11,8 +11,10 @@ import androidx.navigation.toRoute
 import com.example.primeraplicacionprueba.ui.config.RouteScreem
 import com.example.primeraplicacionprueba.ui.screens.admin.HomeAdmin
 import com.example.primeraplicacionprueba.ui.screens.user.UserScreen
-import com.example.primeraplicacionprueba.ui.screens.user.tabs.PlaceDetail
-import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.AddNewPlace
+import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.CreatePlaceStepFour
+import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.CreatePlaceStepOne
+import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.CreatePlaceStepThree
+import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.CreatePlaceStepTwo
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 import com.example.primeraplicacionprueba.viewmodel.UsersViewModel
 
@@ -52,7 +54,7 @@ fun Navigation() {
             currentUser?.let { user ->
                 UserScreen(
                     onNavigateToCreatePlace = {
-                        navController.navigate(RouteScreem.CreatePlace)
+                        navController.navigate(RouteScreem.CreatePlaceStepOne)
                     },
                     onNavigateToEditProfile = {
                         navController.navigate(RouteScreem.EditProfile)
@@ -87,21 +89,66 @@ fun Navigation() {
             )
         }
 
-        composable<RouteScreem.CreatePlace> {
-            AddNewPlace(
+        composable<RouteScreem.CreatePlaceStepOne> {
+            CreatePlaceStepOne(
+                onNavigateToHome = {
+                    navController.navigate(RouteScreem.Home) {
+                        popUpTo(RouteScreem.Home) { inclusive = false }
+                    }
+                },
+                onNavigateToNext = {
+                    // Navegar al siguiente paso
+                    navController.navigate(RouteScreem.CreatePlaceStepTwo)
+                }
+            )
+        }
+
+        composable<RouteScreem.CreatePlaceStepTwo> {
+            CreatePlaceStepTwo(
                 onNavigateToHome = {
                     navController.navigate(RouteScreem.Home) {
                         popUpTo(RouteScreem.Home) { inclusive = false }
                     }
                 },
                 onNavigateToPrevious = {
-                    // Navegar al paso anterior (puedes crear otra pantalla o simplemente regresar)
+                    // Navegar al paso anterior
                     navController.popBackStack()
                 },
                 onNavigateToNext = {
-                    // Navegar al siguiente paso (puedes crear la siguiente pantalla)
-                    // Por ahora solo muestra un mensaje o navega a otra pantalla
-                    navController.navigate(RouteScreem.Home)
+                    // Navegar al siguiente paso
+                    navController.navigate(RouteScreem.CreatePlaceStepThree)
+                }
+            )
+        }
+
+        composable<RouteScreem.CreatePlaceStepThree> {
+            CreatePlaceStepThree(
+                onNavigateToHome = {
+                    navController.navigate(RouteScreem.Home) {
+                        popUpTo(RouteScreem.Home) { inclusive = false }
+                    }
+                },
+                onNavigateToPrevious = {
+                    // Navegar al paso anterior
+                    navController.popBackStack()
+                },
+                onNavigateToNext = {
+                    // Navegar al siguiente paso
+                    navController.navigate(RouteScreem.CreatePlaceStepFour)
+                }
+            )
+        }
+
+        composable<RouteScreem.CreatePlaceStepFour> {
+            CreatePlaceStepFour(
+                onNavigateToHome = {
+                    navController.navigate(RouteScreem.Home) {
+                        popUpTo(RouteScreem.Home) { inclusive = false }
+                    }
+                },
+                onNavigateToPrevious = {
+                    // Navegar al paso anterior
+                    navController.popBackStack()
                 }
             )
         }

@@ -16,7 +16,16 @@ sealed class RouteScreem{
     data object EditProfile: RouteScreem();
 
     @Serializable
-    data object CreatePlace: RouteScreem();
+    data object CreatePlaceStepOne: RouteScreem();
+
+    @Serializable
+    data object CreatePlaceStepTwo: RouteScreem();
+
+    @Serializable
+    data object CreatePlaceStepThree: RouteScreem();
+
+    @Serializable
+    data object CreatePlaceStepFour: RouteScreem();
 
     @Serializable
     data class PlaceDetail(val id: String): RouteScreem();

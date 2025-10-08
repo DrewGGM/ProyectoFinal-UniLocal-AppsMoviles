@@ -1,13 +1,21 @@
 package com.example.primeraplicacionprueba.model
 
-enum class PlaceType (name: String){
-    RESTAURANTE("Restaurante"),
-    BAR("Bar"),
-    CAFETERIA("Cafeteria"),
-    HOTEL("Hotel"),
-    OTROS("Otros"),
-    SHOPPING("Shopping"),
-    PARK("Park")
+enum class PlaceType {
+    RESTAURANT,
+    BAR,
+    CAFE,
+    HOTEL,
+    MUSEUM,
+    FAST_FOOD,
+    SHOPPING,
+    PARK,
+    GAS_STATION,
+    PHARMACY,
+    HOSPITAL,
+    BANK,
+    GYM,
+    CINEMA,
+    OTHER
 }
 
 
