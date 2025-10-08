@@ -13,12 +13,14 @@ import com.example.primeraplicacionprueba.ui.screens.admin.HomeAdmin
 import com.example.primeraplicacionprueba.ui.screens.user.UserScreen
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.PlaceDetail
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.AddNewPlace
+import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 import com.example.primeraplicacionprueba.viewmodel.UsersViewModel
 
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
     val usersViewModel: UsersViewModel = viewModel()
+    val placesViewModel: PlacesViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = RouteScreem.Login
@@ -87,8 +89,10 @@ fun Navigation() {
 
         composable<RouteScreem.CreatePlace> {
             AddNewPlace(
-                onNavigateBack = {
-                    navController.popBackStack()
+                onNavigateToHome = {
+                    navController.navigate(RouteScreem.Home) {
+                        popUpTo(RouteScreem.Home) { inclusive = false }
+                    }
                 },
                 onNavigateToPrevious = {
                     // Navegar al paso anterior (puedes crear otra pantalla o simplemente regresar)
@@ -105,7 +109,11 @@ fun Navigation() {
         composable<RouteScreem.PlaceDetail> {
             val args = it.toRoute<RouteScreem.PlaceDetail>()
             PlaceDetail(
-                id = args.id
+                placesViewModel = placesViewModel,
+                id = args.id,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
             )
         }
 

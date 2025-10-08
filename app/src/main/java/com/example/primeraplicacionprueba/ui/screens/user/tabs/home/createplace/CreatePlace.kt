@@ -26,11 +26,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
+import androidx.compose.foundation.layout.statusBarsPadding
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddNewPlace(
-    onNavigateBack: () -> Unit = {},
+    onNavigateToHome: () -> Unit = {},
     onNavigateToPrevious: () -> Unit = {},
     onNavigateToNext: () -> Unit = {}
 ) {
@@ -48,6 +49,7 @@ fun AddNewPlace(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .background(Color.White)
     ) {
         // Header con título y botón cerrar
@@ -58,14 +60,8 @@ fun AddNewPlace(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Flecha de regreso
-            IconButton(onClick = { onNavigateBack() }) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = stringResource(R.string.txt_back),
-                    tint = Color(0xFF2C3E50)
-                )
-            }
+            // Espacio vacío para balancear el layout
+            Spacer(modifier = Modifier.size(48.dp))
 
             // Título
             Text(
@@ -78,7 +74,7 @@ fun AddNewPlace(
             )
 
             // Botón cerrar
-            IconButton(onClick = { onNavigateBack() }) {
+            IconButton(onClick = { onNavigateToHome() }) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.txt_close),

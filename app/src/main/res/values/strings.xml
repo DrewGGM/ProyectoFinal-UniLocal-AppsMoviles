@@ -123,5 +123,21 @@
     <string name="txt_stat_reviews">Reseñas\nescritas</string>
     <string name="txt_stat_badges">Badges\nganados</string>
 
+    <!-- PLACE DETAIL -->
+    <string name="txt_place_not_found">Lugar no encontrado</string>
+    <string name="txt_about_this_place">Acerca de este lugar</string>
+    <string name="txt_information_contact">Información y Contacto</string>
+    <string name="txt_comments">Comentarios (%1$d)</string>
+    <string name="txt_open">Abierto</string>
+    <string name="txt_closed">Cerrado</string>
+    <string name="txt_closes_at">Cierra a las %1$s</string>
+    <string name="txt_not_available">No disponible</string>
+    <string name="txt_favorites">Favoritos</string>
+    <string name="txt_share">Compartir</string>
+    <string name="txt_directions">Direcciones</string>
+    <string name="txt_place_image">Imagen del lugar</string>
+    <string name="txt_amenities">Servicios</string>
+    <string name="txt_no_reviews">Aún no hay reseñas para este lugar</string>
+
 
 </resources>
