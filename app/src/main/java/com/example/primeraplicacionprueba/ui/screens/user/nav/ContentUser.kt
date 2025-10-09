@@ -9,7 +9,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.primeraplicacionprueba.model.User
-import com.example.primeraplicacionprueba.ui.config.RouteScreem
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.Home
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.map.Map
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.profile.Profile
@@ -23,6 +22,7 @@ fun ContentUser(
     onNavigateToEditProfile: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
     onNavigateToPlace: (String) -> Unit = {},
+    onNavigateToAchievements: () -> Unit = {},
     user: User
 ) {
 
@@ -47,7 +47,8 @@ fun ContentUser(
         composable<RouteTab.Profile> {
             Profile(
                 onNavigateToEditProfile = onNavigateToEditProfile,
-                onNavigateToLogin = onNavigateToLogin
+                onNavigateToLogin = onNavigateToLogin,
+                onNavigateToAchievements = onNavigateToAchievements
             )
         }
     }

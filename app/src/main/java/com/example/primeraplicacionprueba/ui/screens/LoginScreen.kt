@@ -47,14 +47,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.User
-import com.example.primeraplicacionprueba.viewmodel.UsersViewModel
+import com.example.primeraplicacionprueba.ui.theme.*
 
 @Composable
 fun LoginScreen(
-    usersViewModel: UsersViewModel,
     onNavigateToRegister: () -> Unit = {},
     onNavigateToHome: (user: User) -> Unit = {}
 ) {
+    val mainViewModel = LocalMainViewModel.current
+    val usersViewModel = mainViewModel.usersViewModel
     var email by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -94,7 +95,7 @@ fun LoginScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5))
+            .background(BackgroundLight)
     ) {
         Column(
             modifier = Modifier
@@ -127,8 +128,8 @@ fun LoginScreen(
                             .background(
                                 Brush.horizontalGradient(
                                     colors = listOf(
-                                        Color(0xFFFF6B6B),
-                                        Color(0xFF4ECDC4)
+                                        Primary,
+                                        Secondary
                                     )
                                 )
                             ),
@@ -158,14 +159,14 @@ fun LoginScreen(
                         text = stringResource(R.string.txt_welcome_back),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF2C3E50),
+                        color = TextDark,
                         textAlign = TextAlign.Center
                     )
 
                     Text(
                         text = stringResource(R.string.txt_welcome_subtitle),
                         fontSize = 16.sp,
-                        color = Color(0xFF7F8C8D),
+                        color = TextMuted,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(top = 8.dp)
                     )
@@ -187,8 +188,8 @@ fun LoginScreen(
                             { Text(emailError, color = MaterialTheme.colorScheme.error) }
                         } else null,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF4ECDC4),
-                            focusedLabelColor = Color(0xFF4ECDC4)
+                            focusedBorderColor = Secondary,
+                            focusedLabelColor = Secondary
                         )
                     )
 
@@ -216,14 +217,14 @@ fun LoginScreen(
                                         stringResource(R.string.txt_hide)
                                     else
                                         stringResource(R.string.txt_show),
-                                    color = Color(0xFF4ECDC4),
+                                    color = Secondary,
                                     fontSize = 12.sp
                                 )
                             }
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF4ECDC4),
-                            focusedLabelColor = Color(0xFF4ECDC4)
+                            focusedBorderColor = Secondary,
+                            focusedLabelColor = Secondary
                         )
                     )
 
@@ -239,7 +240,7 @@ fun LoginScreen(
                                 } else {
                                     Toast.makeText(
                                         context,
-                                        "Credenciales incorrectas",
+                                        context.getString(R.string.txt_credentials_incorrect),
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
@@ -251,7 +252,7 @@ fun LoginScreen(
                             .height(56.dp),
                         shape = RoundedCornerShape(28.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF4ECDC4)
+                            containerColor = Secondary
                         )
                     ) {
                         Text(
@@ -288,7 +289,7 @@ fun LoginScreen(
                                     text = "G",
                                     fontSize = 24.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF4285F4)
+                                    color = GoogleBlue
                                 )
                             }
                         }
@@ -301,7 +302,7 @@ fun LoginScreen(
                                 .size(56.dp)
                                 .clickable { /* TODO: Implementar Facebook Sign In */ },
                             shape = CircleShape,
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFF1877F2)),
+                            colors = CardDefaults.cardColors(containerColor = FacebookBlue),
                             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                         ) {
                             Box(
@@ -327,12 +328,12 @@ fun LoginScreen(
                     ) {
                         Text(
                             text = stringResource(R.string.txt_no_account),
-                            color = Color(0xFF7F8C8D),
+                            color = TextMuted,
                             fontSize = 15.sp
                         )
                         Text(
                             text = stringResource(R.string.txt_register_link),
-                            color = Color(0xFF4ECDC4),
+                            color = Secondary,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 15.sp,
                             modifier = Modifier.clickable {
@@ -346,7 +347,7 @@ fun LoginScreen(
                     // Link "¿Olvidaste tu contraseña?"
                     Text(
                         text = stringResource(R.string.txt_forgot_password),
-                        color = Color(0xFF4ECDC4),
+                        color = Secondary,
                         fontSize = 14.sp,
                         modifier = Modifier.clickable {
                             // TODO: Implementar recuperación de contraseña

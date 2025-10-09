@@ -1,6 +1,5 @@
 package com.example.primeraplicacionprueba.ui.screens.user.nav
 
-import com.example.primeraplicacionprueba.ui.config.RouteScreem
 import kotlinx.serialization.Serializable
 
 sealed class RouteTab {

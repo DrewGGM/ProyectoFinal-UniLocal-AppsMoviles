@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,18 +28,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
+import com.example.primeraplicacionprueba.ui.theme.*
 import com.example.primeraplicacionprueba.model.Rol
 import com.example.primeraplicacionprueba.model.User
 import java.util.regex.Pattern
-import com.example.primeraplicacionprueba.viewmodel.UsersViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreem(
-    usersViewModel: UsersViewModel,
     onNavigateToLogin: () -> Unit = {},
-    onNavigateToHome: () -> Unit = {}
+    onNavigateToHome: (user: User) -> Unit = {}
 ) {
+    val mainViewModel = LocalMainViewModel.current
+    val usersViewModel = mainViewModel.usersViewModel
     var nombreCompleto by remember { mutableStateOf("") }
     var nombreUsuario by remember { mutableStateOf("") }
     var ciudad by remember { mutableStateOf("") }
@@ -145,7 +147,7 @@ fun RegisterScreem(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5))
+            .background(BackgroundLight)
     ) {
         Column(
             modifier = Modifier
@@ -179,8 +181,8 @@ fun RegisterScreem(
                             .background(
                                 Brush.horizontalGradient(
                                     colors = listOf(
-                                        Color(0xFFFF6B6B),
-                                        Color(0xFF4ECDC4)
+                                        Primary,
+                                        Secondary
                                     )
                                 )
                             ),
@@ -210,14 +212,14 @@ fun RegisterScreem(
                         text = stringResource(R.string.txt_register_title),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF2C3E50),
+                        color = TextDark,
                         textAlign = TextAlign.Center
                     )
 
                     Text(
                         text = stringResource(R.string.txt_register_subtitle),
                         fontSize = 16.sp,
-                        color = Color(0xFF7F8C8D),
+                        color = TextMuted,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(top = 8.dp)
                     )
@@ -238,8 +240,8 @@ fun RegisterScreem(
                             { Text(nombreCompletoError, color = MaterialTheme.colorScheme.error) }
                         } else null,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF4ECDC4),
-                            focusedLabelColor = Color(0xFF4ECDC4)
+                            focusedBorderColor = Secondary,
+                            focusedLabelColor = Secondary
                         )
                     )
 
@@ -258,8 +260,8 @@ fun RegisterScreem(
                             { Text(nombreUsuarioError, color = MaterialTheme.colorScheme.error) }
                         } else null,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF4ECDC4),
-                            focusedLabelColor = Color(0xFF4ECDC4)
+                            focusedBorderColor = Secondary,
+                            focusedLabelColor = Secondary
                         )
                     )
 
@@ -280,14 +282,14 @@ fun RegisterScreem(
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .menuAnchor(),
+                                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                             isError = ciudadError.isNotEmpty(),
                             supportingText = if (ciudadError.isNotEmpty()) {
                                 { Text(ciudadError, color = MaterialTheme.colorScheme.error) }
                             } else null,
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color(0xFF4ECDC4),
-                                focusedLabelColor = Color(0xFF4ECDC4)
+                                focusedBorderColor = Secondary,
+                                focusedLabelColor = Secondary
                             )
                         )
                         ExposedDropdownMenu(
@@ -324,14 +326,14 @@ fun RegisterScreem(
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .menuAnchor(),
+                                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                             isError = paisError.isNotEmpty(),
                             supportingText = if (paisError.isNotEmpty()) {
                                 { Text(paisError, color = MaterialTheme.colorScheme.error) }
                             } else null,
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color(0xFF4ECDC4),
-                                focusedLabelColor = Color(0xFF4ECDC4)
+                                focusedBorderColor = Secondary,
+                                focusedLabelColor = Secondary
                             )
                         )
                         ExposedDropdownMenu(
@@ -367,8 +369,8 @@ fun RegisterScreem(
                             { Text(correoError, color = MaterialTheme.colorScheme.error) }
                         } else null,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF4ECDC4),
-                            focusedLabelColor = Color(0xFF4ECDC4)
+                            focusedBorderColor = Secondary,
+                            focusedLabelColor = Secondary
                         )
                     )
 
@@ -395,14 +397,14 @@ fun RegisterScreem(
                                         stringResource(R.string.txt_hide)
                                     else
                                         stringResource(R.string.txt_show),
-                                    color = Color(0xFF4ECDC4),
+                                    color = Secondary,
                                     fontSize = 12.sp
                                 )
                             }
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF4ECDC4),
-                            focusedLabelColor = Color(0xFF4ECDC4)
+                            focusedBorderColor = Secondary,
+                            focusedLabelColor = Secondary
                         )
                     )
 
@@ -431,7 +433,7 @@ fun RegisterScreem(
                             .height(56.dp),
                         shape = RoundedCornerShape(28.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF4ECDC4)
+                            containerColor = Secondary
                         )
                     ) {
                         Text(
@@ -449,19 +451,19 @@ fun RegisterScreem(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Divider(
+                        HorizontalDivider(
                             modifier = Modifier.weight(1f),
-                            color = Color(0xFFE0E0E0)
+                            color = BorderLight
                         )
                         Text(
                             text = " ${stringResource(R.string.txt_or_continue_with)} ",
-                            color = Color(0xFF7F8C8D),
+                            color = TextMuted,
                             fontSize = 14.sp,
                             modifier = Modifier.padding(horizontal = 8.dp)
                         )
-                        Divider(
+                        HorizontalDivider(
                             modifier = Modifier.weight(1f),
-                            color = Color(0xFFE0E0E0)
+                            color = BorderLight
                         )
                     }
 
@@ -491,7 +493,7 @@ fun RegisterScreem(
                                     text = "G",
                                     fontSize = 24.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF4285F4)
+                                    color = GoogleBlue
                                 )
                             }
                         }
@@ -504,7 +506,7 @@ fun RegisterScreem(
                                 .size(56.dp)
                                 .clickable { /* TODO: Implementar Facebook Sign In */ },
                             shape = CircleShape,
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFF1877F2)),
+                            colors = CardDefaults.cardColors(containerColor = FacebookBlue),
                             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                         ) {
                             Box(
@@ -530,12 +532,12 @@ fun RegisterScreem(
                     ) {
                         Text(
                             text = stringResource(R.string.txt_already_have_account),
-                            color = Color(0xFF7F8C8D),
+                            color = TextMuted,
                             fontSize = 15.sp
                         )
                         Text(
                             text = stringResource(R.string.txt_login_link),
-                            color = Color(0xFF4ECDC4),
+                            color = Secondary,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 15.sp,
                             modifier = Modifier.clickable {

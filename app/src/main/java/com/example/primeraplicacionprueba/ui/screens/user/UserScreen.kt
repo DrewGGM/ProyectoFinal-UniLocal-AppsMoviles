@@ -13,6 +13,7 @@ fun UserScreen(
     onNavigateToEditProfile: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
     onNavigateToPlace: (String) -> Unit = {},
+    onNavigateToAchievements: () -> Unit = {},
     user: User
 ) {
     val navController = rememberNavController()
@@ -29,6 +30,7 @@ fun UserScreen(
             onNavigateToEditProfile = onNavigateToEditProfile,
             onNavigateToLogin = onNavigateToLogin,
             onNavigateToPlace = onNavigateToPlace,
+            onNavigateToAchievements = onNavigateToAchievements,
             user = user
         )
     }
