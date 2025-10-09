@@ -123,6 +123,9 @@ fun Navigation(
                             onNavigateToAchievements = {
                                 navController.navigate(RouteScreen.Achievements)
                             },
+                            onNavigateToFilter = {
+                                navController.navigate(RouteScreen.FilterBusqueda)
+                            },
                             user = user
                         )
                     }
