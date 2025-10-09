@@ -21,6 +21,8 @@ import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.CreatePlaceStepOne
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.CreatePlaceStepThree
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.CreatePlaceStepTwo
+import com.example.primeraplicacionprueba.ui.screens.user.tabs.map.Map
+import com.example.primeraplicacionprueba.ui.screens.user.tabs.map.filtro.FilterBusqueda
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.profile.AchievementsScreen
 import com.example.primeraplicacionprueba.ui.screens.ForgotPasswordScreen
 import com.example.primeraplicacionprueba.utils.SharedPrefsUtil
@@ -37,10 +39,10 @@ fun Navigation(
     val navController = rememberNavController()
     val user = SharedPrefsUtil.getPreferences(context)
 
-    val startDestination = if(user["userId"]?.isEmpty() == true) {
+    val startDestination = if (user["userId"]?.isEmpty() == true) {
         RouteScreen.Login
     } else {
-        if(user["role"] == "ADMIN") {
+        if (user["role"] == "ADMIN") {
             RouteScreen.HomeAdmin
         } else {
             RouteScreen.Home
@@ -125,89 +127,108 @@ fun Navigation(
                             onNavigateToAchievements = {
                                 navController.navigate(RouteScreen.Achievements)
                             },
+                            onNavigateToFilter = {
+                                navController.navigate(RouteScreen.FilterBusqueda)
+                            },
                             user = user
                         )
+                    }
                 }
-            }
-            composable<RouteScreen.HomeAdmin> {
-                HomeAdmin()
-            }
+                composable<RouteScreen.HomeAdmin> {
+                    HomeAdmin()
+                }
 
-            composable<RouteScreen.EditProfile> {
-                EditProfileScreen(
-                    onNavigateBack = {
-                        navController.popBackStack()  // Regresa a la pantalla anterior
-                    },
-                    onSaveChanges = {
-                        // Lógica para guardar cambios y regresar
-                        navController.popBackStack()
-                    }
-                )
-            }
-
-            composable<RouteScreen.CreatePlaceStepOne> {
-                CreatePlaceStepOne(
-                    onNavigateToHome = {
-                        navController.navigate(RouteScreen.Home) {
-                            popUpTo(RouteScreen.Home) { inclusive = false }
+                composable<RouteScreen.EditProfile> {
+                    EditProfileScreen(
+                        onNavigateBack = {
+                            navController.popBackStack()  // Regresa a la pantalla anterior
+                        },
+                        onSaveChanges = {
+                            // Lógica para guardar cambios y regresar
+                            navController.popBackStack()
                         }
-                    },
-                    onNavigateToNext = {
-                        // Navegar al siguiente paso
-                        navController.navigate(RouteScreen.CreatePlaceStepTwo)
-                    }
-                )
-            }
+                    )
+                }
 
-            composable<RouteScreen.CreatePlaceStepTwo> {
-                CreatePlaceStepTwo(
-                    onNavigateToHome = {
-                        navController.navigate(RouteScreen.Home) {
-                            popUpTo(RouteScreen.Home) { inclusive = false }
+                composable<RouteScreen.FilterBusqueda> {
+                    FilterBusqueda(
+                        onNavigateBack = {
+                            navController.popBackStack()
+                        },
+                    )
+                }
+                composable<RouteScreen.Map> {
+                    Map(
+                        onMapToFilter = {
+                            navController.navigate(RouteScreen.FilterBusqueda)
                         }
-                    },
-                    onNavigateToPrevious = {
-                        // Navegar al paso anterior
-                        navController.popBackStack()
-                    },
-                    onNavigateToNext = {
-                        // Navegar al siguiente paso
-                        navController.navigate(RouteScreen.CreatePlaceStepThree)
-                    }
-                )
-            }
+                    )
+                }
 
-            composable<RouteScreen.CreatePlaceStepThree> {
-                CreatePlaceStepThree(
-                    onNavigateToHome = {
-                        navController.navigate(RouteScreen.Home) {
-                            popUpTo(RouteScreen.Home) { inclusive = false }
-                        }
-                    },
-                    onNavigateToPrevious = {
-                        // Navegar al paso anterior
-                        navController.popBackStack()
-                    },
-                    onNavigateToNext = {
-                        // Navegar al siguiente paso
-                        navController.navigate(RouteScreen.CreatePlaceStepFour)
-                    }
-                )
-            }
 
-            composable<RouteScreen.CreatePlaceStepFour> {
-                CreatePlaceStepFour(
-                    onNavigateToHome = {
-                        navController.navigate(RouteScreen.Home) {
-                            popUpTo(RouteScreen.Home) { inclusive = false }
+                composable<RouteScreen.CreatePlaceStepOne> {
+                    CreatePlaceStepOne(
+                        onNavigateToHome = {
+                            navController.navigate(RouteScreen.Home) {
+                                popUpTo(RouteScreen.Home) { inclusive = false }
+                            }
+                        },
+                        onNavigateToNext = {
+                            // Navegar al siguiente paso
+                            navController.navigate(RouteScreen.CreatePlaceStepTwo)
                         }
-                    },
-                    onNavigateToPrevious = {
-                        // Navegar al paso anterior
-                        navController.popBackStack()
-                    }
-                )
-            }
+                    )
+                }
+
+                composable<RouteScreen.CreatePlaceStepTwo> {
+                    CreatePlaceStepTwo(
+                        onNavigateToHome = {
+                            navController.navigate(RouteScreen.Home) {
+                                popUpTo(RouteScreen.Home) { inclusive = false }
+                            }
+                        },
+                        onNavigateToPrevious = {
+                            // Navegar al paso anterior
+                            navController.popBackStack()
+                        },
+                        onNavigateToNext = {
+                            // Navegar al siguiente paso
+                            navController.navigate(RouteScreen.CreatePlaceStepThree)
+                        }
+                    )
+                }
+
+                composable<RouteScreen.CreatePlaceStepThree> {
+                    CreatePlaceStepThree(
+                        onNavigateToHome = {
+                            navController.navigate(RouteScreen.Home) {
+                                popUpTo(RouteScreen.Home) { inclusive = false }
+                            }
+                        },
+                        onNavigateToPrevious = {
+                            // Navegar al paso anterior
+                            navController.popBackStack()
+                        },
+                        onNavigateToNext = {
+                            // Navegar al siguiente paso
+                            navController.navigate(RouteScreen.CreatePlaceStepFour)
+                        }
+                    )
+                }
+
+                composable<RouteScreen.CreatePlaceStepFour> {
+                    CreatePlaceStepFour(
+                        onNavigateToHome = {
+                            navController.navigate(RouteScreen.Home) {
+                                popUpTo(RouteScreen.Home) { inclusive = false }
+                            }
+                        },
+                        onNavigateToPrevious = {
+                            // Navegar al paso anterior
+                            navController.popBackStack()
+                        }
+                    )
+                }
 
                 composable<RouteScreen.PlaceDetail> {
                     val args = it.toRoute<RouteScreen.PlaceDetail>()

@@ -265,4 +265,9 @@
     <string name="txt_continue_with_google">Continuar con Google</string>
     <string name="txt_continue_with_facebook">Continuar con Facebook</string>
 
+    <!-- MAPS -->
+    <string name="txt_search_placeholder">Buscar lugares o categorias...</string>
+    <!-- FILTROS -->
+    <string name="txt_filtrosplace">Filtros de busqueda</string>
+    <string name="txt_find">Buscar...</string>
 </resources>

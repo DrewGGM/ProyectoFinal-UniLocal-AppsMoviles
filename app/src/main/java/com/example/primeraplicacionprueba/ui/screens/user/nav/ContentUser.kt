@@ -23,6 +23,7 @@ fun ContentUser(
     onNavigateToLogin: () -> Unit = {},
     onNavigateToPlace: (String) -> Unit = {},
     onNavigateToAchievements: () -> Unit = {},
+    onNavigateToFilter: () -> Unit = {},
     user: User
 ) {
 
@@ -42,7 +43,9 @@ fun ContentUser(
             )
         }
         composable<RouteTab.Map> {
-            Map()
+            Map(
+                onMapToFilter = onNavigateToFilter
+            )
         }
         composable<RouteTab.Profile> {
             Profile(

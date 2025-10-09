@@ -35,4 +35,11 @@ sealed class RouteScreen{
 
     @Serializable
     data object ForgotPassword: RouteScreen();
+  
+   @Serializable
+    data object FilterBusqueda: RouteScreen();
+
+    @Serializable
+    data object Map: RouteScreen();
+
 }
