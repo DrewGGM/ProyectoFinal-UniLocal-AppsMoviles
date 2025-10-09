@@ -20,6 +20,7 @@ class MainActivity : ComponentActivity() {
     private val achievementViewModel: AchievementViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         // Eliminar datos de la sesion para pruebas y desarrollo
