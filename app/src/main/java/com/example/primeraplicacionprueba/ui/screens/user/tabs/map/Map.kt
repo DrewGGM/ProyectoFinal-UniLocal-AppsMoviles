@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.LocalOffer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -33,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.primeraplicacionprueba.ui.components.Search
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
@@ -52,9 +54,9 @@ fun Map(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        // 🗺️ Imagen de fondo (mapa)
+        //  Imagen de fondo (mapa)
         Image(
-            painter = painterResource(id = R.drawable.mapa), // tu imagen
+            painter = painterResource(id = R.drawable.mapa),
             contentDescription = "Mapa",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
@@ -72,12 +74,27 @@ fun Map(
 
         )
 
+        FloatingActionButton(
+            onClick = {onMapToFilter()},
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 120.dp)
+                .zIndex(1f),
+            containerColor = Accent,
+            contentColor = Color.White,
+            shape = CircleShape
+        ) {
+            Icon(
+                imageVector = Icons.Default.FilterAlt,
+                contentDescription = "IconoFiltro"
+            )
+        }
 
-        // 📄 Tarjeta inferior
+        //  Tarjeta inferior
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 80.dp)
+                .padding(bottom = 9.dp)
                 .fillMaxWidth(0.9f)
                 .clip(RoundedCornerShape(25.dp))
                 .background(Color.White)
@@ -91,20 +108,7 @@ fun Map(
                 }
             }
         }
-        FloatingActionButton(
-            onClick = {onMapToFilter()},
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 16.dp),
-            containerColor = Accent,
-            contentColor = Color.White,
-            shape = CircleShape
-        ) {
-            Icon(
-                imageVector = Icons.Default.LocalOffer,
-                contentDescription = "h"
-            )
-        }
+
     }
 
 

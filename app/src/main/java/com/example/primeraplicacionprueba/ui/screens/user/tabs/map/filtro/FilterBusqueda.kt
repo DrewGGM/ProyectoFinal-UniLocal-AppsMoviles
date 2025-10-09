@@ -74,23 +74,17 @@ fun FilterBusqueda(
                 .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // 🔝 Encabezado
+            //  Encabezado
             Row (
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Filtros de búsqueda", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(BgLight)
-                ){
                     TopAppBar(
                         title = {
                             Text(
                                 text = stringResource(R.string.txt_filtrosplace),
-                                fontSize = 20.sp,
+                                fontSize = 25.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = TextDark
                             )
@@ -104,12 +98,10 @@ fun FilterBusqueda(
                                 )
                             }
                         },
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = Color.White
-                        )
+
                     )
 
-                }
+
             }
 
             // 🔍 Palabra clave
@@ -117,7 +109,7 @@ fun FilterBusqueda(
             OutlinedTextField(
                 value = palabraClave,
                 onValueChange = { palabraClave = it },
-                placeholder = { Text("Buscar...") },
+                placeholder = { Text( text = stringResource(R.string.txt_find)) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp)
             )
@@ -171,7 +163,7 @@ fun FilterBusqueda(
                 shape = RoundedCornerShape(10.dp)
             )
 
-            // ⭐ Calificación mínima
+            //  Calificación mínima
             Text("Calificación mínima", fontWeight = FontWeight.Medium)
             OutlinedTextField(
                 value = calificacion,
@@ -180,7 +172,7 @@ fun FilterBusqueda(
                 shape = RoundedCornerShape(10.dp)
             )
 
-            // ⏰ Abierto ahora
+            //  Abierto ahora
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
                     checked = abiertoAhora,
@@ -189,7 +181,7 @@ fun FilterBusqueda(
                 Text("Abierto ahora")
             }
 
-            // 🔘 Botones
+            //  Botones
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -205,7 +197,7 @@ fun FilterBusqueda(
                         categoriasSeleccionadas.clear()
                     },
                     modifier = Modifier
-                        .weight(1f)
+                        .weight(1.5f)
                         .height(50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                     shape = RoundedCornerShape(12.dp)
@@ -217,8 +209,8 @@ fun FilterBusqueda(
                 Button(
                     onClick = { /* aplicar filtros */ },
                     modifier = Modifier
-                        .weight(1f)
-                        .height(50.dp),
+                        .weight(1.5f)
+                        .height(65.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                 ) {
