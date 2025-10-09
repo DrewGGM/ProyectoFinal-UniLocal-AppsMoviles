@@ -2,31 +2,34 @@ package com.example.primeraplicacionprueba.ui.config
 
 import kotlinx.serialization.Serializable
 
-sealed class RouteScreem{
+sealed class RouteScreen{
     @Serializable
-    data object Home : RouteScreem()
+    data object Home : RouteScreen()
     @Serializable
-    data object HomeAdmin: RouteScreem()
+    data object HomeAdmin: RouteScreen()
     @Serializable
-    data object Login: RouteScreem()
+    data object Login: RouteScreen()
     @Serializable
-    data object Register: RouteScreem()
+    data object Register: RouteScreen()
 
     @Serializable
-    data object EditProfile: RouteScreem();
+    data object EditProfile: RouteScreen();
 
     @Serializable
-    data object CreatePlaceStepOne: RouteScreem();
+    data object CreatePlaceStepOne: RouteScreen();
 
     @Serializable
-    data object CreatePlaceStepTwo: RouteScreem();
+    data object CreatePlaceStepTwo: RouteScreen();
 
     @Serializable
-    data object CreatePlaceStepThree: RouteScreem();
+    data object CreatePlaceStepThree: RouteScreen();
 
     @Serializable
-    data object CreatePlaceStepFour: RouteScreem();
+    data object CreatePlaceStepFour: RouteScreen();
 
     @Serializable
-    data class PlaceDetail(val id: String): RouteScreem();
+    data class PlaceDetail(val id: String): RouteScreen();
+
+    @Serializable
+    data object Achievements: RouteScreen();
 }

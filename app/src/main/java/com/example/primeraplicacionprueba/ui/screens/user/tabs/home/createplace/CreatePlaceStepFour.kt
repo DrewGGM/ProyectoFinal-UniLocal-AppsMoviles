@@ -32,6 +32,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import coil.compose.AsyncImage
 import com.example.primeraplicacionprueba.R
 import androidx.compose.ui.res.stringResource
+import com.example.primeraplicacionprueba.ui.theme.*
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,7 +69,7 @@ fun CreatePlaceStepFour(
                 text = stringResource(R.string.txt_add_new_place),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF2C3E50),
+                color = TextDark,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )
@@ -75,12 +77,12 @@ fun CreatePlaceStepFour(
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.txt_close),
-                    tint = Color(0xFF2C3E50)
+                    tint = TextDark
                 )
             }
         }
 
-        Divider(color = Color(0xFFE0E0E0), thickness = 1.dp)
+            HorizontalDivider(color = BorderLight, thickness = 1.dp)
 
         // Contenido
         Column(
@@ -99,8 +101,8 @@ fun CreatePlaceStepFour(
                     .background(
                         Brush.horizontalGradient(
                             colors = listOf(
-                                Color(0xFFFF6B6B),
-                                Color(0xFF4ECDC4)
+                                Primary,
+                                Secondary
                             )
                         )
                     )
@@ -112,13 +114,13 @@ fun CreatePlaceStepFour(
                 text = stringResource(R.string.txt_step_four_title),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF2C3E50)
+                color = TextDark
             )
 
             Text(
                 text = stringResource(R.string.txt_gallery_description),
                 fontSize = 14.sp,
-                color = Color(0xFF7F8C8D),
+                color = TextMuted,
                 lineHeight = 20.sp
             )
 
@@ -130,7 +132,7 @@ fun CreatePlaceStepFour(
                     text = stringResource(R.string.txt_or_add_urls),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF2C3E50)
+                    color = TextDark
                 )
                 
                 Row(
@@ -152,10 +154,10 @@ fun CreatePlaceStepFour(
                             { Text(urlError, color = MaterialTheme.colorScheme.error) }
                         } else null,
                         colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color(0xFFE0E0E0),
-                            focusedBorderColor = Color(0xFF4ECDC4),
-                            unfocusedContainerColor = Color(0xFFF8F9FA),
-                            focusedContainerColor = Color(0xFFF8F9FA)
+                            unfocusedBorderColor = BorderLight,
+                            focusedBorderColor = Secondary,
+                            unfocusedContainerColor = BgLight,
+                            focusedContainerColor = BgLight
                         ),
                         shape = RoundedCornerShape(12.dp)
                     )
@@ -177,7 +179,7 @@ fun CreatePlaceStepFour(
                         modifier = Modifier.height(56.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF4ECDC4)
+                            containerColor = Secondary
                         )
                     ) {
                         Icon(
@@ -198,10 +200,10 @@ fun CreatePlaceStepFour(
                         .clip(RoundedCornerShape(24.dp))
                         .border(
                             width = 2.dp,
-                            color = Color(0xFFA8E6CF),
+                            color = Tertiary,
                             shape = RoundedCornerShape(24.dp)
                         )
-                        .background(Color(0xFFF8F9FA))
+                        .background(BgLight)
                         .clickable {
                             // TODO: Abrir selector de imágenes
                             showImagePicker = true
@@ -216,14 +218,14 @@ fun CreatePlaceStepFour(
                         Icon(
                             imageVector = Icons.Default.AddPhotoAlternate,
                             contentDescription = stringResource(R.string.txt_add_photo),
-                            tint = Color(0xFF4ECDC4),
+                            tint = Secondary,
                             modifier = Modifier.size(48.dp)
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = stringResource(R.string.txt_tap_to_upload),
                             fontSize = 16.sp,
-                            color = Color(0xFF7F8C8D),
+                            color = TextMuted,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -238,7 +240,7 @@ fun CreatePlaceStepFour(
                         text = stringResource(R.string.txt_preview),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF2C3E50)
+                        color = TextDark
                     )
                     
                     LazyVerticalGrid(
@@ -255,10 +257,10 @@ fun CreatePlaceStepFour(
                                     .clip(RoundedCornerShape(16.dp))
                                     .border(
                                         width = 2.dp,
-                                        color = Color(0xFFA8E6CF),
+                                        color = Tertiary,
                                         shape = RoundedCornerShape(16.dp)
                                     )
-                                    .background(Color(0xFFF8F9FA))
+                                    .background(BgLight)
                                     .clickable {
                                         showImagePicker = true
                                     },
@@ -267,7 +269,7 @@ fun CreatePlaceStepFour(
                                 Icon(
                                     imageVector = Icons.Default.AddPhotoAlternate,
                                     contentDescription = stringResource(R.string.txt_add_more_photos),
-                                    tint = Color(0xFF4ECDC4),
+                                    tint = Secondary,
                                     modifier = Modifier.size(32.dp)
                                 )
                             }
@@ -327,9 +329,9 @@ fun CreatePlaceStepFour(
                         .weight(1f)
                         .height(56.dp),
                     shape = RoundedCornerShape(28.dp),
-                    border = ButtonDefaults.outlinedButtonBorder.copy(
+                    border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
                         brush = Brush.horizontalGradient(
-                            colors = listOf(Color(0xFFE0E0E0), Color(0xFFE0E0E0))
+                            colors = listOf(BorderLight, BorderLight)
                         )
                     )
                 ) {
@@ -337,7 +339,7 @@ fun CreatePlaceStepFour(
                         text = stringResource(R.string.txt_previous),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF7F8C8D)
+                        color = TextMuted
                     )
                 }
 
@@ -358,8 +360,8 @@ fun CreatePlaceStepFour(
                             .background(
                                 Brush.horizontalGradient(
                                     colors = listOf(
-                                        Color(0xFFFF6B6B),
-                                        Color(0xFFFFB347)
+                                        Primary,
+                                        AccentOrange
                                     )
                                 ),
                                 shape = RoundedCornerShape(28.dp)

@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StarHalf
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -37,7 +38,7 @@ fun PlaceDetail(
     id: String,
     onNavigateBack: () -> Unit = {}
 ) {
-    val place = placesViewModel.findById(id)
+    val place = LocalMainViewModel.current.placesViewModel.findById(id)
 
     if (place == null) {
         Box(
@@ -70,9 +71,9 @@ fun PlaceDetail(
                 // Botón de regreso
                 IconButton(onClick = onNavigateBack) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.txt_back),
-                        tint = Color(0xFF2C3E50)
+                        tint = TextDark
                     )
                 }
                 
@@ -81,7 +82,7 @@ fun PlaceDetail(
                     text = place.title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF2C3E50),
+                    color = TextDark,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center
                 )
@@ -91,8 +92,8 @@ fun PlaceDetail(
             }
             
             // Línea divisoria
-            Divider(
-                color = Color(0xFFE0E0E0),
+            HorizontalDivider(
+                color = BorderLight,
                 thickness = 1.dp
             )
             
@@ -172,7 +173,7 @@ fun PlaceDetail(
                     if (place.reviews.isNotEmpty()) {
                         place.reviews.forEach { review ->
                             ReviewCard(
-                                userName = "Usuario${review.userId.takeLast(3)}",
+                                userName = review.username,
                                 rating = review.rating.toFloat(),
                                 comment = review.comment,
                                 avatarColor = if (review.rating >= 4) Tertiary else Primary
@@ -421,13 +422,13 @@ fun MapPlaceholder() {
             .fillMaxWidth()
             .height(200.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFFE0E6EC)),
+            .background(BgLight),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = stringResource(R.string.txt_menumap),
             fontSize = 14.sp,
-            color = Color(0xFF95A5A6),
+            color = TextSecondary,
             fontStyle = FontStyle.Italic
         )
     }
@@ -484,7 +485,7 @@ fun ReviewCard(
                             Icon(
                                 imageVector = Icons.Default.Star,
                                 contentDescription = null,
-                                tint = Color(0xFFF39C12),
+                                tint = Accent,
                                 modifier = Modifier.size(16.dp)
                             )
                         }
@@ -492,7 +493,7 @@ fun ReviewCard(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.StarHalf,
                                 contentDescription = null,
-                                tint = Color(0xFFF39C12),
+                                tint = Accent,
                                 modifier = Modifier.size(16.dp)
                             )
                         }

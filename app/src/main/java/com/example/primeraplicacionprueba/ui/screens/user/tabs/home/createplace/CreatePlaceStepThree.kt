@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.HorizontalDivider
 import com.example.primeraplicacionprueba.R
 import androidx.compose.ui.res.stringResource
+import com.example.primeraplicacionprueba.ui.theme.*
 
 data class DaySchedule(
     val day: String,
@@ -75,7 +76,7 @@ fun CreatePlaceStepThree(
                 text = stringResource(R.string.txt_add_new_place),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF2C3E50),
+                color = TextDark,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )
@@ -83,12 +84,12 @@ fun CreatePlaceStepThree(
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.txt_close),
-                    tint = Color(0xFF2C3E50)
+                    tint = TextDark
                 )
             }
         }
 
-        HorizontalDivider(thickness = 1.dp, color = Color(0xFFE0E0E0))
+        HorizontalDivider(thickness = 1.dp, color = BorderLight)
 
         Column(
             modifier = Modifier
@@ -103,7 +104,7 @@ fun CreatePlaceStepThree(
                     .fillMaxWidth()
                     .height(8.dp)
                     .clip(RoundedCornerShape(4.dp))
-                    .background(Color(0xFFF0F4F8))
+                    .background(BgLight)
             ) {
                 Box(
                     modifier = Modifier
@@ -112,8 +113,8 @@ fun CreatePlaceStepThree(
                         .background(
                             Brush.horizontalGradient(
                                 colors = listOf(
-                                    Color(0xFFFF6B6B),
-                                    Color(0xFF4ECDC4)
+                                    Primary,
+                                    Secondary
                                 )
                             )
                         )
@@ -126,13 +127,13 @@ fun CreatePlaceStepThree(
                 text = stringResource(R.string.txt_step_three_title),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF2C3E50)
+                color = TextDark
             )
 
             Text(
                 text = stringResource(R.string.txt_schedule_description),
                 fontSize = 14.sp,
-                color = Color(0xFF7F8C8D),
+                color = TextMuted,
                 lineHeight = 20.sp
             )
 
@@ -174,9 +175,9 @@ fun CreatePlaceStepThree(
                         .weight(1f)
                         .height(56.dp),
                     shape = RoundedCornerShape(28.dp),
-                    border = ButtonDefaults.outlinedButtonBorder.copy(
+                    border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
                         brush = Brush.horizontalGradient(
-                            colors = listOf(Color(0xFFE0E0E0), Color(0xFFE0E0E0))
+                            colors = listOf(BorderLight, BorderLight)
                         )
                     )
                 ) {
@@ -184,7 +185,7 @@ fun CreatePlaceStepThree(
                         text = stringResource(R.string.txt_previous),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF7F8C8D)
+                        color = TextMuted
                     )
                 }
 
@@ -205,8 +206,8 @@ fun CreatePlaceStepThree(
                             .background(
                                 Brush.horizontalGradient(
                                     colors = listOf(
-                                        Color(0xFFFF6B6B),
-                                        Color(0xFFFFB347)
+                                        Primary,
+                                        AccentOrange
                                     )
                                 ),
                                 shape = RoundedCornerShape(28.dp)
@@ -236,7 +237,7 @@ fun ScheduleCard(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        color = Color(0xFFF0F4F8)
+        color = BgLight
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -246,7 +247,7 @@ fun ScheduleCard(
                 text = schedule.day,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF2C3E50)
+                color = TextDark
             )
 
             // Campo de hora de apertura
@@ -256,8 +257,8 @@ fun ScheduleCard(
                 placeholder = { Text(stringResource(R.string.txt_opening_time), fontSize = 12.sp) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color(0xFFE0E0E0),
-                    focusedBorderColor = Color(0xFF4ECDC4),
+                    unfocusedBorderColor = BorderLight,
+                    focusedBorderColor = Secondary,
                     unfocusedContainerColor = Color.White,
                     focusedContainerColor = Color.White
                 ),
@@ -272,8 +273,8 @@ fun ScheduleCard(
                 placeholder = { Text(stringResource(R.string.txt_closing_time), fontSize = 12.sp) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color(0xFFE0E0E0),
-                    focusedBorderColor = Color(0xFF4ECDC4),
+                    unfocusedBorderColor = BorderLight,
+                    focusedBorderColor = Secondary,
                     unfocusedContainerColor = Color.White,
                     focusedContainerColor = Color.White
                 ),

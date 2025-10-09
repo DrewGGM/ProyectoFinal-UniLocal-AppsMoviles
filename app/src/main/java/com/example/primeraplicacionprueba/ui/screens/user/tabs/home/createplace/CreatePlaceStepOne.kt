@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import com.example.primeraplicacionprueba.model.PlaceType
 import com.example.primeraplicacionprueba.R
 import androidx.compose.ui.res.stringResource
+import com.example.primeraplicacionprueba.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +62,7 @@ fun CreatePlaceStepOne(
                 text = stringResource(R.string.txt_add_new_place),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF2C3E50),
+                color = TextDark,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )
@@ -69,12 +70,12 @@ fun CreatePlaceStepOne(
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.txt_close),
-                    tint = Color(0xFF2C3E50)
+                    tint = TextDark
                 )
             }
         }
 
-        Divider(color = Color(0xFFE0E0E0), thickness = 1.dp)
+            HorizontalDivider(color = BorderLight, thickness = 1.dp)
 
         Column(
             modifier = Modifier
@@ -88,7 +89,7 @@ fun CreatePlaceStepOne(
                     .fillMaxWidth()
                     .height(8.dp)
                     .clip(RoundedCornerShape(4.dp))
-                    .background(Color(0xFFF0F4F8))
+                    .background(BgLight)
             ) {
                 Box(
                     modifier = Modifier
@@ -97,8 +98,8 @@ fun CreatePlaceStepOne(
                         .background(
                             Brush.horizontalGradient(
                                 colors = listOf(
-                                    Color(0xFFFF6B6B),
-                                    Color(0xFF4ECDC4)
+                                    Primary,
+                                    Secondary
                                 )
                             )
                         )
@@ -111,7 +112,7 @@ fun CreatePlaceStepOne(
                 text = stringResource(R.string.txt_step_one_title),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF2C3E50)
+                color = TextDark
             )
 
             Column {
@@ -119,7 +120,7 @@ fun CreatePlaceStepOne(
                     text = stringResource(R.string.txt_place_name),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF2C3E50),
+                    color = TextDark,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 OutlinedTextField(
@@ -135,10 +136,10 @@ fun CreatePlaceStepOne(
                         { Text(nombreError, color = MaterialTheme.colorScheme.error) }
                     } else null,
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color(0xFFE0E0E0),
-                        focusedBorderColor = Color(0xFF4ECDC4),
-                        unfocusedContainerColor = Color(0xFFF8F9FA),
-                        focusedContainerColor = Color(0xFFF8F9FA)
+                        unfocusedBorderColor = BorderLight,
+                        focusedBorderColor = Secondary,
+                        unfocusedContainerColor = BgLight,
+                        focusedContainerColor = BgLight
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
@@ -149,7 +150,7 @@ fun CreatePlaceStepOne(
                     text = stringResource(R.string.txt_detailed_description),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF2C3E50),
+                    color = TextDark,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 OutlinedTextField(
@@ -169,10 +170,10 @@ fun CreatePlaceStepOne(
                         { Text(descripcionError, color = MaterialTheme.colorScheme.error) }
                     } else null,
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color(0xFFE0E0E0),
-                        focusedBorderColor = Color(0xFF4ECDC4),
-                        unfocusedContainerColor = Color(0xFFF8F9FA),
-                        focusedContainerColor = Color(0xFFF8F9FA)
+                        unfocusedBorderColor = BorderLight,
+                        focusedBorderColor = Secondary,
+                        unfocusedContainerColor = BgLight,
+                        focusedContainerColor = BgLight
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
@@ -183,7 +184,7 @@ fun CreatePlaceStepOne(
                     text = stringResource(R.string.txt_category),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF2C3E50),
+                    color = TextDark,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
 
@@ -348,7 +349,7 @@ fun CreatePlaceStepOne(
                             .height(48.dp),
                         shape = RoundedCornerShape(24.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (showAllCategories) Color(0xFF7F8C8D) else Color(0xFF4ECDC4)
+                            containerColor = if (showAllCategories) TextMuted else Secondary
                         )
                     ) {
                         Text(
@@ -392,8 +393,8 @@ fun CreatePlaceStepOne(
                         .background(
                             Brush.horizontalGradient(
                                 colors = listOf(
-                                    Color(0xFFFF6B6B),
-                                    Color(0xFFFFB347)
+                                    Primary,
+                                    AccentOrange
                                 )
                             ),
                             shape = RoundedCornerShape(28.dp)
@@ -425,7 +426,7 @@ fun CategoryCard(
         onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        color = if (isSelected) Color(0xFFA8E6CF) else Color(0xFFF0F4F8)
+        color = if (isSelected) Tertiary else BgLight
     ) {
         Column(
             modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp),
@@ -435,14 +436,14 @@ fun CategoryCard(
             Icon(
                 imageVector = icon,
                 contentDescription = label,
-                tint = Color(0xFF4ECDC4),
+                tint = Secondary,
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = label,
                 fontSize = 12.sp,
-                color = Color(0xFF2C3E50),
+                color = TextDark,
                 textAlign = TextAlign.Center,
                 maxLines = 2
             )

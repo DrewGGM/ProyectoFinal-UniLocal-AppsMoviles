@@ -29,7 +29,12 @@ class UsersViewModel : ViewModel() {
                 email = "user@email.com",
                 password = "user123",
                 id = "1",
-                rol = Rol.USER
+                rol = Rol.USER,
+                placesCreated = 3,
+                placesVisited = 8,
+                reviewsWritten = 12,
+                favoritesAdded = 5,
+                joinDate = "2024-01-01"
             ),
             User(
                 nombre = "Andrew",
@@ -39,7 +44,12 @@ class UsersViewModel : ViewModel() {
                 email = "admin@email.com",
                 password = "admin123",
                 id = "2",
-                rol = Rol.ADMIN
+                rol = Rol.ADMIN,
+                placesCreated = 15,
+                placesVisited = 25,
+                reviewsWritten = 35,
+                favoritesAdded = 12,
+                joinDate = "2023-12-01"
             )
         )
 

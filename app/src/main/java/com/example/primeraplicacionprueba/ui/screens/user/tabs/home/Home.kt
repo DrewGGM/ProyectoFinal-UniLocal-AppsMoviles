@@ -46,6 +46,7 @@ fun Home(
 ) {
 
     val places by placesViewModel.places.collectAsState()
+    val mostPopularPlaces = placesViewModel.findMostPopularPlacesInCity(user.city)
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -85,12 +86,12 @@ fun Home(
                 )
             }
 
-            // Lista de lugares (placeholder)
-            items(places) {
+            // Lista de lugares mas populares en la ciudad del usuario
+            items(mostPopularPlaces) {
                 PlaceCard(
                     name = it.title ,
                     category = it.type ,
-                    rating = it.rating ,
+                    rating = it.getAverageRating() ,
                     distance = it.getDistanceFromUser(),
                     imageUrl = it.imagenes[0],
                     onClick = { onNavigateToPlace(it.id) }
@@ -205,7 +206,7 @@ fun CategoriesSection() {
         CategoryItem(stringResource(R.string.category_cafe), Icons.Filled.Coffee, Accent)
         CategoryItem(stringResource(R.string.category_fastfood), Icons.Filled.Fastfood, Primary)
         CategoryItem(stringResource(R.string.category_museum), Icons.Filled.Museum, Tertiary)
-        CategoryItem(stringResource(R.string.category_hotel), Icons.Filled.Hotel, Color(0xFF81C784))
+        CategoryItem(stringResource(R.string.category_hotel), Icons.Filled.Hotel, Tertiary)
     }
 }
 

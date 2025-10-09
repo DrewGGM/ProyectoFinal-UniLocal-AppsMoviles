@@ -1,13 +1,13 @@
 package com.example.primeraplicacionprueba.model
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 
-class Review (
+data class Review(
     val id: String,
-    val userId: String,
-    val placeId: String,
-    val rating: Int,//calificacion del comentario
+    val userID: String,
+    val username: String,
+    val placeID: String,
+    val rating: Int,
     val comment: String,
-    val date: LocalDate
-){
-}
+    val date: LocalDateTime
+)

@@ -12,7 +12,6 @@ class Place(
     val type: PlaceType,
     val shedule: List<Shedule>,
     val location: Location,
-    val rating: Float,
     val adress: String,
     val website: String? = null,
     val email: String? = null,
@@ -25,7 +24,8 @@ class Place(
     val isVerified: Boolean = false,
     val ownerId: String = "",
     val viewCount: Int = 0,
-    val favoriteCount: Int = 0
+    val favoriteCount: Int = 0,
+    val placeStatus: PlaceStatus = PlaceStatus.PENDING
 ) {
     fun getDistanceFromUser(): String {
         return "5 km"
@@ -49,7 +49,7 @@ class Place(
     
     fun getAverageRating(): Float = if (reviews.isNotEmpty()) {
         reviews.map { it.rating }.average().toFloat()
-    } else rating
+    } else 0f
     
     fun getFormattedCloseTime(): String {
         val closeTime = getNextCloseTime()
@@ -69,3 +69,9 @@ class Place(
         }
     }
 }
+
+data class UserPlace(
+    val place: Place,
+    val createdDate: String,
+    val status: PlaceStatus
+)

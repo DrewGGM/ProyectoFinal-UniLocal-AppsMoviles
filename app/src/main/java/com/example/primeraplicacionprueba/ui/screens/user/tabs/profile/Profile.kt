@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,7 +32,8 @@ import com.example.primeraplicacionprueba.ui.theme.*
 @Composable
 fun Profile(
     onNavigateToEditProfile: () -> Unit = {},
-    onNavigateToLogin: () -> Unit = {}
+    onNavigateToLogin: () -> Unit = {},
+    onNavigateToAchievements: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -48,7 +50,10 @@ fun Profile(
         // Mi Contenido
         Spacer(modifier = Modifier.height(24.dp))
         SectionTitle(stringResource(R.string.txt_my_content))
-        ContentSection(onNavigateToEditProfile = onNavigateToEditProfile)
+        ContentSection(
+            onNavigateToEditProfile = onNavigateToEditProfile,
+            onNavigateToAchievements = onNavigateToAchievements
+        )
 
         // Opciones de la Cuenta
         Spacer(modifier = Modifier.height(24.dp))
@@ -215,13 +220,15 @@ fun SectionTitle(title: String) {
 
 @Composable
 fun ContentSection(
-    onNavigateToEditProfile: () -> Unit = {}
+    onNavigateToEditProfile: () -> Unit = {},
+    onNavigateToAchievements: () -> Unit = {}
 ) {
     val editProfileText = stringResource(R.string.txt_edit_profile)
+    val achievementsText = stringResource(R.string.txt_my_achievements)
     val items = listOf(
         MenuItemData(stringResource(R.string.txt_my_places), Icons.Default.LocationOn),
         MenuItemData(stringResource(R.string.txt_my_favorites), Icons.Default.Star),
-        MenuItemData(stringResource(R.string.txt_my_achievements), Icons.Default.EmojiEvents),
+        MenuItemData(achievementsText, Icons.Default.EmojiEvents),
         MenuItemData(editProfileText, Icons.Default.Edit)
     )
 
@@ -239,8 +246,9 @@ fun ContentSection(
                     icon = item.icon,
                     text = item.text,
                     onClick = {
-                        if (item.text == editProfileText) {
-                            onNavigateToEditProfile()
+                        when (item.text) {
+                            editProfileText -> onNavigateToEditProfile()
+                            achievementsText -> onNavigateToAchievements()
                         }
                     },
                     showDivider = index < items.size - 1
@@ -257,7 +265,7 @@ fun AccountOptionsSection(
     val logoutText = stringResource(R.string.txt_logout)
     val items = listOf(
         MenuItemData(stringResource(R.string.txt_delete_account), Icons.Default.DeleteForever),
-        MenuItemData(logoutText, Icons.Default.Logout)
+        MenuItemData(logoutText, Icons.AutoMirrored.Filled.Logout)
     )
 
     Card(
@@ -279,7 +287,7 @@ fun AccountOptionsSection(
                         }
                     },
                     showDivider = index < items.size - 1,
-                    tintColor = if (item.text == logoutText) Color(0xFFC0392B) else Secondary
+                    tintColor = if (item.text == logoutText) ErrorRed else Secondary
                 )
             }
         }

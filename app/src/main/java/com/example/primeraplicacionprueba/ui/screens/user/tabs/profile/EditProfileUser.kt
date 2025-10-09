@@ -6,7 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
+import com.example.primeraplicacionprueba.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,7 +85,7 @@ fun EditProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5))
+            .background(BgLight)
     ) {
         // Top Bar
         TopAppBar(
@@ -93,15 +94,15 @@ fun EditProfileScreen(
                     text = stringResource(R.string.txt_edit_profile),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF2C3E50)
+                    color = TextDark
                 )
             },
             navigationIcon = {
                 IconButton(onClick = { onNavigateBack() }) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.txt_back),
-                        tint = Color(0xFF2C3E50)
+                        tint = TextDark
                     )
                 }
             },
@@ -123,7 +124,7 @@ fun EditProfileScreen(
                 modifier = Modifier
                     .size(100.dp)
                     .background(
-                        color = Color(0xFFE0E0E0),
+                        color = BorderLight,
                         shape = RoundedCornerShape(50.dp)
                     )
                     .align(Alignment.CenterHorizontally),
@@ -133,7 +134,7 @@ fun EditProfileScreen(
                     text = "CR",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF7F8C8D)
+                    color = TextMuted
                 )
             }
 
@@ -145,7 +146,7 @@ fun EditProfileScreen(
                 Text(
                     text = stringResource(R.string.txt_full_name_label),
                     fontSize = 14.sp,
-                    color = Color(0xFF7F8C8D),
+                    color = TextMuted,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 OutlinedTextField(
@@ -160,10 +161,10 @@ fun EditProfileScreen(
                         { Text(nombreCompletoError, color = MaterialTheme.colorScheme.error) }
                     } else null,
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color(0xFFE0E0E0),
-                        focusedBorderColor = Color(0xFF4ECDC4),
-                        unfocusedContainerColor = Color(0xFFF8F9FA),
-                        focusedContainerColor = Color(0xFFF8F9FA)
+                        unfocusedBorderColor = BorderLight,
+                        focusedBorderColor = Secondary,
+                        unfocusedContainerColor = BgLight,
+                        focusedContainerColor = BgLight
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
@@ -174,7 +175,7 @@ fun EditProfileScreen(
                 Text(
                     text = stringResource(R.string.txt_username_label),
                     fontSize = 14.sp,
-                    color = Color(0xFF7F8C8D),
+                    color = TextMuted,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 OutlinedTextField(
@@ -189,10 +190,10 @@ fun EditProfileScreen(
                         { Text(nombreUsuarioError, color = MaterialTheme.colorScheme.error) }
                     } else null,
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color(0xFFE0E0E0),
-                        focusedBorderColor = Color(0xFF4ECDC4),
-                        unfocusedContainerColor = Color(0xFFF8F9FA),
-                        focusedContainerColor = Color(0xFFF8F9FA)
+                        unfocusedBorderColor = BorderLight,
+                        focusedBorderColor = Secondary,
+                        unfocusedContainerColor = BgLight,
+                        focusedContainerColor = BgLight
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
@@ -203,7 +204,7 @@ fun EditProfileScreen(
                 Text(
                     text = stringResource(R.string.txt_city_residence),
                     fontSize = 14.sp,
-                    color = Color(0xFF7F8C8D),
+                    color = TextMuted,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 OutlinedTextField(
@@ -218,10 +219,10 @@ fun EditProfileScreen(
                         { Text(ciudadError, color = MaterialTheme.colorScheme.error) }
                     } else null,
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color(0xFFE0E0E0),
-                        focusedBorderColor = Color(0xFF4ECDC4),
-                        unfocusedContainerColor = Color(0xFFF8F9FA),
-                        focusedContainerColor = Color(0xFFF8F9FA)
+                        unfocusedBorderColor = BorderLight,
+                        focusedBorderColor = Secondary,
+                        unfocusedContainerColor = BgLight,
+                        focusedContainerColor = BgLight
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
@@ -234,7 +235,7 @@ fun EditProfileScreen(
                 text = stringResource(R.string.txt_account_info_not_editable),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF2C3E50)
+                color = TextDark
             )
 
             // Correo Electrónico (no editable)
@@ -242,7 +243,7 @@ fun EditProfileScreen(
                 Text(
                     text = stringResource(R.string.txt_electronic_mail),
                     fontSize = 14.sp,
-                    color = Color(0xFF7F8C8D),
+                    color = TextMuted,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 OutlinedTextField(
@@ -251,9 +252,9 @@ fun EditProfileScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = false,
                     colors = OutlinedTextFieldDefaults.colors(
-                        disabledBorderColor = Color(0xFFE0E0E0),
-                        disabledContainerColor = Color(0xFFF0F0F0),
-                        disabledTextColor = Color(0xFF7F8C8D)
+                        disabledBorderColor = BorderLight,
+                        disabledContainerColor = BackgroundDisabled,
+                        disabledTextColor = TextMuted
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
@@ -264,7 +265,7 @@ fun EditProfileScreen(
                 Text(
                     text = stringResource(R.string.txt_password_label),
                     fontSize = 14.sp,
-                    color = Color(0xFF7F8C8D),
+                    color = TextMuted,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 OutlinedTextField(
@@ -280,15 +281,15 @@ fun EditProfileScreen(
                                     stringResource(R.string.txt_hide)
                                 else
                                     stringResource(R.string.txt_show),
-                                color = Color(0xFF4ECDC4),
+                                color = Secondary,
                                 fontSize = 12.sp
                             )
                         }
                     },
                     colors = OutlinedTextFieldDefaults.colors(
-                        disabledBorderColor = Color(0xFFE0E0E0),
-                        disabledContainerColor = Color(0xFFF0F0F0),
-                        disabledTextColor = Color(0xFF7F8C8D)
+                        disabledBorderColor = BorderLight,
+                        disabledContainerColor = BackgroundDisabled,
+                        disabledTextColor = TextMuted
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
@@ -308,7 +309,7 @@ fun EditProfileScreen(
                     .height(56.dp),
                 shape = RoundedCornerShape(28.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF6B6B)
+                    containerColor = Primary
                 )
             ) {
                 Text(

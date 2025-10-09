@@ -205,5 +205,50 @@
     <string name="txt_see_more_categories">Ver más categorías</string>
     <string name="txt_see_less_categories">Ver menos</string>
 
+    <!-- ACHIEVEMENTS SCREEN -->
+    <string name="txt_my_achievements_title">Mis Logros</string>
+    <string name="txt_achievements_obtained">Logros Obtenidos</string>
+    <string name="txt_achievements_pending">Logros Pendientes</string>
+    <string name="txt_no_achievements_yet">Aún no tienes logros</string>
+    <string name="txt_explore_to_earn_badge">Explora la ciudad para ganar tu primer badge</string>
+
+    <!-- FAVORITES SCREEN -->
+    <string name="txt_my_favorites_title">Mis Favoritos</string>
+    <string name="txt_no_favorites_yet">Aún no tienes lugares favoritos</string>
+    <string name="txt_explore_to_find_favorite">Explora la ciudad para encontrar tu próximo favorito</string>
+    <string name="txt_remove_from_favorites">Quitar de favoritos</string>
+
+    <!-- MY PLACES SCREEN -->
+    <string name="txt_my_places_title">Mis Lugares</string>
+    <string name="txt_no_places_created_yet">Aún no tienes lugares creados</string>
+    <string name="txt_tap_plus_to_create_place">Toca el botón + para crear tu primer lugar</string>
+    <string name="txt_place_status_approved">Aprobado</string>
+    <string name="txt_place_status_pending">Pendiente</string>
+    <string name="txt_place_status_rejected">Rechazado</string>
+    <string name="txt_add_place">Agregar lugar</string>
+
+    <!-- ERROR MESSAGES -->
+    <string name="txt_credentials_incorrect">Credenciales incorrectas</string>
+
+    <!-- ACHIEVEMENTS -->
+    <string name="txt_achievement_progress">Progreso de Logros</string>
+    <string name="txt_achievements_unlocked">logros desbloqueados</string>
+    <string name="txt_achievement_first_place">Primer Lugar</string>
+    <string name="txt_achievement_first_place_desc">Crea tu primer lugar en la plataforma</string>
+    <string name="txt_achievement_explorer">Explorador</string>
+    <string name="txt_achievement_explorer_desc">Visita 5 lugares diferentes</string>
+    <string name="txt_achievement_local_guide">Guía Local</string>
+    <string name="txt_achievement_local_guide_desc">Crea 10 lugares en la plataforma</string>
+    <string name="txt_achievement_reviewer">Reseñador</string>
+    <string name="txt_achievement_reviewer_desc">Escribe 5 reseñas</string>
+    <string name="txt_achievement_golden_commentator">Comentarista Dorado</string>
+    <string name="txt_achievement_golden_commentator_desc">Escribe 50 reseñas</string>
+    <string name="txt_achievement_collector">Coleccionista</string>
+    <string name="txt_achievement_collector_desc">Agrega 10 lugares a favoritos</string>
+    <string name="txt_achievement_veteran">Veterano</string>
+    <string name="txt_achievement_veteran_desc">Lleva 30 días en la plataforma</string>
+    <string name="txt_achievement_super_user">Super Usuario</string>
+    <string name="txt_achievement_super_user_desc">Crea 5 lugares y escribe 10 reseñas</string>
+
 
 </resources>
