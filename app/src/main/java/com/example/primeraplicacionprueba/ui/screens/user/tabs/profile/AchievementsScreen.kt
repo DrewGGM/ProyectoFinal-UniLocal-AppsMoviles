@@ -251,7 +251,7 @@ fun AchievementProgressCard(
             )
             
             LinearProgressIndicator(
-                progress = progressPercentage,
+                progress = { progressPercentage },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp)

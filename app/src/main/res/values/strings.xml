@@ -250,5 +250,19 @@
     <string name="txt_achievement_super_user">Super Usuario</string>
     <string name="txt_achievement_super_user_desc">Crea 5 lugares y escribe 10 reseñas</string>
 
+    <!-- FORGOT PASSWORD SCREEN -->
+    <string name="txt_forgot_password_title">Recupera tu contraseña</string>
+    <string name="txt_forgot_password_subtitle">Te enviaremos un email para restablecerla.</string>
+    <string name="txt_email_required">El email es requerido</string>
+    <string name="txt_email_invalid">Email inválido</string>
+    <string name="txt_email_label">Email</string>
+    <string name="txt_email_sent">Email enviado a %s</string>
+    <string name="txt_send">Enviar</string>
+    <string name="txt_back_to_login">Volver al inicio de sesión</string>
+    <string name="txt_check_inbox">✓ Revisa tu bandeja de entrada</string>
+
+    <!-- SOCIAL LOGIN CONTENT DESCRIPTIONS -->
+    <string name="txt_continue_with_google">Continuar con Google</string>
+    <string name="txt_continue_with_facebook">Continuar con Facebook</string>
 
 </resources>

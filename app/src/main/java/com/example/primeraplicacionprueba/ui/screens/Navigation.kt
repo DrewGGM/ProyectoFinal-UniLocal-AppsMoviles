@@ -22,6 +22,7 @@ import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.CreatePlaceStepThree
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.CreatePlaceStepTwo
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.profile.AchievementsScreen
+import com.example.primeraplicacionprueba.ui.screens.ForgotPasswordScreen
 import com.example.primeraplicacionprueba.utils.SharedPrefsUtil
 import com.example.primeraplicacionprueba.viewmodel.MainViewModel
 
@@ -56,28 +57,31 @@ fun Navigation(
                 navController = navController,
                 startDestination = startDestination
             ) {
-            composable<RouteScreen.Login> {
-                LoginScreen(
-                    onNavigateToRegister = {
-                        navController.navigate(RouteScreen.Register)
-                    },
-                    onNavigateToHome = { user ->
-                        SharedPrefsUtil.savePreferences(
-                            context, 
-                            user.id, 
-                            user.rol.name, 
-                            user.nombre, 
-                            user.email
-                        )
-                        
-                        if(user.rol == Rol.ADMIN) {
-                            navController.navigate(RouteScreen.HomeAdmin)
-                        } else {
-                            navController.navigate(RouteScreen.Home)
+                composable<RouteScreen.Login> {
+                    LoginScreen(
+                        onNavigateToRegister = {
+                            navController.navigate(RouteScreen.Register)
+                        },
+                        onNavigateToHome = { user ->
+                            SharedPrefsUtil.savePreferences(
+                                context,
+                                user.id,
+                                user.rol.name,
+                                user.nombre,
+                                user.email
+                            )
+
+                            if(user.rol == Rol.ADMIN) {
+                                navController.navigate(RouteScreen.HomeAdmin)
+                            } else {
+                                navController.navigate(RouteScreen.Home)
+                            }
+                        },
+                        onNavigateToForgotPassword = {
+                            navController.navigate(RouteScreen.ForgotPassword)
                         }
-                    }
-                )
-            }
+                    )
+                }
             composable<RouteScreen.Register> {
                 RegisterScreem(
                     onNavigateToLogin = {
@@ -232,6 +236,14 @@ fun Navigation(
                             }
                         )
                     }
+                }
+
+                composable<RouteScreen.ForgotPassword> {
+                    ForgotPasswordScreen(
+                        onNavigateToLogin = {
+                            navController.popBackStack()
+                        }
+                    )
                 }
 
             }

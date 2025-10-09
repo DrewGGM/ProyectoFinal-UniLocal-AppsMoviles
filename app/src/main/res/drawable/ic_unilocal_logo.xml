@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Fondo: pin / marcador de ubicación -->
+    <path
+        android:fillColor="#0D47A1"
+        android:pathData="M12,2C8.13,2 5,5.13 5,9c0,5.25 7,13 7,13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+
+    <!-- Círculo interior -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,6.5c-1.93,0-3.5,1.57-3.5,3.5s1.57,3.5 3.5,3.5 3.5-1.57 3.5-3.5S13.93,6.5 12,6.5z"/>
+
+    <!-- Corazón -->
+    <path
+        android:fillColor="#E53935"
+        android:pathData="M12,17.27l-0.95-0.88C7.6,13.36 5,11.28 5,8.5 5,6.5 6.79,5 8.5,5 9.74,5 10.9,5.54 11.6,6.46 12.3,5.54 13.46,5 14.7,5 16.41,5 18.2,6.5 18.2,8.5c0,2.78-2.6,4.86-6.05,7.89L12,17.27z"/>
+
+    <!-- Grupo de cubiertos -->
+    <group
+        android:translateY="2"
+        android:scaleX="0.9"
+        android:scaleY="0.9">
+
+        <!-- cuchillo -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M16.5,12c0.28,0 0.5,0.22 0.5,0.5v3c0,0.83-0.67,1.5-1.5,1.5 -0.83,0-1.5-0.67-1.5-1.5v-3c0-0.28 0.22-0.5 0.5-0.5h2zM15.75,11.5c-0.41,0-0.75-0.34-0.75-0.75V7c0-0.41 0.34-0.75 0.75-0.75s0.75,0.34 0.75,0.75v3.75C16.5,11.16 16.16,11.5 15.75,11.5z"/>
+
+        <!-- tenedor -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M8.5,12c0.28,0 0.5,0.22 0.5,0.5v3c0,0.83-0.67,1.5-1.5,1.5S6,16.33 6,15.5v-3c0-0.28 0.22-0.5 0.5-0.5h2zM7.75,11.5c-0.41,0-0.75-0.34-0.75-0.75V7c0-0.41 0.34-0.75 0.75-0.75s0.75,0.34 0.75,0.75v3.75C8.5,11.16 8.16,11.5 7.75,11.5z"/>
+    </group>
+</vector>

@@ -20,6 +20,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.ui.theme.*
 
 @Composable
@@ -31,14 +33,19 @@ fun ForgotPasswordScreen(
     var emailSent by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
+    
+    // Strings para validación
+    val emailRequiredText = stringResource(R.string.txt_email_required)
+    val emailInvalidText = stringResource(R.string.txt_email_invalid)
+    val emailSentText = stringResource(R.string.txt_email_sent, email)
 
     // Función de validación
     fun validateEmail(): Boolean {
         return if (email.isBlank()) {
-            emailError = "El email es requerido"
+            emailError = emailRequiredText
             false
         } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailError = "Email inválido"
+            emailError = emailInvalidText
             false
         } else {
             emailError = ""
@@ -120,7 +127,7 @@ fun ForgotPasswordScreen(
                     ) {
                         // Título
                         Text(
-                            text = "Recupera tu contraseña",
+                            text = stringResource(R.string.txt_forgot_password_title),
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextDark,
@@ -129,7 +136,7 @@ fun ForgotPasswordScreen(
 
                         // Subtítulo
                         Text(
-                            text = "Te enviaremos un email para restablecerla.",
+                            text = stringResource(R.string.txt_forgot_password_subtitle),
                             fontSize = 14.sp,
                             color = TextMuted,
                             textAlign = TextAlign.Center,
@@ -145,7 +152,7 @@ fun ForgotPasswordScreen(
                                 email = it
                                 if (emailError.isNotEmpty()) emailError = ""
                             },
-                            label = { Text("Email") },
+                            label = { Text(stringResource(R.string.txt_email_label)) },
                             modifier = Modifier.fillMaxWidth(),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                             isError = emailError.isNotEmpty(),
@@ -170,7 +177,7 @@ fun ForgotPasswordScreen(
                                     emailSent = true
                                     Toast.makeText(
                                         context,
-                                        "Email enviado a $email",
+                                        emailSentText,
                                         Toast.LENGTH_LONG
                                     ).show()
                                 }
@@ -199,7 +206,7 @@ fun ForgotPasswordScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "Enviar",
+                                    text = stringResource(R.string.txt_send),
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = Color.White
@@ -215,7 +222,7 @@ fun ForgotPasswordScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Volver al inicio de sesión",
+                                text = stringResource(R.string.txt_back_to_login),
                                 color = Secondary,
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -241,7 +248,7 @@ fun ForgotPasswordScreen(
                     )
                 ) {
                     Text(
-                        text = "✓ Revisa tu bandeja de entrada",
+                        text = stringResource(R.string.txt_check_inbox),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = SuccessGreen,
