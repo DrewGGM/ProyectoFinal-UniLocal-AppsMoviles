@@ -34,12 +34,12 @@ sealed class RouteScreen{
     data object Achievements: RouteScreen();
 
     @Serializable
+    data object ForgotPassword: RouteScreen();
+  
+   @Serializable
     data object FilterBusqueda: RouteScreen();
 
     @Serializable
     data object Map: RouteScreen();
-
-
-
 
 }

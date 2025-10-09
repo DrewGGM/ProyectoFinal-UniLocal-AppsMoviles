@@ -3,6 +3,7 @@ package com.example.primeraplicacionprueba.ui.screens
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -26,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -52,7 +58,8 @@ import com.example.primeraplicacionprueba.ui.theme.*
 @Composable
 fun LoginScreen(
     onNavigateToRegister: () -> Unit = {},
-    onNavigateToHome: (user: User) -> Unit = {}
+    onNavigateToHome: (user: User) -> Unit = {},
+    onNavigateToForgotPassword: () -> Unit = {}
 ) {
     val mainViewModel = LocalMainViewModel.current
     val usersViewModel = mainViewModel.usersViewModel
@@ -95,7 +102,7 @@ fun LoginScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundLight)
+            .background(BgLight)
     ) {
         Column(
             modifier = Modifier
@@ -109,22 +116,28 @@ fun LoginScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(32.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .verticalScroll(rememberScrollState())
                 ) {
-                    // Header con gradiente
+                    // Header con gradiente curvo
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(120.dp)
-                            .clip(RoundedCornerShape(16.dp))
+                            .height(200.dp)
+                            .clip(
+                                RoundedCornerShape(
+                                    topStart = 32.dp,
+                                    topEnd = 32.dp,
+                                    bottomStart = 50.dp,
+                                    bottomEnd = 50.dp
+                                )
+                            )
                             .background(
                                 Brush.horizontalGradient(
                                     colors = listOf(
@@ -135,224 +148,220 @@ fun LoginScreen(
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        // Logo circular
-                        Box(
-                            modifier = Modifier
-                                .size(80.dp)
-                                .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.3f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "uL",
-                                fontSize = 32.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
+                        
+                            Image(
+                                painter = painterResource(id = R.drawable.unilocal_logo),
+                                contentDescription = "UniLocal Logo",
+                                modifier = Modifier.size(120.dp)
                             )
-                        }
+                        
                     }
 
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // Título
-                    Text(
-                        text = stringResource(R.string.txt_welcome_back),
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = TextDark,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Text(
-                        text = stringResource(R.string.txt_welcome_subtitle),
-                        fontSize = 16.sp,
-                        color = TextMuted,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    // Campo Email/Usuario
-                    OutlinedTextField(
-                        value = email,
-                        onValueChange = {
-                            email = it
-                            if (emailError.isNotEmpty()) emailError = ""
-                        },
-                        label = { Text(stringResource(R.string.txt_email_hint)) },
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                        isError = emailError.isNotEmpty(),
-                        supportingText = if (emailError.isNotEmpty()) {
-                            { Text(emailError, color = MaterialTheme.colorScheme.error) }
-                        } else null,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Secondary,
-                            focusedLabelColor = Secondary
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Campo Contraseña
-                    OutlinedTextField(
-                        value = contrasena,
-                        onValueChange = {
-                            contrasena = it
-                            if (contrasenaError.isNotEmpty()) contrasenaError = ""
-                        },
-                        label = { Text(stringResource(R.string.txt_password_hint)) },
-                        modifier = Modifier.fillMaxWidth(),
-                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        isError = contrasenaError.isNotEmpty(),
-                        supportingText = if (contrasenaError.isNotEmpty()) {
-                            { Text(contrasenaError, color = MaterialTheme.colorScheme.error) }
-                        } else null,
-                        trailingIcon = {
-                            TextButton(onClick = { passwordVisible = !passwordVisible }) {
-                                Text(
-                                    text = if (passwordVisible)
-                                        stringResource(R.string.txt_hide)
-                                    else
-                                        stringResource(R.string.txt_show),
-                                    color = Secondary,
-                                    fontSize = 12.sp
-                                )
-                            }
-                        },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Secondary,
-                            focusedLabelColor = Secondary
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    // Botón de iniciar sesión
-                    Button(
-                        onClick = {
-                            if (validarCampos()) {
-                                val usersLogged = usersViewModel.login(email, contrasena)
-                                if (usersLogged != null) {
-                                    onNavigateToHome(usersLogged)
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.txt_credentials_incorrect),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-
-                            }
-                        },
+                    // Contenido del formulario
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(28.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Secondary
-                        )
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
+
+                        // Título
                         Text(
-                            text = stringResource(R.string.btn_login),
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color.White
+                            text = stringResource(R.string.txt_welcome_back),
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = TextDark,
+                            textAlign = TextAlign.Center
                         )
-                    }
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                        // Subtítulo
+                        Text(
+                            text = stringResource(R.string.txt_welcome_subtitle),
+                            fontSize = 14.sp,
+                            color = TextMuted,
+                            textAlign = TextAlign.Center,
+                            lineHeight = 20.sp
+                        )
 
-                    // Opciones de login social
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // Botón de Google
-                        Card(
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // Campo Email/Usuario
+                        OutlinedTextField(
+                            value = email,
+                            onValueChange = {
+                                email = it
+                                if (emailError.isNotEmpty()) emailError = ""
+                            },
+                            label = { Text(stringResource(R.string.txt_email_hint)) },
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                            isError = emailError.isNotEmpty(),
+                            supportingText = if (emailError.isNotEmpty()) {
+                                { Text(emailError, color = MaterialTheme.colorScheme.error) }
+                            } else null,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Secondary,
+                                focusedLabelColor = Secondary,
+                                unfocusedBorderColor = BorderLight
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Campo Contraseña
+                        OutlinedTextField(
+                            value = contrasena,
+                            onValueChange = {
+                                contrasena = it
+                                if (contrasenaError.isNotEmpty()) contrasenaError = ""
+                            },
+                            label = { Text(stringResource(R.string.txt_password_hint)) },
+                            modifier = Modifier.fillMaxWidth(),
+                            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                            isError = contrasenaError.isNotEmpty(),
+                            supportingText = if (contrasenaError.isNotEmpty()) {
+                                { Text(contrasenaError, color = MaterialTheme.colorScheme.error) }
+                            } else null,
+                            trailingIcon = {
+                                TextButton(onClick = { passwordVisible = !passwordVisible }) {
+                                    Text(
+                                        text = if (passwordVisible)
+                                            stringResource(R.string.txt_hide)
+                                        else
+                                            stringResource(R.string.txt_show),
+                                        color = Secondary,
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Secondary,
+                                focusedLabelColor = Secondary,
+                                unfocusedBorderColor = BorderLight
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        // Botón de iniciar sesión
+                        Button(
+                            onClick = {
+                                if (validarCampos()) {
+                                    val usersLogged = usersViewModel.login(email, contrasena)
+                                    if (usersLogged != null) {
+                                        onNavigateToHome(usersLogged)
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.txt_credentials_incorrect),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+
+                                }
+                            },
                             modifier = Modifier
-                                .size(56.dp)
-                                .clickable { /* TODO: Implementar Google Sign In */ },
-                            shape = CircleShape,
-                            colors = CardDefaults.cardColors(containerColor = Color.White),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                                .fillMaxWidth()
+                                .height(56.dp),
+                            shape = RoundedCornerShape(28.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent
+                            ),
+                            contentPadding = PaddingValues(0.dp)
                         ) {
                             Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                // Logo de Google estilizado
-                                Text(
-                                    text = "G",
-                                    fontSize = 24.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = GoogleBlue
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.width(20.dp))
-
-                        // Botón de Facebook
-                        Card(
-                            modifier = Modifier
-                                .size(56.dp)
-                                .clickable { /* TODO: Implementar Facebook Sign In */ },
-                            shape = CircleShape,
-                            colors = CardDefaults.cardColors(containerColor = FacebookBlue),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(
+                                        Brush.horizontalGradient(
+                                            colors = listOf(
+                                                Primary,
+                                                Accent
+                                            )
+                                        ),
+                                        shape = RoundedCornerShape(28.dp)
+                                    ),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "f",
-                                    fontSize = 28.sp,
-                                    fontWeight = FontWeight.Bold,
+                                    text = stringResource(R.string.btn_login),
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold,
                                     color = Color.White
                                 )
                             }
                         }
-                    }
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                    // Link para registro
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
+                        // Opciones de login social
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // Botón de Google
+                            Icon(
+                                painter = painterResource(id = R.drawable.google_logo),
+                                contentDescription = stringResource(R.string.txt_continue_with_google),
+                                modifier = Modifier
+                                    .size(42.dp)
+                                    .clickable { /* TODO: Implementar Google Sign In */ },
+                                tint = androidx.compose.ui.graphics.Color.Unspecified
+                            )
+
+                            Spacer(modifier = Modifier.width(20.dp))
+
+                            // Botón de Facebook
+                            Icon(
+                                painter = painterResource(id = R.drawable.facebook_logo),
+                                contentDescription = stringResource(R.string.txt_continue_with_facebook),
+                                modifier = Modifier
+                                    .size(42.dp)
+                                    .clickable { /* TODO: Implementar Facebook Sign In */ },
+                                tint = androidx.compose.ui.graphics.Color.Unspecified
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Link para registro
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = stringResource(R.string.txt_no_account),
+                                color = TextMuted,
+                                fontSize = 15.sp
+                            )
+                            Text(
+                                text = stringResource(R.string.txt_register_link),
+                                color = Secondary,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 15.sp,
+                                modifier = Modifier.clickable {
+                                    onNavigateToRegister()
+                                }
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Link "¿Olvidaste tu contraseña?"
                         Text(
-                            text = stringResource(R.string.txt_no_account),
-                            color = TextMuted,
-                            fontSize = 15.sp
-                        )
-                        Text(
-                            text = stringResource(R.string.txt_register_link),
+                            text = stringResource(R.string.txt_forgot_password),
                             color = Secondary,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 15.sp,
+                            fontSize = 14.sp,
                             modifier = Modifier.clickable {
-                                onNavigateToRegister()
+                                onNavigateToForgotPassword()
                             }
                         )
                     }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Link "¿Olvidaste tu contraseña?"
-                    Text(
-                        text = stringResource(R.string.txt_forgot_password),
-                        color = Secondary,
-                        fontSize = 14.sp,
-                        modifier = Modifier.clickable {
-                            // TODO: Implementar recuperación de contraseña
-                        }
-                    )
                 }
             }
         }

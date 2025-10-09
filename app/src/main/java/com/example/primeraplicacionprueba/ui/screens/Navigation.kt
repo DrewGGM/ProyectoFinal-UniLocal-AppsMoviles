@@ -24,6 +24,7 @@ import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.map.Map
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.map.filtro.FilterBusqueda
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.profile.AchievementsScreen
+import com.example.primeraplicacionprueba.ui.screens.ForgotPasswordScreen
 import com.example.primeraplicacionprueba.utils.SharedPrefsUtil
 import com.example.primeraplicacionprueba.viewmodel.MainViewModel
 
@@ -72,36 +73,39 @@ fun Navigation(
                                 user.email
                             )
 
-                            if (user.rol == Rol.ADMIN) {
+                            if(user.rol == Rol.ADMIN) {
                                 navController.navigate(RouteScreen.HomeAdmin)
                             } else {
                                 navController.navigate(RouteScreen.Home)
                             }
-                        }
-                    )
-                }
-                composable<RouteScreen.Register> {
-                    RegisterScreem(
-                        onNavigateToLogin = {
-                            navController.navigate(RouteScreen.Login)
                         },
-                        onNavigateToHome = { user ->
-                            SharedPrefsUtil.savePreferences(
-                                context,
-                                user.id,
-                                user.rol.name,
-                                user.nombre,
-                                user.email
-                            )
-                            navController.navigate(RouteScreen.Home)
+                        onNavigateToForgotPassword = {
+                            navController.navigate(RouteScreen.ForgotPassword)
                         }
                     )
                 }
-                composable<RouteScreen.Home> {
-                    val mainViewModel = LocalMainViewModel.current
-                    val usersViewModel = mainViewModel.usersViewModel
-                    val currentUser by usersViewModel.currentUser.collectAsState()
-                    currentUser?.let { user ->
+            composable<RouteScreen.Register> {
+                RegisterScreem(
+                    onNavigateToLogin = {
+                        navController.navigate(RouteScreen.Login)
+                    },
+                    onNavigateToHome = { user ->
+                        SharedPrefsUtil.savePreferences(
+                            context, 
+                            user.id, 
+                            user.rol.name, 
+                            user.nombre, 
+                            user.email
+                        )
+                        navController.navigate(RouteScreen.Home)
+                    }
+                )
+            }
+            composable<RouteScreen.Home> {
+                val mainViewModel = LocalMainViewModel.current
+                val usersViewModel = mainViewModel.usersViewModel
+                val currentUser by usersViewModel.currentUser.collectAsState()
+                currentUser?.let { user ->
                         UserScreen(
                             onNavigateToCreatePlace = {
                                 navController.navigate(RouteScreen.CreatePlaceStepOne)
@@ -253,6 +257,14 @@ fun Navigation(
                             }
                         )
                     }
+                }
+
+                composable<RouteScreen.ForgotPassword> {
+                    ForgotPasswordScreen(
+                        onNavigateToLogin = {
+                            navController.popBackStack()
+                        }
+                    )
                 }
 
             }

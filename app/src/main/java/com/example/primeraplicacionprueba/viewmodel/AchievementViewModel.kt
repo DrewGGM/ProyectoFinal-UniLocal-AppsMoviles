@@ -1,7 +1,6 @@
 package com.example.primeraplicacionprueba.viewmodel
 
 import androidx.compose.material.icons.automirrored.filled.Comment
-import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
@@ -9,6 +8,7 @@ import androidx.compose.material.icons.filled.Rocket
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Verified
+import androidx.compose.material.icons.Icons
 import androidx.lifecycle.ViewModel
 import com.example.primeraplicacionprueba.model.Achievement
 import com.example.primeraplicacionprueba.model.User
@@ -131,7 +131,7 @@ class AchievementViewModel : ViewModel() {
                 id = "reviewer",
                 title = "Reseñador",
                 description = "Escribe 5 reseñas",
-                icon = androidx.compose.material.icons.Icons.Default.Comment,
+                icon = Icons.AutoMirrored.Filled.Comment,
                 isUnlocked = false,
                 progress = 0f,
                 colorGradient = listOf(
