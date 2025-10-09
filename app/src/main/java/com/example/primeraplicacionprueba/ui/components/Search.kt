@@ -1,10 +1,12 @@
 package com.example.primeraplicacionprueba.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -18,6 +20,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
@@ -26,63 +30,100 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.Place
 import com.example.primeraplicacionprueba.model.PlaceType
 import com.example.primeraplicacionprueba.ui.theme.Primary
 import com.example.primeraplicacionprueba.ui.theme.TextSecondary
 import com.example.primeraplicacionprueba.ui.theme.TextMuted
+import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchBar(
-    textFieldState: TextFieldState,
-    onSearch: (String) -> Unit,
-    searchResults: List<String>,
-    modifier: Modifier = Modifier
-) {
-    // Controls expansion state of the search bar
-    var expanded by rememberSaveable { mutableStateOf(false) }
 
-    Box(
-        modifier
-            .fillMaxSize()
-            .semantics { isTraversalGroup = true }
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun  <T>Search(
+        query: String,
+        onQueryChange: (String) -> Unit,
+        onSearch: (String) -> List<T>,
+        placeholder: String,
+        itemText: (T) -> String
     ) {
-        SearchBar(
+        var expanded by remember { mutableStateOf(false) }
+        Box(
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .semantics { traversalIndex = 0f },
-            inputField = {
-                SearchBarDefaults.InputField(
-                    query = textFieldState.text.toString(),
-                    onQueryChange = { textFieldState.edit { replace(0, length, it) } },
-                    onSearch = {
-                        onSearch(textFieldState.text.toString())
-                        expanded = false
-                    },
-                    expanded = expanded,
-                    onExpandedChange = { expanded = it },
-                    placeholder = { Text("Search") }
-                )
-            },
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
+                .fillMaxSize()
+                .padding(6.dp)
         ) {
-            // Display search results in a scrollable column
-            Column(Modifier.verticalScroll(rememberScrollState())) {
-                searchResults.forEach { result ->
-                    ListItem(
-                        headlineContent = { Text(result) },
-                        modifier = Modifier
-                            .clickable {
-                                textFieldState.edit { replace(0, length, result) }
-                                expanded = false
-                            }
-                            .fillMaxWidth()
+            SearchBar(
+                modifier = Modifier
+                    .align(Alignment.TopCenter),
+
+                inputField = {
+                    SearchBarDefaults.InputField(
+                        query = query,
+                        onQueryChange = { onQueryChange(it) },
+                        onSearch = { expanded = false },
+                        expanded = expanded,
+                        onExpandedChange = { expanded = it },
+                        placeholder = {
+                            Text(
+                                text = placeholder,
+                                color = Color(0xFF9E9E9E), // gris suave
+                                fontSize = 18.sp
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Buscar",
+                                tint = Color(0xFFFFC1CC) // color rosado del icono
+                            )
+                        }
                     )
+                },
+                expanded = expanded,
+                onExpandedChange = { expanded = it },
+                colors = SearchBarDefaults.colors(
+                    containerColor = Color.White,
+                    dividerColor = Color(0xFFE0E0E0),
+                    inputFieldColors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    )
+                )
+            ) {
+                if (query.isNotEmpty()) {
+                    val places = onSearch(query)
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.White)
+                            .padding(horizontal = 12.dp)
+                    ) {
+                        items(places) { item ->
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { expanded = false }
+                                    .padding(vertical = 8.dp)
+                            ) {
+                                Text(
+                                    text = itemText(item),
+                                    color = Color(0xFF4A4A4A),
+                                    fontSize = 16.sp
+                                )
+                                HorizontalDivider(
+                                    color = Color(0xFFF0F0F0),
+                                    thickness = 1.dp,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
+
     }
-}

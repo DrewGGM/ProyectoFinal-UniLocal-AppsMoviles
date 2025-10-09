@@ -1,5 +1,6 @@
 package com.example.primeraplicacionprueba.viewmodel
 
+import android.R
 import androidx.lifecycle.ViewModel
 import com.example.primeraplicacionprueba.model.Place
 import com.example.primeraplicacionprueba.model.PlaceType
@@ -104,6 +105,13 @@ class PlacesViewModel : ViewModel() {
     fun create(place: Place) {
         _places.value = _places.value + place
     }
+    fun filtrarportitulotypo(query:String): List<Place> {
+        return _places.value.filter{
+            it.title.contains(query, ignoreCase = true) ||
+                    it.type.toString().contains(query, ignoreCase = true)
+        }
+
+    }
 
     fun findById(id: String): Place? {
         return _places.value.find { it.id == id }
@@ -112,8 +120,14 @@ class PlacesViewModel : ViewModel() {
     fun findByTitle(title: String): Place? {
         return _places.value.find { it.title.equals(title, ignoreCase = true) }
     }
-
-    fun findByType(type: PlaceType): List<Place>{
-        return _places.value.filter { it.type == type }
+    fun filtrarPlaceByTile(title: String): List<Place> {
+        return _places.value.filter { it.title.contains(title, ignoreCase = true) }
     }
+
+
+    fun findByType(type: String): List<Place>{
+        return _places.value.filter { it.type.toString().contains(type, ignoreCase = true) }
+    }
+
+
 }
