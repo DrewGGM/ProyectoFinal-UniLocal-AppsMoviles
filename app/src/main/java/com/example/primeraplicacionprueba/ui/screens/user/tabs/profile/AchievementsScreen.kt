@@ -2,13 +2,12 @@ package com.example.primeraplicacionprueba.ui.screens.user.tabs.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -71,67 +70,80 @@ fun AchievementsScreen(
             )
         }
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(BgLight)
                 .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
+            // Progreso general
+            if (userAchievements.isNotEmpty()) {
+                item {
+                    AchievementProgressCard(
+                        unlockedCount = unlockedAchievements.size,
+                        totalCount = userAchievements.size,
+                        progressPercentage = progressPercentage
+                    )
+                }
+            }
+
             // Logros Obtenidos
             if (unlockedAchievements.isNotEmpty()) {
-                Text(
-                    text = stringResource(R.string.txt_achievements_obtained),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = TextDark
-                )
+                item {
+                    Text(
+                        text = stringResource(R.string.txt_achievements_obtained),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = TextDark
+                    )
+                }
 
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(unlockedAchievements) { achievement ->
-                        AchievementCard(achievement = achievement)
+                item {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.height(400.dp)
+                    ) {
+                        items(unlockedAchievements) { achievement ->
+                            AchievementCard(achievement = achievement)
+                        }
                     }
                 }
             }
 
             // Logros Pendientes
             if (pendingAchievements.isNotEmpty()) {
-                Text(
-                    text = stringResource(R.string.txt_achievements_pending),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = TextDark
-                )
+                item {
+                    Text(
+                        text = stringResource(R.string.txt_achievements_pending),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = TextDark
+                    )
+                }
 
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(pendingAchievements) { achievement ->
-                        AchievementCard(achievement = achievement)
+                item {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.height(400.dp)
+                    ) {
+                        items(pendingAchievements) { achievement ->
+                            AchievementCard(achievement = achievement)
+                        }
                     }
                 }
             }
 
-            // Progreso general
-            if (userAchievements.isNotEmpty()) {
-                AchievementProgressCard(
-                    unlockedCount = unlockedAchievements.size,
-                    totalCount = userAchievements.size,
-                    progressPercentage = progressPercentage
-                )
-            }
-
             // Estado vacío
             if (userAchievements.isEmpty()) {
-                EmptyAchievementsState()
+                item {
+                    EmptyAchievementsState()
+                }
             }
         }
     }

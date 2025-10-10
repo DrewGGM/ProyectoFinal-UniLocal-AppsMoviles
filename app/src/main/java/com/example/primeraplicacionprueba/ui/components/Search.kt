@@ -48,25 +48,25 @@ import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
         onQueryChange: (String) -> Unit,
         onSearch: (String) -> List<T>,
         placeholder: String,
-        itemText: (T) -> String
+        itemText: (T) -> String,
+        expanded: Boolean,
+        onExpandedChange: (Boolean) -> Unit,
+        modifier: Modifier = Modifier
     ) {
-        var expanded by remember { mutableStateOf(false) }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(6.dp)
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
         ) {
             SearchBar(
-                modifier = Modifier
-                    .align(Alignment.TopCenter),
+                modifier = Modifier.fillMaxWidth(),
 
                 inputField = {
                     SearchBarDefaults.InputField(
                         query = query,
                         onQueryChange = { onQueryChange(it) },
-                        onSearch = { expanded = false },
+                        onSearch = { onExpandedChange(false) },
                         expanded = expanded,
-                        onExpandedChange = { expanded = it },
+                        onExpandedChange = { onExpandedChange(it) },
                         placeholder = {
                             Text(
                                 text = placeholder,
@@ -84,7 +84,7 @@ import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
                     )
                 },
                 expanded = expanded,
-                onExpandedChange = { expanded = it },
+                onExpandedChange = onExpandedChange,
                 colors = SearchBarDefaults.colors(
                     containerColor = Color.White,
                     dividerColor = Color(0xFFE0E0E0),
@@ -94,8 +94,9 @@ import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
                     )
                 )
             ) {
-                if (query.isNotEmpty()) {
-                    val places = onSearch(query)
+                // Si no usamos overlay, podemos no mostrar resultados
+                val places = if (expanded && query.isNotEmpty()) onSearch(query) else emptyList<T>()
+                if (expanded && places.isNotEmpty()) {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -106,7 +107,7 @@ import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable { expanded = false }
+                                    .clickable { onExpandedChange(false) }
                                     .padding(vertical = 8.dp)
                             ) {
                                 Text(

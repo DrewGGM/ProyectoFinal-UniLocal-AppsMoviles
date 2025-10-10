@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,21 +29,30 @@ import com.example.primeraplicacionprueba.model.PlaceType
 import com.example.primeraplicacionprueba.R
 import androidx.compose.ui.res.stringResource
 import com.example.primeraplicacionprueba.ui.theme.*
+import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatePlaceStepOne(
+    viewModel: PlacesViewModel,
     onNavigateToHome: () -> Unit = {},
     onNavigateToNext: () -> Unit = {}
 ) {
-    var nombreLugar by remember { mutableStateOf("") }
-    var descripcion by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf<PlaceType?>(null) }
+    val state by viewModel.createPlaceState.collectAsState()
+
+    var nombreLugar by remember(state.title) { mutableStateOf(state.title) }
+    var descripcion by remember(state.description) { mutableStateOf(state.description) }
+    var selectedCategory by remember(state.type) { mutableStateOf<PlaceType?>(state.type) }
 
     var nombreError by remember { mutableStateOf("") }
     var descripcionError by remember { mutableStateOf("") }
     var categoryError by remember { mutableStateOf("") }
     var showAllCategories by remember { mutableStateOf(false) }
+
+    // Error strings
+    val errNameRequired = stringResource(R.string.err_place_name_required)
+    val errDescRequired = stringResource(R.string.err_description_required)
+    val errCategoryRequired = stringResource(R.string.err_category_required)
 
     Column(
         modifier = Modifier
@@ -127,7 +137,7 @@ fun CreatePlaceStepOne(
                     value = nombreLugar,
                     onValueChange = {
                         nombreLugar = it
-                        if (nombreError.isNotEmpty()) nombreError = ""
+                        if (it.isNotBlank()) nombreError = ""
                     },
                     placeholder = { Text(stringResource(R.string.txt_place_name_placeholder)) },
                     modifier = Modifier.fillMaxWidth(),
@@ -157,7 +167,7 @@ fun CreatePlaceStepOne(
                     value = descripcion,
                     onValueChange = {
                         descripcion = it
-                        if (descripcionError.isNotEmpty()) descripcionError = ""
+                        if (it.isNotBlank()) descripcionError = ""
                     },
                     placeholder = { Text(stringResource(R.string.txt_description_placeholder)) },
                     modifier = Modifier
@@ -377,7 +387,31 @@ fun CreatePlaceStepOne(
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { onNavigateToNext() },
+                onClick = {
+                    // Validar campos
+                    var isValid = true
+
+                    if (nombreLugar.isBlank()) {
+                        nombreError = errNameRequired
+                        isValid = false
+                    }
+
+                    if (descripcion.isBlank()) {
+                        descripcionError = errDescRequired
+                        isValid = false
+                    }
+
+                    if (selectedCategory == null) {
+                        categoryError = errCategoryRequired
+                        isValid = false
+                    }
+
+                    if (isValid) {
+                        // Guardar datos en el ViewModel antes de continuar
+                        viewModel.updateBasicInfo(nombreLugar, descripcion, selectedCategory)
+                        onNavigateToNext()
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),

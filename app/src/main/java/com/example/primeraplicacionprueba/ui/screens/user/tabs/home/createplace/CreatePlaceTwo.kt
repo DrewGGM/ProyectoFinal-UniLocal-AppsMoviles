@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,17 +28,21 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.HorizontalDivider
 import com.example.primeraplicacionprueba.R
 import androidx.compose.ui.res.stringResource
+import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatePlaceStepTwo(
+    viewModel: PlacesViewModel,
     onNavigateToHome: () -> Unit = {},
     onNavigateToPrevious: () -> Unit = {},
     onNavigateToNext: () -> Unit = {}
 ) {
-    var telefonoContacto by remember { mutableStateOf("") }
-    var sitioWeb by remember { mutableStateOf("") }
-    var redesSociales by remember { mutableStateOf("") }
+    val state by viewModel.createPlaceState.collectAsState()
+
+    var telefonoContacto by remember(state.phones) { mutableStateOf(state.phones.firstOrNull() ?: "") }
+    var sitioWeb by remember(state.website) { mutableStateOf(state.website ?: "") }
+    var redesSociales by remember(state.socialMedia) { mutableStateOf(state.socialMedia ?: "") }
 
     var telefonoError by remember { mutableStateOf("") }
     var sitioWebError by remember { mutableStateOf("") }
@@ -307,7 +312,19 @@ fun CreatePlaceStepTwo(
                 }
 
                 Button(
-                    onClick = { onNavigateToNext() },
+                    onClick = {
+                        // Validar al menos un dato de contacto (opcional pero recomendado)
+                        // No bloqueamos si no hay datos, solo guardamos lo que hay
+                        viewModel.updateContactInfo(
+                            phone = telefonoContacto,
+                            website = sitioWeb,
+                            socialMedia = redesSociales,
+                            address = "",  // Valor por defecto hasta que se implemente el mapa
+                            city = "Armenia",     // Valor por defecto hasta que se implemente el mapa
+                            neighborhood = ""  // Valor por defecto hasta que se implemente el mapa
+                        )
+                        onNavigateToNext()
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .height(56.dp),

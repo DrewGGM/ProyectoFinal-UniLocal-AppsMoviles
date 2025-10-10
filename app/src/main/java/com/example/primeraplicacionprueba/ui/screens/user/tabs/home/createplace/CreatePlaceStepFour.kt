@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,16 +34,20 @@ import coil.compose.AsyncImage
 import com.example.primeraplicacionprueba.R
 import androidx.compose.ui.res.stringResource
 import com.example.primeraplicacionprueba.ui.theme.*
+import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatePlaceStepFour(
+    viewModel: PlacesViewModel,
     onNavigateToHome: () -> Unit = {},
     onNavigateToPrevious: () -> Unit = {},
     onSubmit: () -> Unit = {}
 ) {
-    var selectedImages by remember { mutableStateOf<List<String>>(emptyList()) }
+    val state by viewModel.createPlaceState.collectAsState()
+
+    var selectedImages by remember(state.images) { mutableStateOf(state.images) }
     var showImagePicker by remember { mutableStateOf(false) }
     var imageUrl by remember { mutableStateOf("") }
     var urlError by remember { mutableStateOf("") }
@@ -344,7 +349,11 @@ fun CreatePlaceStepFour(
                 }
 
                 Button(
-                    onClick = { onSubmit() },
+                    onClick = {
+                        // Guardar imágenes en el ViewModel antes de enviar
+                        viewModel.updateImages(selectedImages)
+                        onSubmit()
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .height(56.dp),

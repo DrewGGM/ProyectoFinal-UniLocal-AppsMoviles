@@ -35,9 +35,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.primeraplicacionprueba.ui.components.Search
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
+import com.example.primeraplicacionprueba.ui.screens.LocalMainViewModel
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.ui.theme.Accent
 
@@ -46,8 +46,10 @@ import com.example.primeraplicacionprueba.ui.theme.Accent
 fun Map(
     onMapToFilter: () -> Unit = {},
 ){
-    val placesViewModel : PlacesViewModel = viewModel()
+    val mainViewModel = LocalMainViewModel.current
+    val placesViewModel : PlacesViewModel = mainViewModel.placesViewModel
     var query by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
 
 
     Box(
@@ -70,7 +72,9 @@ fun Map(
             },
             placeholder = stringResource(id = R.string.txt_search_placeholder),
             itemText= {it.title} ,
-            onQueryChange = {query = it}
+            onQueryChange = {query = it},
+            expanded = expanded,
+            onExpandedChange = { expanded = it }
 
         )
 

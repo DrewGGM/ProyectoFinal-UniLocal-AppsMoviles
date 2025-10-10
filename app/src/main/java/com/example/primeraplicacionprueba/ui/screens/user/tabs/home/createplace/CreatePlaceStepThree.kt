@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,21 +24,30 @@ import androidx.compose.material3.HorizontalDivider
 import com.example.primeraplicacionprueba.R
 import androidx.compose.ui.res.stringResource
 import com.example.primeraplicacionprueba.ui.theme.*
+import com.example.primeraplicacionprueba.model.Day
+import com.example.primeraplicacionprueba.model.Shedule
+import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
+import java.time.LocalTime
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 
 data class DaySchedule(
     val day: String,
-    var openTime: String = "",
-    var closeTime: String = "",
-    var isClosed: Boolean = false
+    val openTime: MutableState<String> = mutableStateOf(""),
+    val closeTime: MutableState<String> = mutableStateOf(""),
+    val isClosed: MutableState<Boolean> = mutableStateOf(false)
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatePlaceStepThree(
+    viewModel: PlacesViewModel,
     onNavigateToHome: () -> Unit = {},
     onNavigateToPrevious: () -> Unit = {},
     onNavigateToNext: () -> Unit = {}
 ) {
+    val state by viewModel.createPlaceState.collectAsState()
+
     val mondayText = stringResource(R.string.txt_monday)
     val tuesdayText = stringResource(R.string.txt_tuesday)
     val wednesdayText = stringResource(R.string.txt_wednesday)
@@ -149,8 +159,8 @@ fun CreatePlaceStepThree(
                         rowSchedules.forEach { schedule ->
                             ScheduleCard(
                                 schedule = schedule,
-                                onOpenTimeChange = { schedule.openTime = it },
-                                onCloseTimeChange = { schedule.closeTime = it },
+                                onOpenTimeChange = { schedule.openTime.value = it },
+                                onCloseTimeChange = { schedule.closeTime.value = it },
                                 modifier = Modifier.weight(1f)
                             )
                         }
@@ -190,7 +200,54 @@ fun CreatePlaceStepThree(
                 }
 
                 Button(
-                    onClick = { onNavigateToNext() },
+                    onClick = {
+                        // Convertir DaySchedule a Shedule y guardar en el ViewModel
+                        // Los horarios son opcionales, si no se llenan se omiten
+                        val sheduleList = schedules.mapNotNull { daySchedule ->
+                            if (daySchedule.openTime.value.isNotBlank() && daySchedule.closeTime.value.isNotBlank()) {
+                                try {
+                                    // Agregar :00 si el usuario solo puso HH
+                                    val openTimeFormatted = if (daySchedule.openTime.value.contains(":")) {
+                                        daySchedule.openTime.value
+                                    } else {
+                                        "${daySchedule.openTime.value}:00"
+                                    }
+
+                                    val closeTimeFormatted = if (daySchedule.closeTime.value.contains(":")) {
+                                        daySchedule.closeTime.value
+                                    } else {
+                                        "${daySchedule.closeTime.value}:00"
+                                    }
+
+                                    val day = when (daySchedule.day.lowercase()) {
+                                        "lunes", "monday" -> Day.MONDAY
+                                        "martes", "tuesday" -> Day.TUESDAY
+                                        "mi\u00e9rcoles", "miercoles", "wednesday" -> Day.WEDNESDAY
+                                        "jueves", "thursday" -> Day.THURSDAY
+                                        "viernes", "friday" -> Day.FRIDAY
+                                        "s\u00e1bado", "sabado", "saturday" -> Day.SATURDAY
+                                        "domingo", "sunday" -> Day.SUNDAY
+                                        else -> null
+                                    }
+
+                                    day?.let {
+                                        Shedule(
+                                            day = it,
+                                            open = LocalTime.parse(openTimeFormatted),
+                                            close = LocalTime.parse(closeTimeFormatted)
+                                        )
+                                    }
+                                } catch (e: Exception) {
+                                    // Si hay error de formato, ignorar este día
+                                    null
+                                }
+                            } else null
+                        }.filterNotNull()
+
+                        // Guardar horarios (puede ser lista vacía si no se configuró ninguno)
+                        viewModel.updateSchedule(sheduleList)
+                        onNavigateToNext()
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .height(56.dp),
@@ -251,11 +308,20 @@ fun ScheduleCard(
             )
 
             // Campo de hora de apertura
+            val openInvalid = schedule.openTime.value.isNotBlank() && !schedule.openTime.value.matches(Regex("^([01]\\d|2[0-3]):[0-5]\\d$")) && schedule.openTime.value.length >= 4
             OutlinedTextField(
-                value = schedule.openTime,
-                onValueChange = onOpenTimeChange,
-                placeholder = { Text(stringResource(R.string.txt_opening_time), fontSize = 12.sp) },
+                value = schedule.openTime.value,
+                onValueChange = { newValue ->
+                    // Filtrar para solo permitir números y :
+                    val filtered = newValue.filter { it.isDigit() || it == ':' }
+                    // Limitar a formato HH:mm (5 caracteres)
+                    if (filtered.length <= 5) {
+                        onOpenTimeChange(filtered)
+                    }
+                },
+                placeholder = { Text(stringResource(R.string.placeholder_time_hhmm), fontSize = 12.sp) },
                 modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = BorderLight,
                     focusedBorderColor = Secondary,
@@ -263,15 +329,28 @@ fun ScheduleCard(
                     focusedContainerColor = Color.White
                 ),
                 shape = RoundedCornerShape(8.dp),
-                textStyle = LocalTextStyle.current.copy(fontSize = 13.sp)
+                textStyle = LocalTextStyle.current.copy(fontSize = 13.sp),
+                isError = openInvalid,
+                supportingText = if (openInvalid) {
+                    { Text(text = stringResource(R.string.placeholder_time_hhmm), color = MaterialTheme.colorScheme.error, fontSize = 11.sp) }
+                } else null
             )
 
             // Campo de hora de cierre
+            val closeInvalid = schedule.closeTime.value.isNotBlank() && !schedule.closeTime.value.matches(Regex("^([01]\\d|2[0-3]):[0-5]\\d$")) && schedule.closeTime.value.length >= 4
             OutlinedTextField(
-                value = schedule.closeTime,
-                onValueChange = onCloseTimeChange,
-                placeholder = { Text(stringResource(R.string.txt_closing_time), fontSize = 12.sp) },
+                value = schedule.closeTime.value,
+                onValueChange = { newValue ->
+                    // Filtrar para solo permitir números y :
+                    val filtered = newValue.filter { it.isDigit() || it == ':' }
+                    // Limitar a formato HH:mm (5 caracteres)
+                    if (filtered.length <= 5) {
+                        onCloseTimeChange(filtered)
+                    }
+                },
+                placeholder = { Text(stringResource(R.string.placeholder_time_hhmm), fontSize = 12.sp) },
                 modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = BorderLight,
                     focusedBorderColor = Secondary,
@@ -279,7 +358,11 @@ fun ScheduleCard(
                     focusedContainerColor = Color.White
                 ),
                 shape = RoundedCornerShape(8.dp),
-                textStyle = LocalTextStyle.current.copy(fontSize = 13.sp)
+                textStyle = LocalTextStyle.current.copy(fontSize = 13.sp),
+                isError = closeInvalid,
+                supportingText = if (closeInvalid) {
+                    { Text(text = stringResource(R.string.placeholder_time_hhmm), color = MaterialTheme.colorScheme.error, fontSize = 11.sp) }
+                } else null
             )
         }
     }

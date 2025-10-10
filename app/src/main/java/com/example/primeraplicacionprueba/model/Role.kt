@@ -1,6 +1,6 @@
 package com.example.primeraplicacionprueba.model
 
-enum class Rol(){
+enum class Role(){
     ADMIN,
     USER
 }

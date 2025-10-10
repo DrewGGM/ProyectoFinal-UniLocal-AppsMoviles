@@ -2,16 +2,39 @@ package com.example.primeraplicacionprueba.ui.screens.user.tabs.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,16 +48,28 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
-import com.example.primeraplicacionprueba.model.StatData
 import com.example.primeraplicacionprueba.model.MenuItemData
-import com.example.primeraplicacionprueba.ui.theme.*
+import com.example.primeraplicacionprueba.model.StatData
+import com.example.primeraplicacionprueba.model.User
+import com.example.primeraplicacionprueba.ui.theme.BgLight
+import com.example.primeraplicacionprueba.ui.theme.ErrorRed
+import com.example.primeraplicacionprueba.ui.theme.Primary
+import com.example.primeraplicacionprueba.ui.theme.Secondary
+import com.example.primeraplicacionprueba.ui.theme.TextDark
+import com.example.primeraplicacionprueba.ui.theme.TextLight
+import com.example.primeraplicacionprueba.ui.theme.TextMuted
+import com.example.primeraplicacionprueba.viewmodel.UsersViewModel
 
 @Composable
 fun Profile(
+    user: User,
     onNavigateToEditProfile: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
-    onNavigateToAchievements: () -> Unit = {}
+    onNavigateToAchievements: () -> Unit = {},
+    onNavigateToMyPlaces: () -> Unit = {},
+    onNavigateToFavorites: () -> Unit = {}
 ) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,17 +77,21 @@ fun Profile(
             .verticalScroll(rememberScrollState())
     ) {
         // Header con gradiente
-        ProfileHeader()
+        ProfileHeader(user = user)
+
+        Spacer(modifier = Modifier.height(5.dp))
 
         // Estadísticas
-        StatsGrid()
+        StatsGrid(user = user)
 
         // Mi Contenido
         Spacer(modifier = Modifier.height(24.dp))
         SectionTitle(stringResource(R.string.txt_my_content))
         ContentSection(
             onNavigateToEditProfile = onNavigateToEditProfile,
-            onNavigateToAchievements = onNavigateToAchievements
+            onNavigateToAchievements = onNavigateToAchievements,
+            onNavigateToMyPlaces = onNavigateToMyPlaces,
+            onNavigateToFavorites = onNavigateToFavorites,
         )
 
         // Opciones de la Cuenta
@@ -66,7 +105,7 @@ fun Profile(
 }
 
 @Composable
-fun ProfileHeader() {
+fun ProfileHeader(user: User?) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -111,7 +150,7 @@ fun ProfileHeader() {
 
                 // Nombre
                 Text(
-                    text = stringResource(R.string.txt_user_name_sample),
+                    text = user?.nombre ?: "",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextLight
@@ -119,7 +158,7 @@ fun ProfileHeader() {
 
                 // Rol
                 Text(
-                    text = stringResource(R.string.txt_role_explorer),
+                    text = user?.rol?.name ?: "",
                     fontSize = 16.sp,
                     color = TextLight.copy(alpha = 0.9f)
                 )
@@ -129,12 +168,12 @@ fun ProfileHeader() {
 }
 
 @Composable
-fun StatsGrid() {
+fun StatsGrid(user: User?) {
     val stats = listOf(
-        StatData("45", stringResource(R.string.txt_stat_reputation)),
-        StatData("7", stringResource(R.string.txt_stat_places)),
-        StatData("3", stringResource(R.string.txt_stat_reviews)),
-        StatData("12", stringResource(R.string.txt_stat_badges))
+        StatData(user?.placesCreated.toString(), stringResource(R.string.txt_stat_places)),
+        StatData(user?.placesVisited.toString(), stringResource(R.string.txt_stat_visited)),
+        StatData(user?.reviewsWritten.toString(), stringResource(R.string.txt_stat_reviews)),
+        StatData(user?.favoritesAdded.toString(), stringResource(R.string.txt_stat_favorites))
     )
 
     Column(
@@ -221,13 +260,17 @@ fun SectionTitle(title: String) {
 @Composable
 fun ContentSection(
     onNavigateToEditProfile: () -> Unit = {},
-    onNavigateToAchievements: () -> Unit = {}
+    onNavigateToAchievements: () -> Unit = {},
+    onNavigateToMyPlaces: () -> Unit = {},
+    onNavigateToFavorites: () -> Unit = {}
 ) {
     val editProfileText = stringResource(R.string.txt_edit_profile)
     val achievementsText = stringResource(R.string.txt_my_achievements)
+    val myPlacesText = stringResource(R.string.txt_my_places)
+    val favorites = stringResource(R.string.txt_my_favorites)
     val items = listOf(
-        MenuItemData(stringResource(R.string.txt_my_places), Icons.Default.LocationOn),
-        MenuItemData(stringResource(R.string.txt_my_favorites), Icons.Default.Star),
+        MenuItemData(myPlacesText, Icons.Default.LocationOn),
+        MenuItemData(favorites, Icons.Default.Star),
         MenuItemData(achievementsText, Icons.Default.EmojiEvents),
         MenuItemData(editProfileText, Icons.Default.Edit)
     )
@@ -249,6 +292,8 @@ fun ContentSection(
                         when (item.text) {
                             editProfileText -> onNavigateToEditProfile()
                             achievementsText -> onNavigateToAchievements()
+                            favorites  -> onNavigateToFavorites()
+                            myPlacesText -> onNavigateToMyPlaces()
                         }
                     },
                     showDivider = index < items.size - 1
@@ -283,6 +328,7 @@ fun AccountOptionsSection(
                     text = item.text,
                     onClick = {
                         if (item.text == logoutText) {
+
                             onNavigateToLogin()
                         }
                     },
