@@ -1,27 +1,38 @@
 package com.example.primeraplicacionprueba.ui.screens.admin
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.primeraplicacionprueba.model.User
+import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.PlaceStatus
+import com.example.primeraplicacionprueba.model.User
+import com.example.primeraplicacionprueba.ui.theme.BgLight
+import com.example.primeraplicacionprueba.ui.theme.Primary
+import com.example.primeraplicacionprueba.ui.theme.Secondary
+import com.example.primeraplicacionprueba.ui.theme.TextLight
+import com.example.primeraplicacionprueba.ui.theme.TextMuted
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,13 +40,10 @@ import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 fun MyPerfilAdmin(
     user: User,
     placesViewModel: PlacesViewModel,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToLogin: () -> Unit = {}
 ) {
     val places by placesViewModel.places.collectAsState()
-    
-    // Datos del usuario recibidos por parámetro
-    val userName = user.nombre
-    val userRole = user.rol.name
     
     // Estadísticas reales del administrador
     val approvedCount = places.count { it.placeStatus == PlaceStatus.APPROVED }
@@ -49,7 +57,7 @@ fun MyPerfilAdmin(
             TopAppBar(
                 title = { 
                     Text(
-                        "Mi Perfil",
+                        stringResource(R.string.txt_my_profile),
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
                     )
@@ -57,8 +65,8 @@ fun MyPerfilAdmin(
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Volver",
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.txt_go_back),
                             tint = Color.Black
                         )
                     }
@@ -67,122 +75,143 @@ fun MyPerfilAdmin(
             )
         }
     ) { padding ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
-                .padding(padding),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .background(BgLight)
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
         ) {
-            item {
-                // Banner del perfil con gradiente
+            // Header con gradiente (mismo estilo que Profile)
+            AdminProfileHeader(user = user)
+
+            Spacer(modifier = Modifier.height(5.dp))
+
+            // Estadísticas (mismo estilo que Profile)
+            AdminStatsGrid(
+                approvedCount = approvedCount,
+                rejectedCount = rejectedCount,
+                pendingCount = pendingCount,
+                reportsHandled = reportsHandled
+            )
+
+            // Opciones de la Cuenta
+            Spacer(modifier = Modifier.height(24.dp))
+            SectionTitle(stringResource(R.string.txt_account_options))
+            AccountOptionsSection(onNavigateToLogin = onNavigateToLogin)
+
+            // Espaciado para el bottom navigation
+            Spacer(modifier = Modifier.height(100.dp))
+        }
+    }
+}
+
+@Composable
+fun AdminProfileHeader(user: User) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(250.dp)
+    ) {
+        // Fondo con gradiente
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
+                .background(
+                    Brush.linearGradient(
+                        colors = listOf(Primary, Secondary)
+                    )
+                )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 40.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Avatar
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .background(
-                            brush = Brush.horizontalGradient(
-                                colors = listOf(
-                                    Color(0xFFE91E63), // Rosa-rojo
-                                    Color(0xFF4DB6AC)  // Verde-azul
-                                )
-                            ),
-                            shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
-                        )
+                        .size(100.dp)
+                        .shadow(8.dp, CircleShape)
+                        .clip(CircleShape)
+                        .background(Color.White),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(horizontal = 16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        // Avatar circular
-                        Box(
-                            modifier = Modifier
-                                .size(80.dp)
-                                .clip(CircleShape)
-                                .background(Color.White)
-                                .padding(8.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Person,
-                                contentDescription = "Avatar",
-                                tint = Color(0xFFFF5722),
-                                modifier = Modifier.size(40.dp)
-                            )
-                        }
-                        
-                        Spacer(modifier = Modifier.height(12.dp))
-                        
-                        // Nombre del usuario
-                        Text(
-                            text = userName,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                        
-                        // Rol del usuario
-                        Text(
-                            text = userRole,
-                            fontSize = 14.sp,
-                            color = Color.White.copy(alpha = 0.8f)
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = stringResource(R.string.txt_avatar),
+                        modifier = Modifier.size(60.dp),
+                        tint = Primary
+                    )
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Nombre
+                Text(
+                    text = user.nombre,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextLight
+                )
+
+                // Rol
+                Text(
+                    text = user.rol.name,
+                    fontSize = 16.sp,
+                    color = TextLight.copy(alpha = 0.9f)
+                )
             }
-            
-            item {
-                // Grid de estadísticas 2x2
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    // Fila superior
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        // Tarjeta Aprobados
-                        StatCard(
-                            modifier = Modifier.weight(1f),
-                            number = approvedCount.toString(),
-                            label = "Aprobados",
-                            color = Color(0xFFFF5722)
-                        )
-                        
-                        // Tarjeta Rechazados
-                        StatCard(
-                            modifier = Modifier.weight(1f),
-                            number = rejectedCount.toString(),
-                            label = "Rechazados",
-                            color = Color(0xFFFF5722)
-                        )
-                    }
-                    
-                    // Fila inferior
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        // Tarjeta Reportes manejados
-                        StatCard(
-                            modifier = Modifier.weight(1f),
-                            number = reportsHandled.toString(),
-                            label = "Reportes manejados",
-                            color = Color(0xFFFF5722)
-                        )
-                        
-                        // Tarjeta Puntos de reputación
-                        StatCard(
-                            modifier = Modifier.weight(1f),
-                            number = reputationPoints.toString(),
-                            label = "Puntos de reputación",
-                            color = Color(0xFFFF5722)
-                        )
-                    }
-                }
+        }
+    }
+}
+
+@Composable
+fun AdminStatsGrid(
+    approvedCount: Int,
+    rejectedCount: Int,
+    pendingCount: Int,
+    reportsHandled: Int
+) {
+    val stats = listOf(
+        StatData(approvedCount.toString(), stringResource(R.string.txt_approved_places)),
+        StatData(rejectedCount.toString(), stringResource(R.string.txt_rejected_places)),
+        StatData(pendingCount.toString(), stringResource(R.string.txt_pending_places)),
+        StatData(reportsHandled.toString(), stringResource(R.string.txt_reports_handled))
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .offset(y = (-50).dp)
+            .padding(horizontal = 24.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            stats.take(2).forEach { stat ->
+                StatCard(
+                    modifier = Modifier.weight(1f),
+                    value = stat.value,
+                    label = stat.label
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            stats.takeLast(2).forEach { stat ->
+                StatCard(
+                    modifier = Modifier.weight(1f),
+                    value = stat.value,
+                    label = stat.label
+                )
             }
         }
     }
@@ -191,36 +220,123 @@ fun MyPerfilAdmin(
 @Composable
 fun StatCard(
     modifier: Modifier = Modifier,
-    number: String,
-    label: String,
-    color: Color
+    value: String,
+    label: String
 ) {
     Card(
-        modifier = modifier.height(100.dp),
-        shape = RoundedCornerShape(16.dp),
+        modifier = modifier,
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = number,
-                fontSize = 28.sp,
+                text = value,
+                fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                color = color
+                color = Primary
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = label,
-                fontSize = 12.sp,
-                color = Color.Gray,
-                textAlign = TextAlign.Center
+                fontSize = 13.sp,
+                color = TextMuted,
+                textAlign = TextAlign.Center,
+                lineHeight = 16.sp
             )
         }
     }
 }
+
+@Composable
+fun SectionTitle(title: String) {
+    Text(
+        text = title,
+        fontSize = 18.sp,
+        fontWeight = FontWeight.SemiBold,
+        color = Color.Black,
+        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+    )
+}
+
+@Composable
+fun AccountOptionsSection(
+    onNavigateToLogin: () -> Unit = {}
+) {
+    val logoutText = stringResource(R.string.txt_logout)
+    val items = listOf(
+        MenuItemData(logoutText, Icons.AutoMirrored.Filled.Logout)
+    )
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 12.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column {
+            items.forEachIndexed { index, item ->
+                MenuItem(
+                    icon = item.icon,
+                    text = item.text,
+                    onClick = {
+                        when (item.text) {
+                            logoutText -> onNavigateToLogin()
+                        }
+                    }
+                )
+                if (index < items.size - 1) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        color = BgLight
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun MenuItem(
+    icon: ImageVector,
+    text: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = if (text == stringResource(R.string.txt_logout)) Color.Red else Primary,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = text,
+            fontSize = 16.sp,
+            color = if (text == stringResource(R.string.txt_logout)) Color.Red else Color.Black
+        )
+    }
+}
+
+data class StatData(
+    val value: String,
+    val label: String
+)
+
+data class MenuItemData(
+    val text: String,
+    val icon: ImageVector
+)

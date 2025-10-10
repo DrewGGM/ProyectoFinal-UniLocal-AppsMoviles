@@ -178,11 +178,18 @@ fun Navigation(
                     val usersViewModel = mainViewModel.usersViewModel
                     val placesViewModel = mainViewModel.placesViewModel
                     val currentUser by usersViewModel.currentUser.collectAsState()
+                    
                     currentUser?.let { user ->
                         MyPerfilAdmin(
                             user = user,
                             placesViewModel = placesViewModel,
-                            onNavigateBack = { navController.popBackStack() }
+                            onNavigateBack = { navController.popBackStack() },
+                            onNavigateToLogin = {
+                                usersViewModel.logout(context)
+                                navController.navigate(RouteScreen.Login) {
+                                    popUpTo(RouteScreen.HomeAdmin) { inclusive = true }
+                                }
+                            }
                         )
                     }
                 }
@@ -456,11 +463,13 @@ fun Navigation(
                 composable<RouteScreen.Favorites> {
                     val mainViewModel = LocalMainViewModel.current
                     val usersViewModel = mainViewModel.usersViewModel
+                    val placesViewModel = mainViewModel.placesViewModel
                     val currentUser by usersViewModel.currentUser.collectAsState()
                     val favorites = currentUser?.favorites ?: emptyList()
                     currentUser?.let { user ->
                         FavoritesScreen(
                             favorites= favorites,
+                            placesViewModel = placesViewModel,
                             onNavigateBack = {
                                 navController.popBackStack()
                             },

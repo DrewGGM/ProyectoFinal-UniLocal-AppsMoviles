@@ -2,6 +2,7 @@ package com.example.primeraplicacionprueba.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.example.primeraplicacionprueba.model.Review
+import com.example.primeraplicacionprueba.model.ReviewReply
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +24,20 @@ class ReviewViewModel: ViewModel() {
     fun create(review: Review) {
         _reviews.value = _reviews.value + review
     }
+    
+    fun addReplyToReview(reviewId: String, reply: ReviewReply) {
+        _reviews.value = _reviews.value.map { review ->
+            if (review.id == reviewId) {
+                review.copy(replies = review.replies + reply)
+            } else {
+                review
+            }
+        }
+    }
+    
+    fun getReviewById(reviewId: String): Review? {
+        return _reviews.value.find { it.id == reviewId }
+    }
 
     fun loadReviews() {
         _reviews.value = listOf(
@@ -33,7 +48,17 @@ class ReviewViewModel: ViewModel() {
                 placeID = "p1",
                 rating = 5,
                 comment = "Una experiencia increíble. La comida deliciosa y el servicio excepcional. ¡Totalmente recomendado!",
-                date = LocalDateTime.now().minusDays(2)
+                date = LocalDateTime.now().minusDays(2),
+                replies = listOf(
+                    ReviewReply(
+                        id = "reply1",
+                        reviewId = "r1",
+                        userID = "owner1",
+                        username = "Café Central",
+                        replyText = "¡Muchas gracias por tu comentario! Nos alegra saber que disfrutaste tu visita.",
+                        date = LocalDateTime.now().minusDays(1)
+                    )
+                )
             ),
             Review(
                 id = "r2",

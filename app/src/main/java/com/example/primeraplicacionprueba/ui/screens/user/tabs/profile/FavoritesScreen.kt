@@ -25,11 +25,13 @@ import coil.compose.AsyncImage
 import com.example.primeraplicacionprueba.model.Place
 import com.example.primeraplicacionprueba.ui.theme.*
 import com.example.primeraplicacionprueba.R
+import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoritesScreen(
     favorites: List<Place> = emptyList(),
+    placesViewModel: PlacesViewModel,
     onNavigateBack: () -> Unit = {},
     onPlaceClick: (String) -> Unit = {},
     onRemoveFavorite: (String) -> Unit = {}
@@ -77,6 +79,7 @@ fun FavoritesScreen(
                 items(favorites) { place ->
                     FavoriteCard(
                         place = place,
+                        placesViewModel = placesViewModel,
                         onClick = { onPlaceClick(place.id) },
                         onRemoveFavorite = { onRemoveFavorite(place.id) }
                     )
@@ -89,6 +92,7 @@ fun FavoritesScreen(
 @Composable
 fun FavoriteCard(
     place: Place,
+    placesViewModel: PlacesViewModel,
     onClick: () -> Unit,
     onRemoveFavorite: () -> Unit
 ) {
@@ -158,7 +162,7 @@ fun FavoriteCard(
                     Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                         repeat(5) { index ->
                             Icon(
-                                imageVector = if (index < place.getAverageRating().toInt()) {
+                                imageVector = if (index < placesViewModel.getAverageRatingForPlace(place.id).toInt()) {
                                     Icons.Default.Star
                                 } else {
                                     Icons.Default.StarBorder
@@ -170,7 +174,7 @@ fun FavoriteCard(
                         }
                     }
                     Text(
-                        text = "(${(place.getAverageRating() * 10).toInt()})",
+                        text = "(${(placesViewModel.getAverageRatingForPlace(place.id) * 10).toInt()})",
                         fontSize = 13.sp,
                         color = TextMuted
                     )
