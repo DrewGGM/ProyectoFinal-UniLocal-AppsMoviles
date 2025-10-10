@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.model.Review
+import com.example.primeraplicacionprueba.model.ReviewReply
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 import com.example.primeraplicacionprueba.viewmodel.ReviewViewModel
 import java.time.format.DateTimeFormatter
@@ -37,6 +38,10 @@ fun MyCommentScreen(
     val place = placesViewModel.findById(placeId)
     val reviews by reviewViewModel.reviews.collectAsState()
     val placeReviews = reviews.filter { it.placeID == placeId }
+    
+    // Obtener usuario actual para las respuestas
+    val mainViewModel = LocalMainViewModel.current
+    val currentUser by mainViewModel.usersViewModel.currentUser.collectAsState()
     
     Scaffold(
         topBar = {
@@ -73,7 +78,18 @@ fun MyCommentScreen(
                 items(placeReviews) { review ->
                     CommentCard(
                         review = review,
-                        onReply = { /* TODO: Implementar respuesta */ }
+                        onReply = { replyText ->
+                            // Crear respuesta usando ReviewViewModel
+                            val newReply = ReviewReply(
+                                id = "reply_${System.currentTimeMillis()}",
+                                reviewId = review.id,
+                                userID = currentUser?.id ?: "unknown_user",
+                                username = place?.title ?: "Mi Lugar", // Usar nombre del lugar
+                                replyText = replyText,
+                                date = java.time.LocalDateTime.now()
+                            )
+                            reviewViewModel.addReplyToReview(review.id, newReply)
+                        }
                     )
                 }
             } else {
@@ -180,8 +196,17 @@ fun CommentCard(
                 color = Color.Gray
             )
             
-            // Respuesta existente (si existe)
-            // TODO: Implementar cuando se agregue sistema de respuestas
+            // Mostrar respuestas existentes
+            if (review.replies.isNotEmpty()) {
+                Column(
+                    modifier = Modifier.padding(start = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    review.replies.forEach { reply ->
+                        ReplyCard(reply = reply)
+                    }
+                }
+            }
             
             // Campo de respuesta
             Row(
@@ -223,4 +248,5 @@ fun CommentCard(
         }
     }
 }
+
 

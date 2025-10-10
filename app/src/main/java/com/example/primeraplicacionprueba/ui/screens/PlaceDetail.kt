@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.primeraplicacionprueba.viewmodel.ReviewViewModel
+import com.example.primeraplicacionprueba.model.ReviewReply
 
 @Composable
 fun PlaceDetail(
@@ -48,7 +50,7 @@ fun PlaceDetail(
 ) {
     val place = LocalMainViewModel.current.placesViewModel.findById(id)
     val reviews by reviewViewModel.reviews.collectAsState()
-    val placeReviews = reviews.filter { it.placeID == id }
+    val placeReviews = remember(reviews, id) { reviews.filter { it.placeID == id } }
 
     if (place == null) {
         Box(
@@ -137,7 +139,7 @@ fun PlaceDetail(
                         title = place.title,
                         isOpen = place.isCurrentlyOpen(),
                         closeTime = place.getFormattedCloseTime(),
-                        rating = place.getAverageRating()
+                        rating = remember(reviews, id) { placesViewModel.getAverageRatingForPlace(id) }
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -195,14 +197,16 @@ fun PlaceDetail(
                     Spacer(modifier = Modifier.height(12.dp))
                     // Mostrar todas las reseñas del lugar
                     if (placeReviews.isNotEmpty()) {
-                        placeReviews.forEach { review ->
-                            ReviewCard(
-                                userName = review.username,
-                                rating = review.rating.toFloat(),
-                                comment = review.comment,
-                                avatarColor = if (review.rating >= 4) Tertiary else Primary
-                            )
-                            Spacer(modifier = Modifier.height(12.dp))
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            placeReviews.forEach { review ->
+                                ReviewCard(
+                                    userName = review.username,
+                                    rating = review.rating.toFloat(),
+                                    comment = review.comment,
+                                    avatarColor = if (review.rating >= 4) Tertiary else Primary,
+                                    replies = review.replies
+                                )
+                            }
                         }
                     } else {
                         // Mostrar mensaje si no hay reseñas
@@ -379,7 +383,7 @@ fun ContactGrid(
             )
         }
         
-        // Si no hay teléfonos, mostrar "No disponible"
+        // Si no hay teléfonos, mostrar string del resources
         if (phones.isEmpty()) {
             ContactItem(
                 icon = Icons.Default.Phone,
@@ -468,7 +472,8 @@ fun ReviewCard(
     userName: String,
     rating: Float,
     comment: String,
-    avatarColor: Color
+    avatarColor: Color,
+    replies: List<ReviewReply> = emptyList()
 ) {
     Surface(
         shape = RoundedCornerShape(16.dp),
@@ -537,6 +542,66 @@ fun ReviewCard(
                 color = TextSecondary,
                 lineHeight = 20.sp
             )
+            
+            // Mostrar respuestas si existen
+            if (replies.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Column(
+                    modifier = Modifier.padding(start = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    replies.forEach { reply ->
+                        ReplyCard(reply = reply)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ReplyCard(reply: ReviewReply) {
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = Color.White,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // Avatar pequeño
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .clip(CircleShape)
+                    .background(Secondary),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = reply.username.first().uppercase(),
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+            
+            Column {
+                Text(
+                    text = reply.username,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = TextDark
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = reply.replyText,
+                    fontSize = 12.sp,
+                    color = TextSecondary,
+                    lineHeight = 16.sp
+                )
+            }
         }
     }
 }
@@ -620,7 +685,7 @@ fun ScheduleSection(schedules: List<com.example.primeraplicacionprueba.model.She
                         fontSize = 14.sp
                     )
                     Text(
-                        text = entry?.let { "${it.open.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))} - ${it.close.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))}" }
+                        text = entry?.let { stringResource(R.string.txt_schedule_format, it.open.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm")), it.close.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))) }
                             ?: stringResource(id = R.string.txt_closed),
                         color = TextSecondary,
                         fontSize = 13.sp

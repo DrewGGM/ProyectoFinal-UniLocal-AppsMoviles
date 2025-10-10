@@ -31,6 +31,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.PlaceType
+import com.example.primeraplicacionprueba.model.PlaceStatus
 import com.example.primeraplicacionprueba.model.User
 import com.example.primeraplicacionprueba.ui.theme.*
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
@@ -47,7 +48,7 @@ fun Home(
 
     val places by placesViewModel.places.collectAsState()
     val mostPopularPlaces = places
-        .filter { it.city.equals(user.city, ignoreCase = true) }
+        .filter { it.city.equals(user.city, ignoreCase = true) && it.placeStatus == PlaceStatus.APPROVED }
         .sortedByDescending { it.favoriteCount }
 
     var query by remember { mutableStateOf("") }
@@ -55,7 +56,7 @@ fun Home(
     var selectedType by remember { mutableStateOf<PlaceType?>(null) }
     val availableTypes by remember(places, user.city) {
         mutableStateOf(
-            places.filter { it.city.equals(user.city, ignoreCase = true) }
+            places.filter { it.city.equals(user.city, ignoreCase = true) && it.placeStatus == PlaceStatus.APPROVED }
                 .map { it.type }
                 .distinct()
         )
@@ -120,8 +121,8 @@ fun Home(
                 )
             }
 
-            // Lista filtrada por query y categoría
-            val base = places.filter { it.city.equals(user.city, ignoreCase = true) }
+            // Lista filtrada por query y categoría (solo lugares aprobados)
+            val base = places.filter { it.city.equals(user.city, ignoreCase = true) && it.placeStatus == PlaceStatus.APPROVED }
             val byType = selectedType?.let { t -> base.filter { it.type == t } } ?: base
             val listToShow = if (query.isNotBlank()) {
                 byType.filter { p ->
@@ -134,9 +135,9 @@ fun Home(
                 PlaceCard(
                     name = it.title ,
                     category = it.type ,
-                    rating = it.getAverageRating() ,
+                    rating = placesViewModel.getAverageRatingForPlace(it.id) ,
                     distance = it.getDistanceFromUser(),
-                    imageUrl = it.imagenes[0],
+                    imageUrl = it.imagenes.firstOrNull() ?: "",
                     onClick = { onNavigateToPlace(it.id) }
                 )
             }

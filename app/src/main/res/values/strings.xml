@@ -326,4 +326,29 @@
     <!-- SAMPLE USERS -->
     <string name="txt_user_juan_perez">JuanPerez</string>
     <string name="txt_user_ana_gomez">AnaGomez</string>
+    
+    <!-- ADMIN PANEL -->
+    <string name="txt_moderation_panel_title">Panel de Moderación</string>
+    <string name="txt_welcome_moderator">Bienvenido, Moderador</string>
+    <string name="txt_manage_place_requests">Gestiona las solicitudes de lugares</string>
+    <string name="txt_profile">Perfil</string>
+    <string name="txt_notifications">Notificaciones</string>
+    <string name="txt_my_profile">Mi Perfil</string>
+    <string name="txt_approved_places">Aprobados</string>
+    <string name="txt_rejected_places">Rechazados</string>
+    <string name="txt_pending_places">Pendientes</string>
+    <string name="txt_reports_handled">Reportes</string>
+    <string name="txt_no_pending_places">No hay lugares pendientes de revisión</string>
+    <string name="txt_moderation_history">Historial de Moderación</string>
+    <string name="txt_no_moderation_history">No hay historial de moderación</string>
+    <string name="txt_user_prefix">Usuario %1$s</string>
+    <string name="txt_time_ago_minutes">Hace 5 min</string>
+    <string name="txt_time_ago_hours">Hace 2 horas</string>
+    <string name="txt_moderated_places_count">%1$d lugares moderados</string>
+    <string name="txt_filter_all">Todos</string>
+    <string name="txt_filter_approved">Aprobados</string>
+    <string name="txt_filter_rejected">Rechazados</string>
+    
+    <!-- PLACE DETAIL -->
+    <string name="txt_schedule_format">%1$s - %2$s</string>
 </resources>

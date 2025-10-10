@@ -25,9 +25,31 @@ class PlacesViewModel : ViewModel() {
     // Estado para creación de lugares
     private val _createPlaceState = MutableStateFlow(CreatePlaceState())
     val createPlaceState: StateFlow<CreatePlaceState> = _createPlaceState.asStateFlow()
+    
+    // Reference to ReviewViewModel for getting reviews
+    private var reviewViewModel: ReviewViewModel? = null
 
     init {
         loadPlaces()
+    }
+    
+    fun setReviewViewModel(reviewViewModel: ReviewViewModel) {
+        this.reviewViewModel = reviewViewModel
+    }
+    
+    fun getReviewsForPlace(placeId: String): List<Review> {
+        return reviewViewModel?.getReviewsByPlace(placeId) ?: emptyList()
+    }
+    
+    fun getAverageRatingForPlace(placeId: String): Float {
+        val reviews = getReviewsForPlace(placeId)
+        return if (reviews.isNotEmpty()) {
+            reviews.map { it.rating }.average().toFloat()
+        } else 0f
+    }
+    
+    fun getReviewCountForPlace(placeId: String): Int {
+        return getReviewsForPlace(placeId).size
     }
 
     fun loadPlaces() {
@@ -963,7 +985,9 @@ class PlacesViewModel : ViewModel() {
         
         if (placeIndex != -1) {
             val place = currentPlaces[placeIndex]
-            place.changePlaceStatus(PlaceStatus.APPROVED)
+            // Crear una nueva instancia del lugar con el estado actualizado
+            val updatedPlace = place.copy(placeStatus = PlaceStatus.APPROVED)
+            currentPlaces[placeIndex] = updatedPlace
             println("DEBUG: Cambiando estado de ${place.title} a APPROVED")
             
             // Crear una nueva lista para forzar la notificación del StateFlow
@@ -980,7 +1004,9 @@ class PlacesViewModel : ViewModel() {
         
         if (placeIndex != -1) {
             val place = currentPlaces[placeIndex]
-            place.changePlaceStatus(PlaceStatus.REJECTED)
+            // Crear una nueva instancia del lugar con el estado actualizado
+            val updatedPlace = place.copy(placeStatus = PlaceStatus.REJECTED)
+            currentPlaces[placeIndex] = updatedPlace
             println("DEBUG: Cambiando estado de ${place.title} a REJECTED")
             
             // Crear una nueva lista para forzar la notificación del StateFlow

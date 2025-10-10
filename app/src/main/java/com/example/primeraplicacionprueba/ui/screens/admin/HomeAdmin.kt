@@ -19,13 +19,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 import com.example.primeraplicacionprueba.model.Place
 import com.example.primeraplicacionprueba.model.PlaceStatus
+import com.example.primeraplicacionprueba.ui.theme.AdminBackground
+import com.example.primeraplicacionprueba.ui.theme.AdminPrimary
+import com.example.primeraplicacionprueba.ui.theme.AdminSuccess
+import com.example.primeraplicacionprueba.ui.theme.AdminError
+import com.example.primeraplicacionprueba.ui.theme.AdminWarning
+import com.example.primeraplicacionprueba.ui.theme.AdminTextDark
+import com.example.primeraplicacionprueba.ui.theme.AdminTextMuted
+import com.example.primeraplicacionprueba.ui.theme.AdminTextLight
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeAdmin(
     placesViewModel: PlacesViewModel,
@@ -37,62 +47,82 @@ fun HomeAdmin(
     val approvedCount = places.count { it.placeStatus == PlaceStatus.APPROVED }
     val rejectedCount = places.count { it.placeStatus == PlaceStatus.REJECTED }
     
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF5F5F5))
-            .padding(23.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(bottom = 16.dp)
-    ) {
-        // Header
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.txt_moderation_panel),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF333333)
-                )
-                
-                // User icon
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF333333))
-                        .clickable { onNavigateToProfile() },
-                    contentAlignment = Alignment.Center
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { 
+                    Text(
+                        stringResource(R.string.txt_moderation_panel_title),
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                },
+                actions = {
+                    IconButton(onClick = onNavigateToProfile) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = stringResource(R.string.txt_profile),
+                            tint = Color.Black
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+            )
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(AdminBackground)
+                .padding(padding)
+                .padding(horizontal = 23.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(bottom = 16.dp)
+        ) {
+            // Header
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Column {
+                        Text(
+                            text = stringResource(R.string.txt_welcome_moderator),
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = AdminTextDark
+                        )
+                        Text(
+                            text = stringResource(R.string.txt_manage_place_requests),
+                            fontSize = 14.sp,
+                            color = AdminTextMuted
+                        )
+                    }
                     Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Usuario",
-                        tint = Color.White,
+                        imageVector = Icons.Default.Notifications,
+                        contentDescription = stringResource(R.string.txt_notifications),
+                        tint = AdminTextMuted,
                         modifier = Modifier.size(24.dp)
                     )
                 }
             }
-        }
 
-        // Statistics Cards
-        item {
-            StatisticsCards(pendingCount, approvedCount, rejectedCount)
-        }
+            // Statistics Cards
+            item {
+                StatisticsCards(pendingCount, approvedCount, rejectedCount)
+            }
 
-        // Review Queue Section
-        item {
-            ReviewQueueSection(placesViewModel, onItemClick = { id -> onNavigateToDetail(id) })
-        }
+            // Review Queue Section
+            item {
+                ReviewQueueSection(placesViewModel, onItemClick = { id -> onNavigateToDetail(id) })
+            }
 
-        // Moderation History Section
-        item {
-            ModerationHistorySection(placesViewModel)
+            // Moderation History Section
+            item {
+                ModerationHistorySection(placesViewModel)
+            }
         }
-        
     }
 }
 
@@ -113,13 +143,13 @@ fun StatisticsCards(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            StatCard(
-                number = pendingCount.toString(),
+            AdminStatCard(
+                value = pendingCount.toString(),
                 label = stringResource(R.string.txt_pending),
                 modifier = Modifier.weight(1f)
             )
-            StatCard(
-                number = approvedCount.toString(),
+            AdminStatCard(
+                value = approvedCount.toString(),
                 label = stringResource(R.string.txt_approved_today),
                 modifier = Modifier.weight(1f)
             )
@@ -130,13 +160,13 @@ fun StatisticsCards(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            StatCard(
-                number = reportsCount.toString(),
+            AdminStatCard(
+                value = reportsCount.toString(),
                 label = stringResource(R.string.txt_reports),
                 modifier = Modifier.weight(1f)
             )
-            StatCard(
-                number = problemsCount.toString(),
+            AdminStatCard(
+                value = problemsCount.toString(),
                 label = stringResource(R.string.txt_problems),
                 modifier = Modifier.weight(1f)
             )
@@ -145,32 +175,36 @@ fun StatisticsCards(
 }
 
 @Composable
-fun StatCard(
-    number: String,
-    label: String,
-    modifier: Modifier = Modifier
+fun AdminStatCard(
+    modifier: Modifier = Modifier,
+    value: String,
+    label: String
 ) {
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = number,
-                fontSize = 32.sp,
+                text = value,
+                fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFFE53E3E)
+                color = AdminPrimary
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = label,
-                fontSize = 14.sp,
-                color = Color(0xFF666666)
+                fontSize = 12.sp,
+                color = AdminTextMuted,
+                textAlign = TextAlign.Center
             )
         }
     }
@@ -189,33 +223,15 @@ fun ReviewQueueSection(placesViewModel: PlacesViewModel, onItemClick: (String) -
         ) {
             Text(
                 text = stringResource(R.string.txt_review_queue),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF333333)
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = AdminTextDark
             )
-            
-            Button(
-                onClick = { /* Filter action */ },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.txt_filters),
-                        color = Color.White,
-                        fontSize = 14.sp
-                    )
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = "Filtros",
-                        tint = Color.White,
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
-            }
+            Text(
+                text = "${pendingPlaces.size} ${stringResource(R.string.txt_pending)}",
+                fontSize = 14.sp,
+                color = AdminTextMuted
+            )
         }
         
         Spacer(modifier = Modifier.height(12.dp))
@@ -225,8 +241,8 @@ fun ReviewQueueSection(placesViewModel: PlacesViewModel, onItemClick: (String) -
             pendingPlaces.forEach { place ->
                 ReviewItem(
                     placeName = place.title,
-                    createdBy = "Usuario ${place.ownerId}",
-                    timeAgo = "Hace 5 min", // Por simplicidad, tiempo fijo
+                    createdBy = stringResource(R.string.txt_user_prefix, place.ownerId),
+                    timeAgo = stringResource(R.string.txt_time_ago_minutes),
                     onApprove = { placesViewModel.approvePlace(place.id) },
                     onReject = { placesViewModel.rejectPlace(place.id) },
                     onClick = { onItemClick(place.id) }
@@ -243,9 +259,9 @@ fun ReviewQueueSection(placesViewModel: PlacesViewModel, onItemClick: (String) -
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Text(
-                    text = "No hay lugares pendientes de revisión",
+                    text = stringResource(R.string.txt_no_pending_places),
                     modifier = Modifier.padding(16.dp),
-                    color = Color(0xFF666666),
+                    color = AdminTextMuted,
                     fontSize = 14.sp
                 )
             }
@@ -284,48 +300,44 @@ fun ReviewItem(
                     text = placeName,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF333333)
+                    color = AdminTextDark
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = stringResource(R.string.txt_created_by, createdBy) + " • $timeAgo",
+                    text = createdBy,
                     fontSize = 14.sp,
-                    color = Color(0xFF666666)
+                    color = AdminTextMuted
+                )
+                Text(
+                    text = timeAgo,
+                    fontSize = 12.sp,
+                    color = AdminTextLight
                 )
             }
             
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Approve button
-                IconButton(
-                    onClick ={ onApprove()},
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF4CAF50))
+                Button(
+                    onClick = onApprove,
+                    colors = ButtonDefaults.buttonColors(containerColor = AdminSuccess),
+                    shape = RoundedCornerShape(8.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = stringResource(R.string.txt_approve),
-                        tint = Color.White,
-                        modifier = Modifier.size(20.dp)
+                    Text(
+                        text = stringResource(R.string.txt_approve),
+                        color = Color.White,
+                        fontSize = 12.sp
                     )
                 }
-                
-                // Reject button
-                IconButton(
-                    onClick = {onReject()},
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFE53E3E))
+                Button(
+                    onClick = onReject,
+                    colors = ButtonDefaults.buttonColors(containerColor = AdminError),
+                    shape = RoundedCornerShape(8.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = stringResource(R.string.txt_reject),
-                        tint = Color.White,
-                        modifier = Modifier.size(20.dp)
+                    Text(
+                        text = stringResource(R.string.txt_reject),
+                        color = Color.White,
+                        fontSize = 12.sp
                     )
                 }
             }
@@ -339,55 +351,88 @@ fun ModerationHistorySection(placesViewModel: PlacesViewModel) {
     val approvedPlaces = places.filter { it.placeStatus == PlaceStatus.APPROVED }
     val rejectedPlaces = places.filter { it.placeStatus == PlaceStatus.REJECTED }
     
+    // Strings del resources
+    val filterAll = stringResource(R.string.txt_filter_all)
+    val filterApproved = stringResource(R.string.txt_filter_approved)
+    val filterRejected = stringResource(R.string.txt_filter_rejected)
+    
+    // Estado para el filtro del historial
+    var selectedFilter by remember { mutableStateOf(filterAll) }
+    
+    // Mostrar todos los lugares aprobados y rechazados según el filtro
+    val allModeratedPlaces = when (selectedFilter) {
+        filterApproved -> approvedPlaces
+        filterRejected -> rejectedPlaces
+        else -> (approvedPlaces + rejectedPlaces)
+    }.sortedByDescending { 
+        // Ordenar por fecha de creación (simulado por ID para este ejemplo)
+        it.id 
+    }
+    
     Column {
-        Text(
-            text = stringResource(R.string.txt_my_moderation_history),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF333333)
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.txt_moderation_history),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = AdminTextDark
+            )
+            Text(
+                text = stringResource(R.string.txt_moderated_places_count, allModeratedPlaces.size),
+                fontSize = 14.sp,
+                color = AdminTextMuted
+            )
+        }
+        
+        // Filtros del historial
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            listOf(filterAll, filterApproved, filterRejected).forEach { filter ->
+                FilterChip(
+                    onClick = { selectedFilter = filter },
+                    label = { 
+                        Text(
+                            text = filter,
+                            fontSize = 12.sp
+                        ) 
+                    },
+                    selected = selectedFilter == filter,
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = AdminPrimary,
+                        selectedLabelColor = Color.White
+                    )
+                )
+            }
+        }
         
         Spacer(modifier = Modifier.height(12.dp))
         
-        // Mostrar lugares aprobados recientemente
-        approvedPlaces.forEach { place ->
-            HistoryItem(
-                placeName = place.title,
-                action = stringResource(R.string.txt_authorized_by_you),
-                timeAgo = "Recién aprobado",
-                status = stringResource(R.string.txt_approved),
-                statusColor = Color(0xFF4CAF50)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        
-        // Mostrar lugares rechazados recientemente
-        rejectedPlaces.forEach { place ->
-            HistoryItem(
-                placeName = place.title,
-                action = stringResource(R.string.txt_rejected_by_you),
-                timeAgo = "Recién rechazado",
-                status = stringResource(R.string.txt_rejected),
-                statusColor = Color(0xFFFF6B6B)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        
-        // Si no hay historial, mostrar mensaje
-        if (approvedPlaces.isEmpty() && rejectedPlaces.isEmpty()) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Text(
-                    text = "No hay historial de moderación aún",
-                    modifier = Modifier.padding(16.dp),
-                    color = Color(0xFF666666),
-                    fontSize = 14.sp
+        if (allModeratedPlaces.isNotEmpty()) {
+            allModeratedPlaces.forEach { place ->
+                HistoryItem(
+                    placeName = place.title,
+                    status = when (place.placeStatus) {
+                        PlaceStatus.APPROVED -> stringResource(R.string.txt_approved)
+                        PlaceStatus.REJECTED -> stringResource(R.string.txt_rejected)
+                        else -> stringResource(R.string.txt_pending)
+                    },
+                    timeAgo = stringResource(R.string.txt_time_ago_hours)
                 )
+                Spacer(modifier = Modifier.height(8.dp))
             }
+        } else {
+            Text(
+                text = stringResource(R.string.txt_no_moderation_history),
+                fontSize = 14.sp,
+                color = AdminTextMuted,
+                modifier = Modifier.padding(16.dp)
+            )
         }
     }
 }
@@ -395,10 +440,8 @@ fun ModerationHistorySection(placesViewModel: PlacesViewModel) {
 @Composable
 fun HistoryItem(
     placeName: String,
-    action: String,
-    timeAgo: String,
     status: String,
-    statusColor: Color
+    timeAgo: String
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -419,21 +462,27 @@ fun HistoryItem(
                 Text(
                     text = placeName,
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF333333)
+                    fontWeight = FontWeight.Medium,
+                    color = AdminTextDark
                 )
-                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "$action • $timeAgo",
-                    fontSize = 14.sp,
-                    color = Color(0xFF666666)
+                    text = timeAgo,
+                    fontSize = 12.sp,
+                    color = AdminTextLight
                 )
             }
             
             // Status badge
-            Surface(
-                color = statusColor,
-                shape = RoundedCornerShape(16.dp)
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        when (status) {
+                            stringResource(R.string.txt_approved) -> AdminSuccess
+                            stringResource(R.string.txt_rejected) -> AdminError
+                            else -> AdminWarning
+                        }
+                    )
             ) {
                 Text(
                     text = status,
