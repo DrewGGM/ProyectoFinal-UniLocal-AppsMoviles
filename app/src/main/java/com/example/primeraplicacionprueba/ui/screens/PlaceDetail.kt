@@ -40,7 +40,9 @@ import androidx.compose.ui.text.style.TextOverflow
 fun PlaceDetail(
     placesViewModel: PlacesViewModel,
     id: String,
-    onNavigateBack: () -> Unit = {}
+    onNavigateBack: () -> Unit = {},
+    onNavigateToComment: (String) -> Unit = {}
+
 ) {
     val place = LocalMainViewModel.current.placesViewModel.findById(id)
 
@@ -251,7 +253,7 @@ fun PlaceDetail(
                 )
             }
             FloatingActionButton(
-                onClick = { /* Hacer un comentario */ },
+                onClick = { onNavigateToComment(id) },
                 containerColor = Primary,
                 contentColor = Color.White,
                 shape = CircleShape,

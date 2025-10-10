@@ -48,4 +48,8 @@ sealed class RouteScreen{
     @Serializable
     data object Map: RouteScreen();
 
+    @Serializable
+    data class CommentScream(val id: String): RouteScreen();
+
+
 }

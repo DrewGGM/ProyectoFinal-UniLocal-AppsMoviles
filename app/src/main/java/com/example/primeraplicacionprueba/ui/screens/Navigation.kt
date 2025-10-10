@@ -147,7 +147,9 @@ fun Navigation(
                     }
                 }
                 composable<RouteScreen.HomeAdmin> {
-                    HomeAdmin()
+                    val mainViewModel = LocalMainViewModel.current
+                    val placesViewModel = mainViewModel.placesViewModel
+                    HomeAdmin(placesViewModel = placesViewModel)
                 }
 
                 composable<RouteScreen.EditProfile> {
@@ -324,6 +326,19 @@ fun Navigation(
                     val placesViewModel = mainViewModel.placesViewModel
                     PlaceDetail(
                         placesViewModel = placesViewModel,
+                        id = args.id,
+                        onNavigateBack = {
+                            navController.popBackStack()
+                        },
+                        onNavigateToComment = { placeId ->
+                            navController.navigate(RouteScreen.CommentScream(placeId))
+                        }
+                    )
+
+                }
+                composable<RouteScreen.CommentScream> {
+                    val args = it.toRoute<RouteScreen.CommentScream>()
+                    CommentScreen(
                         id = args.id,
                         onNavigateBack = {
                             navController.popBackStack()

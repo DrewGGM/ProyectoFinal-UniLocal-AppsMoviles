@@ -29,6 +29,10 @@ data class Place(
     val placeStatus: PlaceStatus = PlaceStatus.PENDING,
     val createdDate: LocalDate,
 ) {
+    fun changePlaceStatus(status: PlaceStatus) {
+        placeStatus = status
+    }
+
     fun getDistanceFromUser(): String {
         return "5 km"
     }

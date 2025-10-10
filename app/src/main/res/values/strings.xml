@@ -284,4 +284,46 @@
     <string name="err_category_required">La categoría es requerida</string>
     <string name="placeholder_time_hhmm">HH:mm</string>
     <string name="txt_not_specified">No especificado</string>
+    <!-- COMMENT SCREEN -->
+    <string name="txt_write_comment_title">Escribe tu comentario</string>
+    <string name="txt_rate_this_place">Califica este lugar</string>
+    <string name="txt_your_experience">Tu experiencia</string>
+    <string name="txt_share_opinion_placeholder">Comparte tu opinión sobre este lugar...</string>
+    <string name="txt_add_photos_visit">Agrega fotos de tu visita</string>
+    <string name="txt_send_comment">Enviar Comentario</string>
+    <string name="txt_star_rating">Estrella %1$d</string>
+    <string name="txt_add_photos">Agregar fotos</string>
+    <string name="txt_photo_number">Foto %1$d</string>
+    <string name="txt_go_back">Volver</string>
+
+    <!-- MODERATION PANEL -->
+    <string name="txt_moderation_panel">Panel de Moderación</string>
+    <string name="txt_pending">Pendientes</string>
+    <string name="txt_approved_today">Aprobados hoy</string>
+    <string name="txt_reports">Reportes</string>
+    <string name="txt_problems">Problemas</string>
+    <string name="txt_review_queue">Cola de Revisión</string>
+    <string name="txt_filters">Filtros</string>
+    <string name="txt_created_by">Creado por: %1$s</string>
+    <string name="txt_ago_minutes">Hace %1$d min</string>
+    <string name="txt_ago_hours">Hace %1$d hora</string>
+    <string name="txt_yesterday">Ayer</string>
+    <string name="txt_my_moderation_history">Mi Historial de Moderación</string>
+    <string name="txt_authorized_by_you">Autorizado por ti</string>
+    <string name="txt_rejected_by_you">Rechazado por ti</string>
+    <string name="txt_approved">Aprobado</string>
+    <string name="txt_rejected">Rechazado</string>
+    <string name="txt_approve">Aprobar</string>
+    <string name="txt_reject">Rechazar</string>
+    
+    <!-- SAMPLE PLACES -->
+    <string name="txt_bakery_el_trigal">Panadería El Trigal</string>
+    <string name="txt_coffee_express">Tienda de Café Expresso</string>
+    <string name="txt_restaurant_el_fogon">Restaurante El Fogón</string>
+    <string name="txt_pastry_la_felicidad">Pastelería La Felicidad</string>
+    <string name="txt_bookstore_el_rincon">Librería El Rincón</string>
+    
+    <!-- SAMPLE USERS -->
+    <string name="txt_user_juan_perez">JuanPerez</string>
+    <string name="txt_user_ana_gomez">AnaGomez</string>
 </resources>
