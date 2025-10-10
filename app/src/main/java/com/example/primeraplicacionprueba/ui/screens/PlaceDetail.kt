@@ -13,6 +13,9 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,6 +31,7 @@ import com.example.primeraplicacionprueba.ui.theme.*
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -54,6 +58,12 @@ fun PlaceDetail(
             )
         }
         return
+    }
+
+    val mainViewModel = LocalMainViewModel.current
+    val usersViewModel = mainViewModel.usersViewModel
+    LaunchedEffect(id) {
+        usersViewModel.registerVisited(id)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -153,6 +163,14 @@ fun PlaceDetail(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
+                    // Horarios de atención
+                    if (place.shedule.isNotEmpty()) {
+                        SectionTitle(title = stringResource(R.string.txt_step_three_title))
+                        Spacer(modifier = Modifier.height(12.dp))
+                        ScheduleSection(schedules = place.shedule)
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
                     // Servicios y Amenidades
                     if (place.amenities.isNotEmpty()) {
                         SectionTitle(title = stringResource(R.string.txt_amenities))
@@ -205,16 +223,21 @@ fun PlaceDetail(
                 .padding(end = 24.dp, bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            val currentUser by usersViewModel.currentUser.collectAsState()
+            val isFavorite = currentUser?.favorites?.any { it.id == place.id } == true
             FloatingActionButton(
-                onClick = { /* Agregar a favoritos */ },
-                containerColor = Primary,
-                contentColor = Color.White,
+                onClick = {
+                    usersViewModel.toggleFavorite(place)
+                },
+                containerColor = Color.White,
+                contentColor = if (isFavorite) Primary else TextDark,
                 shape = CircleShape,
                 modifier = Modifier.size(56.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = stringResource(R.string.txt_favorites)
+                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = stringResource(R.string.txt_favorites),
+                    tint = if (isFavorite) Primary else TextDark
                 )
             }
             FloatingActionButton(
@@ -237,8 +260,8 @@ fun PlaceDetail(
                 modifier = Modifier.size(56.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.LocationOn,
-                    contentDescription = stringResource(R.string.txt_directions)
+                    imageVector = Icons.AutoMirrored.Filled.Comment,
+                    contentDescription = stringResource(R.string.txt_comments)
                 )
             }
         }
@@ -553,6 +576,51 @@ fun AmenitiesGrid(amenities: List<String>) {
                 // Rellenar con espacio vacío si hay un número impar de amenidades
                 if (rowAmenities.size == 1) {
                     Spacer(modifier = Modifier.weight(1f))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ScheduleSection(schedules: List<com.example.primeraplicacionprueba.model.Shedule>) {
+    val dayOrder = listOf(
+        com.example.primeraplicacionprueba.model.Day.MONDAY,
+        com.example.primeraplicacionprueba.model.Day.TUESDAY,
+        com.example.primeraplicacionprueba.model.Day.WEDNESDAY,
+        com.example.primeraplicacionprueba.model.Day.THURSDAY,
+        com.example.primeraplicacionprueba.model.Day.FRIDAY,
+        com.example.primeraplicacionprueba.model.Day.SATURDAY,
+        com.example.primeraplicacionprueba.model.Day.SUNDAY,
+    )
+
+    val scheduleByDay = schedules.associateBy { it.day }
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        dayOrder.forEach { day ->
+            val entry = scheduleByDay[day]
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = BgLight
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = day.name.lowercase().replaceFirstChar { it.titlecase() },
+                        color = TextDark,
+                        fontSize = 14.sp
+                    )
+                    Text(
+                        text = entry?.let { "${it.open.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))} - ${it.close.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))}" }
+                            ?: stringResource(id = R.string.txt_closed),
+                        color = TextSecondary,
+                        fontSize = 13.sp
+                    )
                 }
             }
         }

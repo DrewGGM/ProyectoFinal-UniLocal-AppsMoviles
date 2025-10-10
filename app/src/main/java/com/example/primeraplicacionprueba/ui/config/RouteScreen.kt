@@ -16,22 +16,28 @@ sealed class RouteScreen{
     data object EditProfile: RouteScreen();
 
     @Serializable
-    data object CreatePlaceStepOne: RouteScreen();
+    data class CreatePlaceStepOne(val placeId: String? = null): RouteScreen();
 
     @Serializable
-    data object CreatePlaceStepTwo: RouteScreen();
+    data class CreatePlaceStepTwo(val placeId: String? = null): RouteScreen();
 
     @Serializable
-    data object CreatePlaceStepThree: RouteScreen();
+    data class CreatePlaceStepThree(val placeId: String? = null): RouteScreen();
 
     @Serializable
-    data object CreatePlaceStepFour: RouteScreen();
+    data class CreatePlaceStepFour(val placeId: String? = null): RouteScreen();
 
     @Serializable
     data class PlaceDetail(val id: String): RouteScreen();
 
     @Serializable
     data object Achievements: RouteScreen();
+
+    @Serializable
+    data object MyPlaces: RouteScreen();
+
+    @Serializable
+    data object Favorites: RouteScreen();
 
     @Serializable
     data object ForgotPassword: RouteScreen();

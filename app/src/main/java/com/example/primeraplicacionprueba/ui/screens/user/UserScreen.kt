@@ -6,6 +6,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.primeraplicacionprueba.model.User
 import com.example.primeraplicacionprueba.ui.screens.user.bottombar.BottomBarUser
 import com.example.primeraplicacionprueba.ui.screens.user.nav.ContentUser
+import com.example.primeraplicacionprueba.viewmodel.UsersViewModel
 
 @Composable
 fun UserScreen(
@@ -14,6 +15,8 @@ fun UserScreen(
     onNavigateToLogin: () -> Unit = {},
     onNavigateToPlace: (String) -> Unit = {},
     onNavigateToAchievements: () -> Unit = {},
+    onNavigateToMyPlaces: () -> Unit = {},
+    onNavigateToFavorites: () -> Unit = {},
     onNavigateToFilter: () -> Unit = {},
     user: User
 ) {
@@ -21,7 +24,7 @@ fun UserScreen(
     
     Scaffold(
         bottomBar = {
-            BottomBarUser(navController = navController)
+            BottomBarUser(navController = navController, user = user)
         }
     ) { paddingValues ->
         ContentUser(
@@ -32,6 +35,8 @@ fun UserScreen(
             onNavigateToLogin = onNavigateToLogin,
             onNavigateToPlace = onNavigateToPlace,
             onNavigateToAchievements = onNavigateToAchievements,
+            onNavigateToMyPlaces = onNavigateToMyPlaces,
+            onNavigateToFavorites = onNavigateToFavorites,
             onNavigateToFilter = onNavigateToFilter,
             user = user
         )

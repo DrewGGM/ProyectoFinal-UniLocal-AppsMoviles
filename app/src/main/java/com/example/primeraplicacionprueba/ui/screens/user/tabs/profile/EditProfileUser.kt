@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.ui.theme.*
+import com.example.primeraplicacionprueba.ui.screens.LocalMainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,13 +29,17 @@ fun EditProfileScreen(
     onNavigateBack: () -> Unit = {},
     onSaveChanges: () -> Unit = {}
 ) {
-    // Estados para los campos editables
-    var nombreCompleto by remember { mutableStateOf("Carlos Rodríguez") }
-    var nombreUsuario by remember { mutableStateOf("carlos.rodriguez") }
-    var ciudad by remember { mutableStateOf("Bogotá") }
+    val mainViewModel = LocalMainViewModel.current
+    val usersViewModel = mainViewModel.usersViewModel
+    val currentUser by usersViewModel.currentUser.collectAsState()
+
+    // Estados para los campos editables (con valores reales)
+    var nombreCompleto by remember(currentUser) { mutableStateOf(currentUser?.nombre ?: "") }
+    var nombreUsuario by remember(currentUser) { mutableStateOf(currentUser?.username ?: "") }
+    var ciudad by remember(currentUser) { mutableStateOf(currentUser?.city ?: "") }
 
     // Estados para campos no editables (solo mostrar)
-    val correoElectronico = "carlos.r@ejemplo.com"
+    val correoElectronico = currentUser?.email ?: ""
     var contrasena by remember { mutableStateOf("******") }
     var passwordVisible by remember { mutableStateOf(false) }
 
@@ -301,6 +306,11 @@ fun EditProfileScreen(
             Button(
                 onClick = {
                     if (validarCampos()) {
+                        usersViewModel.updateCurrentUserProfile(
+                            nombre = nombreCompleto,
+                            username = nombreUsuario,
+                            city = ciudad
+                        )
                         onSaveChanges()
                     }
                 },

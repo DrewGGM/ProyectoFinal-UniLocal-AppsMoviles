@@ -12,9 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.zIndex
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +35,7 @@ import com.example.primeraplicacionprueba.model.User
 import com.example.primeraplicacionprueba.ui.theme.*
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 import com.example.primeraplicacionprueba.viewmodel.UsersViewModel
+import com.example.primeraplicacionprueba.ui.components.Search
 
 @Composable
 fun Home(
@@ -46,23 +46,51 @@ fun Home(
 ) {
 
     val places by placesViewModel.places.collectAsState()
-    val mostPopularPlaces = placesViewModel.findMostPopularPlacesInCity(user.city)
+    val mostPopularPlaces = places
+        .filter { it.city.equals(user.city, ignoreCase = true) }
+        .sortedByDescending { it.favoriteCount }
 
+    var query by remember { mutableStateOf("") }
+    var searchExpanded by remember { mutableStateOf(false) }
+    var selectedType by remember { mutableStateOf<PlaceType?>(null) }
+    val availableTypes by remember(places, user.city) {
+        mutableStateOf(
+            places.filter { it.city.equals(user.city, ignoreCase = true) }
+                .map { it.type }
+                .distinct()
+        )
+    }
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(BgLight)
+                .padding(top = 16.dp)
         ) {
-            // Header
             item {
                 HeaderSection(
                     userName = user.nombre,
-                    onSearchClick = { }
+                    searchBar = {
+                        Search(
+                            query = query,
+                            onQueryChange = { query = it },
+                            onSearch = { q ->
+                                places.filter { p ->
+                                    p.title.contains(q, ignoreCase = true) ||
+                                    p.type.toString().contains(q, ignoreCase = true)
+                                }
+                            },
+                            placeholder = stringResource(R.string.txt_search_placeholder),
+                            itemText = { place -> place.title },
+                            expanded = false,
+                            onExpandedChange = { }
+                        )
+                    }
                 )
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Sección de Categorías
+            // Sección de Categorías (filtro rápido)
             item {
                 Spacer(modifier = Modifier.height(40.dp))
                 Text(
@@ -72,7 +100,13 @@ fun Home(
                     color = TextDark,
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
                 )
-                CategoriesSection()
+                CategoriesSection(
+                    types = availableTypes,
+                    selected = selectedType,
+                    onSelect = { type ->
+                        selectedType = if (selectedType == type) null else type
+                    }
+                )
             }
 
             // Sección de Lugares Populares
@@ -86,8 +120,17 @@ fun Home(
                 )
             }
 
-            // Lista de lugares mas populares en la ciudad del usuario
-            items(mostPopularPlaces) {
+            // Lista filtrada por query y categoría
+            val base = places.filter { it.city.equals(user.city, ignoreCase = true) }
+            val byType = selectedType?.let { t -> base.filter { it.type == t } } ?: base
+            val listToShow = if (query.isNotBlank()) {
+                byType.filter { p ->
+                    p.title.contains(query, ignoreCase = true) ||
+                    p.type.toString().contains(query, ignoreCase = true)
+                }
+            } else byType
+
+            items(listToShow, key = { it.id }) {
                 PlaceCard(
                     name = it.title ,
                     category = it.type ,
@@ -120,7 +163,8 @@ fun Home(
 @Composable
 fun HeaderSection(
     userName: String,
-    onSearchClick: () -> Unit
+    onSearchClick: () -> Unit = {},
+    searchBar: (@Composable () -> Unit)? = null
 ) {
     Box(
         modifier = Modifier
@@ -159,54 +203,92 @@ fun HeaderSection(
             }
         }
 
-        // Barra búsqueda
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp)
-                .align(Alignment.BottomCenter)
-                .offset(y = 24.dp)
-                .clickable { onSearchClick() },
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-        ) {
-            Row(
+        // Barra de búsqueda (si se provee desde afuera)
+        if (searchBar != null) {
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(horizontal = 24.dp)
+                    .align(Alignment.BottomCenter)
+                    .offset(y = 48.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = stringResource(R.string.txt_search),
-                    tint = Primary,
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = stringResource(R.string.txt_search_hint),
-                    color = TextSecondary,
-                    fontSize = 15.sp
-                )
+                searchBar()
             }
         }
     }
 }
 
 @Composable
-fun CategoriesSection() {
+fun CategoriesSection(
+    types: List<PlaceType>,
+    selected: PlaceType?,
+    onSelect: (PlaceType) -> Unit
+) {
     Row(
         modifier = Modifier
             .horizontalScroll(rememberScrollState())
             .padding(horizontal = 24.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        CategoryItem(stringResource(R.string.category_restaurant), Icons.Filled.Restaurant, Secondary)
-        CategoryItem(stringResource(R.string.category_cafe), Icons.Filled.Coffee, Accent)
-        CategoryItem(stringResource(R.string.category_fastfood), Icons.Filled.Fastfood, Primary)
-        CategoryItem(stringResource(R.string.category_museum), Icons.Filled.Museum, Tertiary)
-        CategoryItem(stringResource(R.string.category_hotel), Icons.Filled.Hotel, Tertiary)
+        types.forEach { type ->
+            val (label, icon, color) = when (type) {
+                PlaceType.RESTAURANT -> Triple(stringResource(R.string.category_restaurant), Icons.Filled.Restaurant, Secondary)
+                PlaceType.CAFE -> Triple(stringResource(R.string.category_cafe), Icons.Filled.Coffee, Accent)
+                PlaceType.FAST_FOOD -> Triple(stringResource(R.string.category_fastfood), Icons.Filled.Fastfood, Primary)
+                PlaceType.MUSEUM -> Triple(stringResource(R.string.category_museum), Icons.Filled.Museum, Tertiary)
+                PlaceType.HOTEL -> Triple(stringResource(R.string.category_hotel), Icons.Filled.Hotel, Tertiary)
+                PlaceType.BAR -> Triple(stringResource(R.string.place_type_bar), Icons.Filled.LocalBar, Secondary)
+                PlaceType.PARK -> Triple(stringResource(R.string.category_park), Icons.Filled.Park, Tertiary)
+                PlaceType.SHOPPING -> Triple(stringResource(R.string.category_shopping), Icons.Filled.ShoppingBag, Secondary)
+                PlaceType.GAS_STATION -> Triple(stringResource(R.string.place_type_gas_station), Icons.Filled.LocalGasStation, Secondary)
+                PlaceType.PHARMACY -> Triple(stringResource(R.string.place_type_pharmacy), Icons.Filled.LocalPharmacy, Secondary)
+                PlaceType.HOSPITAL -> Triple(stringResource(R.string.place_type_hospital), Icons.Filled.LocalHospital, Secondary)
+                PlaceType.BANK -> Triple(stringResource(R.string.place_type_bank), Icons.Filled.AccountBalance, Secondary)
+                PlaceType.GYM -> Triple(stringResource(R.string.place_type_gym), Icons.Filled.FitnessCenter, Secondary)
+                PlaceType.CINEMA -> Triple(stringResource(R.string.place_type_cinema), Icons.Filled.Movie, Secondary)
+                PlaceType.OTHER -> Triple(stringResource(R.string.category_other), Icons.Filled.Place, Primary)
+            }
+            val bg = Brush.linearGradient(listOf(color, color.copy(alpha = 0.7f)))
+            val chipSize = if (selected == type) 64.dp else 56.dp
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .width(80.dp)
+                    .clickable { onSelect(type) }
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(chipSize)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(bg),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (selected == type) {
+                        // halo de selección
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .clip(RoundedCornerShape(22.dp))
+                                .background(Color.White.copy(alpha = 0.12f))
+                        ) {}
+                    }
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = label,
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = label,
+                    fontSize = 12.sp,
+                    color = TextMuted,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2
+                )
+            }
+        }
     }
 }
 

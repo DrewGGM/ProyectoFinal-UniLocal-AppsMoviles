@@ -184,6 +184,9 @@
     <string name="txt_saturday">Sábado</string>
     <string name="txt_sunday">Domingo</string>
     <string name="txt_opening_time">Apertura</string>
+    <string name="category_park">Parque</string>
+    <string name="category_shopping">Compras</string>
+    <string name="category_other">Otros</string>
     <string name="txt_closing_time">Cierre</string>
     
     <!-- STEP FOUR -->
@@ -271,6 +274,16 @@
     <string name="txt_filtrosplace">Filtros de busqueda</string>
     <string name="txt_find">Buscar...</string>
 
+    <!-- PROFILE STATS -->
+    <string name="txt_stat_visited">Lugares\nvisitados</string>
+    <string name="txt_stat_favorites">Favoritos\nagregados</string>
+    
+    <!-- CREATE PLACE ERRORS & PLACEHOLDERS -->
+    <string name="err_place_name_required">El nombre del lugar es requerido</string>
+    <string name="err_description_required">La descripción es requerida</string>
+    <string name="err_category_required">La categoría es requerida</string>
+    <string name="placeholder_time_hhmm">HH:mm</string>
+    <string name="txt_not_specified">No especificado</string>
     <!-- COMMENT SCREEN -->
     <string name="txt_write_comment_title">Escribe tu comentario</string>
     <string name="txt_rate_this_place">Califica este lugar</string>

@@ -57,7 +57,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
-import com.example.primeraplicacionprueba.model.Rol
+import com.example.primeraplicacionprueba.model.Role
 import com.example.primeraplicacionprueba.model.User
 import com.example.primeraplicacionprueba.ui.theme.Accent
 import com.example.primeraplicacionprueba.ui.theme.BgLight
@@ -68,11 +68,12 @@ import com.example.primeraplicacionprueba.ui.theme.Primary
 import com.example.primeraplicacionprueba.ui.theme.Secondary
 import com.example.primeraplicacionprueba.ui.theme.TextDark
 import com.example.primeraplicacionprueba.ui.theme.TextMuted
+import java.time.LocalDate
 import java.util.regex.Pattern
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreem(
+fun RegisterScreen(
     onNavigateToLogin: () -> Unit = {},
     onNavigateToHome: (user: User) -> Unit = {}
 ) {
@@ -513,7 +514,8 @@ fun RegisterScreem(
                                         country = pais,
                                         email = correo,
                                         password = contrasena,
-                                        rol = Rol.USER
+                                        rol = Role.USER,
+                                        joinDate = LocalDate.now()
                                     )
                                     usersViewModel.create(user)
                                     onNavigateToLogin()

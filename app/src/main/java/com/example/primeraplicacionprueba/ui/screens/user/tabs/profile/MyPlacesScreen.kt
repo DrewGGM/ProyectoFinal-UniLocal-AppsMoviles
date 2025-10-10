@@ -17,30 +17,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.primeraplicacionprueba.model.Place
+import coil.compose.AsyncImage
 import com.example.primeraplicacionprueba.model.PlaceStatus
 import com.example.primeraplicacionprueba.model.PlaceType
-import com.example.primeraplicacionprueba.model.UserPlace
 import com.example.primeraplicacionprueba.ui.theme.*
 import com.example.primeraplicacionprueba.R
-
-
+import com.example.primeraplicacionprueba.model.Place
+import com.example.primeraplicacionprueba.ui.screens.LocalMainViewModel
+import androidx.compose.runtime.LaunchedEffect
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyPlacesScreen(
-    places: List<UserPlace> = emptyList(),
+    places: List<Place> = emptyList(),
     onNavigateBack: () -> Unit = {},
     onAddPlace: () -> Unit = {},
     onEditPlace: (String) -> Unit = {},
     onDeletePlace: (String) -> Unit = {},
-    onViewComments: (String) -> Unit = {}
+    onViewComments: (String) -> Unit = {},
 ) {
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -82,6 +84,12 @@ fun MyPlacesScreen(
                     .padding(paddingValues)
             )
         } else {
+            // Sincronizar conteo de lugares creados con UsersViewModel (para logros)
+            val mainViewModel = LocalMainViewModel.current
+            val usersViewModel = mainViewModel.usersViewModel
+          LaunchedEffect(places.size) {
+              usersViewModel.updatePlacesCreated(places.size)
+          }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -90,12 +98,12 @@ fun MyPlacesScreen(
                 contentPadding = PaddingValues(24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(places) { userPlace ->
+                items(places) { place ->
                     MyPlaceCard(
-                        userPlace = userPlace,
-                        onEdit = { onEditPlace(userPlace.place.id) },
-                        onDelete = { onDeletePlace(userPlace.place.id) },
-                        onViewComments = { onViewComments(userPlace.place.id) }
+                        place = place,
+                        onEdit = { onEditPlace(place.id) },
+                        onDelete = { onDeletePlace(place.id) },
+                        onViewComments = { onViewComments(place.id) }
                     )
                 }
             }
@@ -105,7 +113,7 @@ fun MyPlacesScreen(
 
 @Composable
 fun MyPlaceCard(
-    userPlace: UserPlace,
+    place: Place,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     onViewComments: () -> Unit
@@ -131,11 +139,12 @@ fun MyPlaceCard(
                     .background(Tertiary),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = getIconForPlaceType(userPlace.place.type),
-                    contentDescription = null,
-                    tint = Secondary,
-                    modifier = Modifier.size(32.dp)
+                AsyncImage(
+                    model = place.imagenes.first(),
+                    contentDescription = stringResource(R.string.txt_place_image),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
                 )
             }
 
@@ -145,23 +154,22 @@ fun MyPlaceCard(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = userPlace.place.title,
+                    text = place.title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = TextDark
                 )
                 Text(
-                    text = "Creado el ${userPlace.createdDate}",
+                    text = "Creado el ${place.createdDate}",
                     fontSize = 14.sp,
                     color = TextMuted
                 )
-                StatusBadge(status = userPlace.status)
+                StatusBadge(status = place.placeStatus)
             }
 
-            // Acciones
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 ActionButton(
                     icon = Icons.AutoMirrored.Filled.Comment,
@@ -214,9 +222,10 @@ fun ActionButton(
     IconButton(
         onClick = onClick,
         modifier = Modifier
-            .size(40.dp)
+            .size(35.dp)
             .clip(CircleShape)
             .background(BgLight)
+            .padding(2.dp).fillMaxSize()
     ) {
         Icon(
             imageVector = icon,

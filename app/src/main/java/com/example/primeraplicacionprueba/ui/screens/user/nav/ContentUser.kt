@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,6 +11,7 @@ import com.example.primeraplicacionprueba.model.User
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.Home
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.map.Map
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.profile.Profile
+import com.example.primeraplicacionprueba.ui.screens.LocalMainViewModel
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 
 @Composable
@@ -23,11 +23,14 @@ fun ContentUser(
     onNavigateToLogin: () -> Unit = {},
     onNavigateToPlace: (String) -> Unit = {},
     onNavigateToAchievements: () -> Unit = {},
+    onNavigateToMyPlaces: () -> Unit = {},
+    onNavigateToFavorites: () -> Unit = {},
     onNavigateToFilter: () -> Unit = {},
     user: User
 ) {
 
-    val placesViewModel: PlacesViewModel = viewModel()
+    val mainViewModel = LocalMainViewModel.current
+    val placesViewModel: PlacesViewModel = mainViewModel.placesViewModel
 
     NavHost(
         modifier = Modifier.padding(padding),
@@ -49,9 +52,12 @@ fun ContentUser(
         }
         composable<RouteTab.Profile> {
             Profile(
+                user = user,
                 onNavigateToEditProfile = onNavigateToEditProfile,
                 onNavigateToLogin = onNavigateToLogin,
-                onNavigateToAchievements = onNavigateToAchievements
+                onNavigateToAchievements = onNavigateToAchievements,
+                onNavigateToMyPlaces = onNavigateToMyPlaces,
+                onNavigateToFavorites = onNavigateToFavorites,
             )
         }
     }

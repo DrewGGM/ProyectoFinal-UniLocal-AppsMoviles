@@ -1,9 +1,10 @@
 package com.example.primeraplicacionprueba.model
 
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.LocalTime
 
-class Place(
+data class Place(
     val id: String,
     val title: String,
     val imagenes: List<String>,
@@ -25,7 +26,8 @@ class Place(
     val ownerId: String = "",
     val viewCount: Int = 0,
     val favoriteCount: Int = 0,
-    var placeStatus: PlaceStatus = PlaceStatus.PENDING
+    val placeStatus: PlaceStatus = PlaceStatus.PENDING,
+    val createdDate: LocalDate,
 ) {
     fun changePlaceStatus(status: PlaceStatus) {
         placeStatus = status
@@ -74,8 +76,24 @@ class Place(
     }
 }
 
-data class UserPlace(
-    val place: Place,
-    val createdDate: String,
-    val status: PlaceStatus
+data class CreatePlaceState(
+    // Step 1: Información básica
+    val title: String = "",
+    val description: String = "",
+    val type: PlaceType? = null,
+
+    // Step 2: Contacto y ubicación
+    val phones: List<String> = emptyList(),
+    val website: String? = null,
+    val socialMedia: String? = null,
+    val location: Location? = null,
+    val address: String = "",
+    val city: String = "",
+    val neighborhood: String = "",
+
+    // Step 3: Horarios
+    val schedule: List<Shedule> = emptyList(),
+
+    // Step 4: Imágenes
+    val images: List<String> = emptyList()
 )

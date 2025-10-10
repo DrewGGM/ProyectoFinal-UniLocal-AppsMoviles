@@ -1,6 +1,8 @@
 package com.example.primeraplicacionprueba.model
 
-class User(
+import java.time.LocalDate
+
+data class User(
     val nombre: String,
     val username: String,
     val city: String,
@@ -8,14 +10,16 @@ class User(
     val email: String,
     val password: String,
     val id: String,
-    val rol: Rol,
+    val rol: Role,
     val imageUrl: String? = null,
+    val favorites: List<Place> = emptyList(),
     // Estadísticas para achievements
     val placesCreated: Int = 0,
     val placesVisited: Int = 0,
     val reviewsWritten: Int = 0,
     val favoritesAdded: Int = 0,
-    val joinDate: String = "", // Fecha de registro
+    val joinDate: LocalDate,
+    val isActive: Boolean = true
 ) {
     
     // Métodos para calcular achievements
@@ -26,11 +30,8 @@ class User(
     
     // Método para obtener días desde el registro
     fun getDaysSinceJoin(): Int {
-        return if (joinDate.isNotEmpty()) {
-            // Simulación: asumimos que se registró hace 30 días
-            30
-        } else {
-            0
-        }
+        return LocalDate.now().compareTo(joinDate)
     }
+
+
 }
