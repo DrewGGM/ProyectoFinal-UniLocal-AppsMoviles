@@ -22,15 +22,37 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
+import com.example.primeraplicacionprueba.model.Review
+import com.example.primeraplicacionprueba.viewmodel.ReviewViewModel
+import java.time.LocalDateTime
 
 @Composable
 fun CommentScreen(
-    id: String,
+    placeId: String,
+    userId: String,
+    username: String,
+    reviewViewModel: ReviewViewModel,
     onNavigateBack: () -> Unit = {}
 ) {
     var rating by remember { mutableStateOf(0) }
     var comment by remember { mutableStateOf("") }
     var selectedPhotos by remember { mutableStateOf<List<String>>(emptyList()) }
+
+    fun saveComment() {
+        if (rating > 0 && comment.isNotBlank()) {
+            val newReview = Review(
+                id = "review_${System.currentTimeMillis()}",
+                userID = userId,
+                username = username,
+                placeID = placeId,
+                rating = rating,
+                comment = comment,
+                date = LocalDateTime.now()
+            )
+            reviewViewModel.create(newReview)
+            onNavigateBack()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -100,19 +122,19 @@ fun CommentScreen(
                         .fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    // ⭐ Rating Section
+                    //  Rating Section
                     RatingSection(
                         rating = rating,
                         onRatingChanged = { rating = it }
                     )
 
-                    // 💬 Comment Section
+                    //  Comment Section
                     CommentSection(
                         comment = comment,
                         onCommentChanged = { comment = it }
                     )
 
-                    // 📷 Photo Section
+                    //  Photo Section
                     PhotoSection(
                         selectedPhotos = selectedPhotos,
                         onPhotosChanged = { selectedPhotos = it }
@@ -123,7 +145,7 @@ fun CommentScreen(
 
         // 🚀 Send Button
         Button(
-            onClick = { onNavigateBack() },
+            onClick = { saveComment() },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()

@@ -21,6 +21,8 @@ import com.example.primeraplicacionprueba.model.Location
 import com.example.primeraplicacionprueba.ui.config.RouteScreen
 import java.time.LocalDate
 import com.example.primeraplicacionprueba.ui.screens.admin.HomeAdmin
+import com.example.primeraplicacionprueba.ui.screens.admin.DetailPlaceAdmin
+import com.example.primeraplicacionprueba.ui.screens.admin.MyPerfilAdmin
 import com.example.primeraplicacionprueba.ui.screens.user.UserScreen
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.CreatePlaceStepFour
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.CreatePlaceStepOne
@@ -149,7 +151,53 @@ fun Navigation(
                 composable<RouteScreen.HomeAdmin> {
                     val mainViewModel = LocalMainViewModel.current
                     val placesViewModel = mainViewModel.placesViewModel
-                    HomeAdmin(placesViewModel = placesViewModel)
+                    HomeAdmin(
+                        placesViewModel = placesViewModel,
+                        onNavigateToDetail = { placeId ->
+                            navController.navigate(RouteScreen.AdminPlaceDetail(placeId))
+                        },
+                        onNavigateToProfile = {
+                            navController.navigate(RouteScreen.MyPerfilAdmin)
+                        }
+                    )
+                }
+
+                composable<RouteScreen.AdminPlaceDetail> {
+                    val args = it.toRoute<RouteScreen.AdminPlaceDetail>()
+                    val mainViewModel = LocalMainViewModel.current
+                    val placesViewModel = mainViewModel.placesViewModel
+                    DetailPlaceAdmin(
+                        id = args.id,
+                        placesViewModel = placesViewModel,
+                        onNavigateBack = { navController.popBackStack() }
+                    )
+                }
+
+                composable<RouteScreen.MyPerfilAdmin> {
+                    val mainViewModel = LocalMainViewModel.current
+                    val usersViewModel = mainViewModel.usersViewModel
+                    val placesViewModel = mainViewModel.placesViewModel
+                    val currentUser by usersViewModel.currentUser.collectAsState()
+                    currentUser?.let { user ->
+                        MyPerfilAdmin(
+                            user = user,
+                            placesViewModel = placesViewModel,
+                            onNavigateBack = { navController.popBackStack() }
+                        )
+                    }
+                }
+
+                composable<RouteScreen.MyComments> {
+                    val args = it.toRoute<RouteScreen.MyComments>()
+                    val mainViewModel = LocalMainViewModel.current
+                    val placesViewModel = mainViewModel.placesViewModel
+                    val reviewViewModel = mainViewModel.reviewsViewModel
+                    MyCommentScreen(
+                        placeId = args.placeId,
+                        placesViewModel = placesViewModel,
+                        reviewViewModel = reviewViewModel,
+                        onNavigateBack = { navController.popBackStack() }
+                    )
                 }
 
                 composable<RouteScreen.EditProfile> {
@@ -324,8 +372,10 @@ fun Navigation(
                     val args = it.toRoute<RouteScreen.PlaceDetail>()
                     val mainViewModel = LocalMainViewModel.current
                     val placesViewModel = mainViewModel.placesViewModel
+                    val reviewViewModel = mainViewModel.reviewsViewModel
                     PlaceDetail(
                         placesViewModel = placesViewModel,
+                        reviewViewModel = reviewViewModel,
                         id = args.id,
                         onNavigateBack = {
                             navController.popBackStack()
@@ -338,12 +388,21 @@ fun Navigation(
                 }
                 composable<RouteScreen.CommentScream> {
                     val args = it.toRoute<RouteScreen.CommentScream>()
-                    CommentScreen(
-                        id = args.id,
-                        onNavigateBack = {
-                            navController.popBackStack()
-                        }
-                    )
+                    val mainViewModel = LocalMainViewModel.current
+                    val reviewViewModel = mainViewModel.reviewsViewModel
+                    val usersViewModel = mainViewModel.usersViewModel
+                    val currentUser by usersViewModel.currentUser.collectAsState()
+                    currentUser?.let { user ->
+                        CommentScreen(
+                            placeId = args.id,
+                            userId = user.id,
+                            username = user.username,
+                            reviewViewModel = reviewViewModel,
+                            onNavigateBack = {
+                                navController.popBackStack()
+                            }
+                        )
+                    }
                 }
 
                 composable<RouteScreen.Achievements> {
@@ -388,7 +447,7 @@ fun Navigation(
                                 placesViewModel.deletePlace(placeId)
                             },
                             onViewComments= { placeId ->
-                                navController.navigate(RouteScreen.PlaceDetail(placeId))
+                                navController.navigate(RouteScreen.MyComments(placeId))
                             },
                         )
                     }

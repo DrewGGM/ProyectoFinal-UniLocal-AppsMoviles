@@ -35,16 +35,20 @@ import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import com.example.primeraplicacionprueba.viewmodel.ReviewViewModel
 
 @Composable
 fun PlaceDetail(
     placesViewModel: PlacesViewModel,
+    reviewViewModel: ReviewViewModel,
     id: String,
     onNavigateBack: () -> Unit = {},
     onNavigateToComment: (String) -> Unit = {}
 
 ) {
     val place = LocalMainViewModel.current.placesViewModel.findById(id)
+    val reviews by reviewViewModel.reviews.collectAsState()
+    val placeReviews = reviews.filter { it.placeID == id }
 
     if (place == null) {
         Box(
@@ -187,11 +191,11 @@ fun PlaceDetail(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     // Comentarios
-                    SectionTitle(title = stringResource(R.string.txt_comments, place.getReviewCount()))
+                    SectionTitle(title = stringResource(R.string.txt_comments, placeReviews.size))
                     Spacer(modifier = Modifier.height(12.dp))
                     // Mostrar todas las reseñas del lugar
-                    if (place.reviews.isNotEmpty()) {
-                        place.reviews.forEach { review ->
+                    if (placeReviews.isNotEmpty()) {
+                        placeReviews.forEach { review ->
                             ReviewCard(
                                 userName = review.username,
                                 rating = review.rating.toFloat(),

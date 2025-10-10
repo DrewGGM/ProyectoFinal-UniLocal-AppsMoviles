@@ -63,9 +63,9 @@ class CommentsViewModel : ViewModel(){
     }
     fun findByUserPlaceId(placeId: String, userId: String): List<Comment> {
         return _comments.value.filter { it.placeId == placeId && it.userId == userId }
-
     }
 
-
-
+    fun create(comment: Comment) {
+        _comments.value = _comments.value + comment
+    }
 }

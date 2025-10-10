@@ -28,7 +28,9 @@ import com.example.primeraplicacionprueba.model.PlaceStatus
 
 @Composable
 fun HomeAdmin(
-    placesViewModel: PlacesViewModel
+    placesViewModel: PlacesViewModel,
+    onNavigateToDetail: (String) -> Unit = {},
+    onNavigateToProfile: () -> Unit = {}
 ) {
     val places by placesViewModel.places.collectAsState()
     val pendingCount = places.count { it.placeStatus == PlaceStatus.PENDING }
@@ -39,7 +41,7 @@ fun HomeAdmin(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
-            .padding(16.dp),
+            .padding(23.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(bottom = 16.dp)
     ) {
@@ -62,7 +64,8 @@ fun HomeAdmin(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFF333333)),
+                        .background(Color(0xFF333333))
+                        .clickable { onNavigateToProfile() },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -82,7 +85,7 @@ fun HomeAdmin(
 
         // Review Queue Section
         item {
-            ReviewQueueSection(placesViewModel)
+            ReviewQueueSection(placesViewModel, onItemClick = { id -> onNavigateToDetail(id) })
         }
 
         // Moderation History Section
@@ -174,7 +177,7 @@ fun StatCard(
 }
 
 @Composable
-fun ReviewQueueSection(placesViewModel: PlacesViewModel) {
+fun ReviewQueueSection(placesViewModel: PlacesViewModel, onItemClick: (String) -> Unit = {}) {
     val places by placesViewModel.places.collectAsState()
     val pendingPlaces = places.filter { it.placeStatus == PlaceStatus.PENDING }
     
@@ -225,7 +228,8 @@ fun ReviewQueueSection(placesViewModel: PlacesViewModel) {
                     createdBy = "Usuario ${place.ownerId}",
                     timeAgo = "Hace 5 min", // Por simplicidad, tiempo fijo
                     onApprove = { placesViewModel.approvePlace(place.id) },
-                    onReject = { placesViewModel.rejectPlace(place.id) }
+                    onReject = { placesViewModel.rejectPlace(place.id) },
+                    onClick = { onItemClick(place.id) }
                 )
                 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -255,10 +259,13 @@ fun ReviewItem(
     createdBy: String,
     timeAgo: String,
     onApprove: () -> Unit,
-    onReject: () -> Unit
+    onReject: () -> Unit,
+    onClick: () -> Unit = {}
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -292,7 +299,7 @@ fun ReviewItem(
             ) {
                 // Approve button
                 IconButton(
-                    onClick ={ onApprove    },
+                    onClick ={ onApprove()},
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
@@ -308,7 +315,7 @@ fun ReviewItem(
                 
                 // Reject button
                 IconButton(
-                    onClick = onReject,
+                    onClick = {onReject()},
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)

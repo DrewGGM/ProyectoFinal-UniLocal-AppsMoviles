@@ -52,4 +52,13 @@ sealed class RouteScreen{
     data class CommentScream(val id: String): RouteScreen();
 
 
+    @Serializable
+    data class AdminPlaceDetail(val id: String): RouteScreen();
+
+    @Serializable
+    data object MyPerfilAdmin: RouteScreen();
+
+    @Serializable
+    data class MyComments(val placeId: String): RouteScreen();
+
 }
