@@ -3,12 +3,9 @@ package com.example.primeraplicacionprueba.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.primeraplicacionprueba.model.CreatePlaceState
-import com.example.primeraplicacionprueba.model.Day
-import com.example.primeraplicacionprueba.model.Location
 import com.example.primeraplicacionprueba.model.Place
 import com.example.primeraplicacionprueba.model.PlaceType
 import com.example.primeraplicacionprueba.model.Location
-import com.example.primeraplicacionprueba.model.Shedule
 import com.example.primeraplicacionprueba.model.Day
 import com.example.primeraplicacionprueba.model.PlaceStatus
 import com.example.primeraplicacionprueba.model.Review
@@ -801,52 +798,96 @@ class PlacesViewModel : ViewModel() {
                 viewCount = 1500,
                 favoriteCount = 345,
                 createdDate = LocalDate.now(),
-                placeStatus = com.example.primeraplicacionprueba.model.PlaceStatus.APPROVED
+                placeStatus = PlaceStatus.APPROVED
             ),
             // Lugares pendientes para moderación
             Place(
-                id = "p3",
+                id = "p10",
                 title = "Panadería El Trigal",
                 imagenes = listOf("https://cdn.pixabay.com/photo/2016/11/18/19/13/buildings-1836478_1280.jpg"),
                 description = "Panadería tradicional con productos artesanales",
                 phones = listOf("+57 300 111 2233"),
                 type = PlaceType.OTHER,
                 shedule = listOf(
-                    Shedule(Day.MONDAY, java.time.LocalTime.of(6, 0), java.time.LocalTime.of(18, 0)),
-                    Shedule(Day.TUESDAY, java.time.LocalTime.of(6, 0), java.time.LocalTime.of(18, 0)),
-                    Shedule(Day.WEDNESDAY, java.time.LocalTime.of(6, 0), java.time.LocalTime.of(18, 0)),
-                    Shedule(Day.THURSDAY, java.time.LocalTime.of(6, 0), java.time.LocalTime.of(18, 0)),
-                    Shedule(Day.FRIDAY, java.time.LocalTime.of(6, 0), java.time.LocalTime.of(18, 0)),
-                    Shedule(Day.SATURDAY, java.time.LocalTime.of(6, 0), java.time.LocalTime.of(16, 0))
+                    Shedule(Day.MONDAY, LocalTime.of(6, 0), LocalTime.of(18, 0)),
+                    Shedule(Day.TUESDAY, LocalTime.of(6, 0), LocalTime.of(18, 0)),
+                    Shedule(Day.WEDNESDAY, LocalTime.of(6, 0), LocalTime.of(18, 0)),
+                    Shedule(Day.THURSDAY, LocalTime.of(6, 0), LocalTime.of(18, 0)),
+                    Shedule(Day.FRIDAY, LocalTime.of(6, 0), LocalTime.of(18, 0)),
+                    Shedule(Day.SATURDAY, LocalTime.of(6, 0), LocalTime.of(16, 0))
                 ),
                 location = Location(latitude = 4.8143, longitude = -75.6946),
                 adress = "Calle 15 #20-45, Centro",
+                website = null,
+                email = null,
+                socialMedia = null,
+                reviews = emptyList(),
                 city = "Pereira",
                 neighborhood = "Centro",
+                priceRange = "$$",
+                amenities = listOf("Panadería", "Bebidas", "Para llevar"),
+                isVerified = false,
                 ownerId = "3",
-                placeStatus = com.example.primeraplicacionprueba.model.PlaceStatus.PENDING
+                viewCount = 0,
+                favoriteCount = 0,
+                createdDate = LocalDate.now(),
+                placeStatus = PlaceStatus.PENDING
             ),
             Place(
-                id = "p4",
+                id = "p11",
                 title = "Tienda de Café Expresso",
                 imagenes = listOf("https://cdn.pixabay.com/photo/2022/07/14/00/36/cafe-7320242_1280.jpg"),
                 description = "Café especializado en bebidas expresso",
                 phones = listOf("+57 300 222 3344"),
                 type = PlaceType.CAFE,
                 shedule = listOf(
-                    Shedule(Day.MONDAY, java.time.LocalTime.of(7, 0), java.time.LocalTime.of(19, 0)),
-                    Shedule(Day.TUESDAY, java.time.LocalTime.of(7, 0), java.time.LocalTime.of(19, 0)),
-                    Shedule(Day.WEDNESDAY, java.time.LocalTime.of(7, 0), java.time.LocalTime.of(19, 0)),
-                    Shedule(Day.THURSDAY, java.time.LocalTime.of(7, 0), java.time.LocalTime.of(19, 0)),
-                    Shedule(Day.FRIDAY, java.time.LocalTime.of(7, 0), java.time.LocalTime.of(19, 0)),
-                    Shedule(Day.SATURDAY, java.time.LocalTime.of(8, 0), java.time.LocalTime.of(17, 0))
+                    Shedule(
+                        Day.MONDAY,
+                        LocalTime.of(7, 0),
+                        LocalTime.of(19, 0)
+                    ),
+                    Shedule(
+                        Day.TUESDAY,
+                        LocalTime.of(7, 0),
+                        LocalTime.of(19, 0)
+                    ),
+                    Shedule(
+                        Day.WEDNESDAY,
+                        LocalTime.of(7, 0),
+                        LocalTime.of(19, 0)
+                    ),
+                    Shedule(
+                        Day.THURSDAY,
+                        LocalTime.of(7, 0),
+                        LocalTime.of(19, 0)
+                    ),
+                    Shedule(
+                        Day.FRIDAY,
+                        LocalTime.of(7, 0),
+                        LocalTime.of(19, 0)
+                    ),
+                    Shedule(
+                        Day.SATURDAY,
+                        LocalTime.of(8, 0),
+                        LocalTime.of(17, 0)
+                    )
                 ),
                 location = Location(latitude = 4.8143, longitude = -75.6946),
                 adress = "Carrera 8 #12-30, El Poblado",
+                website = null,
+                email = null,
+                socialMedia = null,
+                reviews = emptyList(),
                 city = "Pereira",
                 neighborhood = "El Poblado",
+                priceRange = "$$",
+                amenities = listOf("Café Especial", "Postres", "Terraza"),
+                isVerified = false,
                 ownerId = "4",
-                placeStatus = com.example.primeraplicacionprueba.model.PlaceStatus.PENDING
+                viewCount = 0,
+                favoriteCount = 0,
+                createdDate = LocalDate.now(),
+                placeStatus = PlaceStatus.PENDING,
             )
         )
     }
@@ -896,13 +937,13 @@ class PlacesViewModel : ViewModel() {
 
     // Métodos para moderación
     fun getPendingPlaces(): List<Place> {
-        return _places.value.filter { it.placeStatus == com.example.primeraplicacionprueba.model.PlaceStatus.PENDING }
+        return _places.value.filter { it.placeStatus == PlaceStatus.PENDING }
     }
 
     fun getApprovedPlacesToday(): List<Place> {
         // Por simplicidad, retornamos todos los aprobados
         // En una implementación real, filtrarías por fecha
-        return _places.value.filter { it.placeStatus == com.example.primeraplicacionprueba.model.PlaceStatus.APPROVED }
+        return _places.value.filter { it.placeStatus == PlaceStatus.APPROVED }
     }
 
     fun getReportedPlaces(): List<Place> {

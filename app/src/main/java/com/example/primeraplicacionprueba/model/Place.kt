@@ -26,7 +26,7 @@ data class Place(
     val ownerId: String = "",
     val viewCount: Int = 0,
     val favoriteCount: Int = 0,
-    val placeStatus: PlaceStatus = PlaceStatus.PENDING,
+    var placeStatus: PlaceStatus = PlaceStatus.PENDING,
     val createdDate: LocalDate,
 ) {
     fun changePlaceStatus(status: PlaceStatus) {
