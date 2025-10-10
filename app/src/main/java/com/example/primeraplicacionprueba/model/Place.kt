@@ -25,8 +25,12 @@ class Place(
     val ownerId: String = "",
     val viewCount: Int = 0,
     val favoriteCount: Int = 0,
-    val placeStatus: PlaceStatus = PlaceStatus.PENDING
+    var placeStatus: PlaceStatus = PlaceStatus.PENDING
 ) {
+    fun changePlaceStatus(status: PlaceStatus) {
+        placeStatus = status
+    }
+
     fun getDistanceFromUser(): String {
         return "5 km"
     }
