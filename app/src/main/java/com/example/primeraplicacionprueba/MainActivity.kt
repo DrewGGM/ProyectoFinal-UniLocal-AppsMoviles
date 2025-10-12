@@ -23,11 +23,8 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // Eliminar datos de la sesion para pruebas y desarrollo
-        SharedPrefsUtil.clearPreferences(this)
 
         placesViewModel.setReviewViewModel(reviewsViewModel)
-        
         val mainViewModel = MainViewModel(
             placesViewModel = placesViewModel,
             reviewsViewModel = reviewsViewModel,
