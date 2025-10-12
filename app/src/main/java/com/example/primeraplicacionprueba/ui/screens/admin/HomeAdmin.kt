@@ -75,38 +75,11 @@ fun HomeAdmin(
                 .fillMaxSize()
                 .background(AdminBackground)
                 .padding(padding)
-                .padding(horizontal = 23.dp),
+                .padding(horizontal = 23.dp)
+                .padding(vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            // Header
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Text(
-                            text = stringResource(R.string.txt_welcome_moderator),
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = AdminTextDark
-                        )
-                        Text(
-                            text = stringResource(R.string.txt_manage_place_requests),
-                            fontSize = 14.sp,
-                            color = AdminTextMuted
-                        )
-                    }
-                    Icon(
-                        imageVector = Icons.Default.Notifications,
-                        contentDescription = stringResource(R.string.txt_notifications),
-                        tint = AdminTextMuted,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
 
             // Statistics Cards
             item {
