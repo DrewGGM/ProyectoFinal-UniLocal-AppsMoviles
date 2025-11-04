@@ -26,9 +26,13 @@ import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.ui.theme.*
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.runtime.saveable.rememberSaveable
 import com.example.primeraplicacionprueba.R
 import androidx.compose.ui.res.stringResource
+import com.example.primeraplicacionprueba.ui.components.Map
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
+import com.mapbox.geojson.Point
+import com.example.primeraplicacionprueba.model.Location
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,6 +51,7 @@ fun CreatePlaceStepTwo(
     var telefonoError by remember { mutableStateOf("") }
     var sitioWebError by remember { mutableStateOf("") }
     var redesSocialesError by remember { mutableStateOf("") }
+    var clickedPoint by rememberSaveable { mutableStateOf<Point?>(null) }
 
     Column(
         modifier = Modifier
@@ -158,30 +163,20 @@ fun CreatePlaceStepTwo(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        // Icono de pin de mapa simulado
-                        Box(
-                            modifier = Modifier
-                                .size(60.dp)
-                                .background(
-                                    Brush.radialGradient(
-                                        colors = listOf(
-                                            GoogleBlue,
-                                            GoogleBlue
-                                        )
-                                    ),
-                                    shape = RoundedCornerShape(30.dp, 30.dp, 30.dp, 0.dp)
-                                )
-                                .clip(RoundedCornerShape(30.dp, 30.dp, 30.dp, 0.dp)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(20.dp)
-                                    .background(Color.White, RoundedCornerShape(10.dp))
-                            )
-                        }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Map(
+                            modifierr = Modifier.fillMaxSize(),
+                            activateClick = true,
+                            onMapClickListener={ l ->
+                                clickedPoint = l
+                                viewModel.updateLocation(
+                                    Location(
+                                        latitude = l.latitude(),
+                                        longitude = l.longitude()
+                                    )
+                                )
+                            }
+                        )
 
                         Text(
                             text = stringResource(R.string.txt_tap_to_select_map),
@@ -323,6 +318,17 @@ fun CreatePlaceStepTwo(
                             city = "Armenia",     // Valor por defecto hasta que se implemente el mapa
                             neighborhood = ""  // Valor por defecto hasta que se implemente el mapa
                         )
+                        // Asegurar que la ubicación se persista si se seleccionó en el mapa
+                        if (clickedPoint != null && state.location == null) {
+                            val p = clickedPoint!!
+                            viewModel.updateLocation(
+                                Location(
+                                    latitude = p.latitude(),
+                                    longitude = p.longitude()
+                                    
+                                )
+                            )
+                        }
                         onNavigateToNext()
                     },
                     modifier = Modifier

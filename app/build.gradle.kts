@@ -58,6 +58,10 @@ dependencies {
     implementation(libs.androidx.foundation)
     implementation(libs.androidx.compose.ui.ui)
 
+    implementation(libs.maps.android)
+    implementation(libs.maps.compose)
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

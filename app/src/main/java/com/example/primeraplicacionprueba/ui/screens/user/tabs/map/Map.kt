@@ -1,5 +1,9 @@
 package com.example.primeraplicacionprueba.ui.screens.user.tabs.map
 
+import android.content.pm.PackageManager
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,6 +24,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,42 +35,68 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.core.content.ContextCompat
 import com.example.primeraplicacionprueba.ui.components.Search
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 import com.example.primeraplicacionprueba.ui.screens.LocalMainViewModel
 import com.example.primeraplicacionprueba.R
+import com.example.primeraplicacionprueba.ui.components.Map as PlacesMap
+import com.example.primeraplicacionprueba.model.Place
 import com.example.primeraplicacionprueba.ui.theme.Accent
+import com.mapbox.geojson.Point
+import com.mapbox.maps.extension.compose.MapEffect
+import com.mapbox.maps.extension.compose.MapboxMap
+import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mapbox.maps.extension.compose.annotation.generated.PointAnnotation
+import com.mapbox.maps.extension.compose.annotation.rememberIconImage
+import com.mapbox.maps.plugin.PuckBearing
+import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
+import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.maps.plugin.viewport.data.DefaultViewportTransitionOptions
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun Map(
     onMapToFilter: () -> Unit = {},
 ){
-    val mainViewModel = LocalMainViewModel.current
-    val placesViewModel : PlacesViewModel = mainViewModel.placesViewModel
+
     var query by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
+   val placesViewModel = LocalMainViewModel.current.placesViewModel
+    val places by placesViewModel.places.collectAsState()
+    val filtered by placesViewModel.filteredPlaces.collectAsState()
 
+    var selectedPlace by remember { mutableStateOf<Place?>(null) }
+    var centerPointState by remember { mutableStateOf<Point?>(null) }
+    var centerZoomState by remember { mutableStateOf<Double?>(null) }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+
+
     ) {
         //  Imagen de fondo (mapa)
-        Image(
-            painter = painterResource(id = R.drawable.mapa),
-            contentDescription = "Mapa",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+         PlacesMap (
+            places= places,
+             modifierr = Modifier.fillMaxSize(),
+            activateClick = false,
+             onMapClickListener = { selectedPlace = null },
+             onPlaceSelected = { place ->
+                 selectedPlace = place
+            },
+            centerPoint = centerPointState ?: if (placesViewModel.hasActiveFilters() && filtered.isNotEmpty()) {
+                Point.fromLngLat(filtered.first().location.longitude, filtered.first().location.latitude)
+            } else null,
+            centerZoom = centerZoomState ?: if (placesViewModel.hasActiveFilters() && filtered.isNotEmpty()) 14.0 else null
+         )
 
-//BARRA DE BUSQUEDA
+        //BARRA DE BUSQUEDA
         Search(
             query = query,
             onSearch = {
@@ -74,8 +106,13 @@ fun Map(
             itemText= {it.title} ,
             onQueryChange = {query = it},
             expanded = expanded,
-            onExpandedChange = { expanded = it }
-
+            onExpandedChange = { expanded = it },
+            onItemClick = { place ->
+                // Centrar el mapa en el lugar seleccionado
+                centerPointState = Point.fromLngLat(place.location.longitude, place.location.latitude)
+                centerZoomState = 14.0
+                selectedPlace = place
+            }
         )
 
         FloatingActionButton(
@@ -94,27 +131,50 @@ fun Map(
             )
         }
 
-        //  Tarjeta inferior
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 9.dp)
-                .fillMaxWidth(0.9f)
-                .clip(RoundedCornerShape(25.dp))
-                .background(Color.White)
-                .padding(16.dp)
-        ) {
-            Column {
-                Text("Restaurante Del Sol", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text("Restaurante", color = Color.Gray, fontSize = 14.sp)
-                Row (verticalAlignment = Alignment.CenterVertically) {
-                    Text("⭐ 4.8", color = Color(0xFFFFC107), fontSize = 16.sp)
+        //  Mensaje si no hay resultados con filtros
+        if (placesViewModel.hasActiveFilters() && filtered.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 16.dp)
+                    .fillMaxWidth(0.9f)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(Color(0xFFFFF3E0))
+                    .padding(14.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.txt_no_places_found_filters),
+                    color = Color(0xFF8D6E63),
+                    fontSize = 14.sp
+                )
+            }
+        }
+
+        //  Tarjeta inferior (solo si hay un lugar seleccionado)
+        if (selectedPlace != null) {
+            val place = selectedPlace!!
+            val rating = placesViewModel.getAverageRatingForPlace(place.id)
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 9.dp)
+                    .fillMaxWidth(0.9f)
+                    .clip(RoundedCornerShape(25.dp))
+                    .background(Color.White)
+                    .padding(16.dp)
+            ) {
+                Column {
+                    Text(place.title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text(place.type.name.lowercase().replaceFirstChar { it.titlecase() }, color = Color.Gray, fontSize = 14.sp)
+                    Row (verticalAlignment = Alignment.CenterVertically) {
+                        Text("⭐ ${String.format("%.1f", rating)}", color = Color(0xFFFFC107), fontSize = 16.sp)
+                    }
                 }
             }
         }
 
     }
 
-
-
 }
+
+

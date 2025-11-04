@@ -3,6 +3,7 @@ package com.example.primeraplicacionprueba.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.primeraplicacionprueba.model.CreatePlaceState
+import com.example.primeraplicacionprueba.model.MapFilters
 import com.example.primeraplicacionprueba.model.Place
 import com.example.primeraplicacionprueba.model.PlaceType
 import com.example.primeraplicacionprueba.model.Location
@@ -21,6 +22,11 @@ class PlacesViewModel : ViewModel() {
 
     private val _places = MutableStateFlow(emptyList<Place>())
     val places: StateFlow<List<Place>> = _places.asStateFlow()
+
+    // Estado de filtros y lista filtrada
+    private val _activeFilters = MutableStateFlow<MapFilters?>(null)
+    private val _filteredPlaces = MutableStateFlow(emptyList<Place>())
+    val filteredPlaces: StateFlow<List<Place>> = _filteredPlaces.asStateFlow()
 
     // Estado para creación de lugares
     private val _createPlaceState = MutableStateFlow(CreatePlaceState())
@@ -97,7 +103,7 @@ class PlacesViewModel : ViewModel() {
                         LocalTime.of(18, 0)
                     )
                 ),
-                location = Location(latitude = 4.8143, longitude = -75.6946),
+                location = Location(latitude = 4.5339, longitude = -75.6811),
                 adress = "Calle 10 #12-34, Centro",
                 website = "www.cafecentral.com",
                 email = "info@cafecentral.com",
@@ -183,7 +189,7 @@ class PlacesViewModel : ViewModel() {
                         LocalTime.of(22, 0)
                     )
                 ),
-                location = Location(latitude = 4.5353, longitude = -75.6750),
+                location = Location(latitude = 4.8133, longitude = -75.6961),
                 adress = "Av. Bolívar 45-67",
                 website = "www.laparrillaq.com",
                 email = "reservas@laparrillaq.com",
@@ -275,7 +281,7 @@ class PlacesViewModel : ViewModel() {
                         LocalTime.of(16, 0)
                     )
                 ),
-                location = Location(latitude = 4.8143, longitude = -75.6946),
+                location = Location(latitude = 4.5350, longitude = -75.6800),
                 adress = "Av. Bolívar 40N-80",
                 website = "www.banrepcultural.org/armenia",
                 email = "armenia@banrepcultural.org",
@@ -522,7 +528,7 @@ class PlacesViewModel : ViewModel() {
                     ),
                     Shedule(Day.SUNDAY, LocalTime.of(7, 0), LocalTime.of(19, 0))
                 ),
-                location = Location(latitude = 4.5353, longitude = -75.6750),
+                location = Location(latitude = 4.8667, longitude = -75.6167),
                 adress = "Vía Santa Rosa de Cabal",
                 website = "www.termalessantarosa.com",
                 email = "reservas@termalessantarosa.com",
@@ -609,7 +615,7 @@ class PlacesViewModel : ViewModel() {
                         LocalTime.of(21, 0)
                     )
                 ),
-                location = Location(latitude = 4.5353, longitude = -75.6750),
+                location = Location(latitude = 4.8100, longitude = -75.6900),
                 adress = "Carrera 7 #30-20",
                 website = "www.pereiraplaza.com",
                 email = "info@pereiraplaza.com",
@@ -693,7 +699,7 @@ class PlacesViewModel : ViewModel() {
                     ),
                     Shedule(Day.SUNDAY, LocalTime.of(6, 0), LocalTime.of(21, 0))
                 ),
-                location = Location(latitude = 4.5353, longitude = -75.6750),
+                location = Location(latitude = 4.8130, longitude = -75.6950),
                 adress = "Carrera 13 #15-30",
                 website = "www.parqueolayaherrera.com",
                 email = "info@parqueolayaherrera.com",
@@ -780,7 +786,7 @@ class PlacesViewModel : ViewModel() {
                         LocalTime.of(22, 0)
                     )
                 ),
-                location = Location(latitude = 4.5353, longitude = -75.6750),
+                location = Location(latitude = 4.8080, longitude = -75.6880),
                 adress = "Calle 20 #8-45",
                 website = "www.elfogonpereira.com",
                 email = "reservas@elfogonpereira.com",
@@ -838,7 +844,7 @@ class PlacesViewModel : ViewModel() {
                     Shedule(Day.FRIDAY, LocalTime.of(6, 0), LocalTime.of(18, 0)),
                     Shedule(Day.SATURDAY, LocalTime.of(6, 0), LocalTime.of(16, 0))
                 ),
-                location = Location(latitude = 4.8143, longitude = -75.6946),
+                location = Location(latitude = 4.8150, longitude = -75.6920),
                 adress = "Calle 15 #20-45, Centro",
                 website = null,
                 email = null,
@@ -894,7 +900,7 @@ class PlacesViewModel : ViewModel() {
                         LocalTime.of(17, 0)
                     )
                 ),
-                location = Location(latitude = 4.8143, longitude = -75.6946),
+                location = Location(latitude = 4.8050, longitude = -75.6850),
                 adress = "Carrera 8 #12-30, El Poblado",
                 website = null,
                 email = null,
@@ -912,6 +918,8 @@ class PlacesViewModel : ViewModel() {
                 placeStatus = PlaceStatus.PENDING,
             )
         )
+        // Inicializar lista filtrada con todos los lugares
+        _filteredPlaces.value = _places.value
     }
 
     fun create(place: Place) {
@@ -924,6 +932,69 @@ class PlacesViewModel : ViewModel() {
                     it.type.toString().contains(query, ignoreCase = true)
         }
 
+    }
+
+    // ====== Filtros avanzados para el mapa ======
+    fun applyFilters(filters: MapFilters) {
+        _activeFilters.value = filters
+        _filteredPlaces.value = filterPlaces(filters)
+    }
+
+    fun clearFilters() {
+        _activeFilters.value = null
+        _filteredPlaces.value = _places.value
+    }
+
+    fun hasActiveFilters(): Boolean = _activeFilters.value != null
+
+    private fun filterPlaces(filters: MapFilters): List<Place> {
+        var result = _places.value.asSequence()
+
+        val keyword = filters.keyword?.trim().orEmpty()
+        if (keyword.isNotEmpty()) {
+            result = result.filter { place ->
+                place.title.contains(keyword, ignoreCase = true) ||
+                        place.description.contains(keyword, ignoreCase = true)
+            }
+        }
+
+        if (filters.categories.isNotEmpty()) {
+            result = result.filter { it.type in filters.categories }
+        }
+
+        val city = filters.city?.trim().orEmpty()
+        if (city.isNotEmpty()) {
+            result = result.filter { it.city.equals(city, ignoreCase = true) }
+        }
+
+        filters.minRating?.let { min ->
+            result = result.filter { getAverageRatingForPlace(it.id) >= min }
+        }
+
+        if (filters.openNow) {
+            result = result.filter { isOpenNow(it) }
+        }
+
+        // maxDistanceKm pendiente de implementar cuando haya ubicación del usuario
+
+        return result.toList()
+    }
+
+    private fun isOpenNow(place: Place): Boolean {
+        val now = LocalDateTime.now()
+        val day = when (now.dayOfWeek) {
+            java.time.DayOfWeek.MONDAY -> Day.MONDAY
+            java.time.DayOfWeek.TUESDAY -> Day.TUESDAY
+            java.time.DayOfWeek.WEDNESDAY -> Day.WEDNESDAY
+            java.time.DayOfWeek.THURSDAY -> Day.THURSDAY
+            java.time.DayOfWeek.FRIDAY -> Day.FRIDAY
+            java.time.DayOfWeek.SATURDAY -> Day.SATURDAY
+            java.time.DayOfWeek.SUNDAY -> Day.SUNDAY
+        }
+        val today = place.shedule.firstOrNull { it.day == day } ?: return false
+        val nowTime = now.toLocalTime()
+        // Inclusivo en apertura, exclusivo en cierre: open <= now < close
+        return (nowTime == today.open || nowTime.isAfter(today.open)) && nowTime.isBefore(today.close)
     }
 
     fun findById(id: String): Place? {

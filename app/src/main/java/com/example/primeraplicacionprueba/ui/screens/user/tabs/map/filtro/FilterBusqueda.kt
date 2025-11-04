@@ -45,6 +45,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
+import com.example.primeraplicacionprueba.model.MapFilters
+import com.example.primeraplicacionprueba.model.PlaceType
+import com.example.primeraplicacionprueba.ui.screens.LocalMainViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,6 +55,7 @@ import androidx.compose.ui.unit.dp
 fun FilterBusqueda(
     onNavigateBack: () -> Unit = {}
 ){
+    val placesViewModel = LocalMainViewModel.current.placesViewModel
     var palabraClave by remember { mutableStateOf("") }
     var distancia by remember { mutableStateOf("") }
     var ciudad by remember { mutableStateOf("") }
@@ -207,7 +211,32 @@ fun FilterBusqueda(
 
                 // Botón "Aplicar filtros"
                 Button(
-                    onClick = { /* aplicar filtros */ },
+                    onClick = {
+                        val selectedTypes = categoriasSeleccionadas.mapNotNull { nombre ->
+                            when (nombre) {
+                                "Restaurante" -> PlaceType.RESTAURANT
+                                "Cafetería" -> PlaceType.CAFE
+                                "Museo" -> PlaceType.MUSEUM
+                                "Hotel" -> PlaceType.HOTEL
+                                "Comidas rápidas" -> PlaceType.FAST_FOOD
+                                else -> null
+                            }
+                        }.toSet()
+
+                        val minRating = calificacion.trim().takeIf { it.isNotEmpty() && it != "Cualquiera" }?.toFloatOrNull()
+                        val maxDist = distancia.trim().takeIf { it.isNotEmpty() }?.toFloatOrNull()
+
+                        val filters = MapFilters(
+                            keyword = palabraClave.ifBlank { null },
+                            categories = selectedTypes,
+                            city = ciudad.ifBlank { null },
+                            minRating = minRating,
+                            openNow = abiertoAhora,
+                            maxDistanceKm = maxDist
+                        )
+                        placesViewModel.applyFilters(filters)
+                        onNavigateBack()
+                    },
                     modifier = Modifier
                         .weight(1.5f)
                         .height(65.dp),

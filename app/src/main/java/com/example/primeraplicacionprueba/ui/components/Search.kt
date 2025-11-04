@@ -51,6 +51,7 @@ import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
         itemText: (T) -> String,
         expanded: Boolean,
         onExpandedChange: (Boolean) -> Unit,
+        onItemClick: (T) -> Unit = {},
         modifier: Modifier = Modifier
     ) {
         Column(
@@ -107,7 +108,10 @@ import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable { onExpandedChange(false) }
+                                    .clickable { 
+                                        onItemClick(item)
+                                        onExpandedChange(false) 
+                                    }
                                     .padding(vertical = 8.dp)
                             ) {
                                 Text(

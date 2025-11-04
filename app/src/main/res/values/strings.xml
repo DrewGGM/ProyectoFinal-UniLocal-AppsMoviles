@@ -166,6 +166,7 @@
     <string name="txt_step_two_title">2. Ubicación y Contacto</string>
     <string name="txt_location">Ubicación</string>
     <string name="txt_tap_to_select_map">Toca para seleccionar en el mapa</string>
+    <string name="txt_select_location_required">Seleccione una ubicación en el mapa</string>
     <string name="txt_contact_phone">Teléfono de Contacto</string>
     <string name="txt_phone_placeholder">Ej: +57 320 123 4567</string>
     <string name="txt_website">Sitio Web</string>
@@ -273,6 +274,7 @@
     <!-- FILTROS -->
     <string name="txt_filtrosplace">Filtros de busqueda</string>
     <string name="txt_find">Buscar...</string>
+    <string name="txt_no_places_found_filters">No se encontraron lugares con esos filtros</string>
 
     <!-- PROFILE STATS -->
     <string name="txt_stat_visited">Lugares\nvisitados</string>
