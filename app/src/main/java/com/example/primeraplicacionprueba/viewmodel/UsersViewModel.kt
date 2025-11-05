@@ -100,6 +100,18 @@ class UsersViewModel : ViewModel() {
         return user
     }
     
+    fun restoreUserFromPreferences(context: Context) {
+        val prefs = SharedPrefsUtil.getPreferences(context)
+        val userId = prefs["userId"] ?: ""
+
+        if (userId.isNotEmpty()) {
+            val user = findById(userId)
+            if (user != null) {
+                _currentUser.value = user
+            }
+        }
+    }
+
     fun logout(context: Context) {
         _currentUser.value = null
         SharedPrefsUtil.clearPreferences(context)

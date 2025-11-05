@@ -23,7 +23,6 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        SharedPrefsUtil.clearPreferences(this)
         placesViewModel.setReviewViewModel(reviewsViewModel)
         val mainViewModel = MainViewModel(
             placesViewModel = placesViewModel,

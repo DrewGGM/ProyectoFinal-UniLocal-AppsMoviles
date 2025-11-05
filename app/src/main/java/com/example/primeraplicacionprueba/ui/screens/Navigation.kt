@@ -47,6 +47,13 @@ fun Navigation(
     val navController = rememberNavController()
     val user = SharedPrefsUtil.getPreferences(context)
 
+    // Restaurar usuario desde SharedPreferences si existe
+    LaunchedEffect(Unit) {
+        if (user["userId"]?.isNotEmpty() == true) {
+            mainViewModel.usersViewModel.restoreUserFromPreferences(context)
+        }
+    }
+
     val startDestination = if (user["userId"]?.isEmpty() == true) {
         RouteScreen.Login
     } else {
