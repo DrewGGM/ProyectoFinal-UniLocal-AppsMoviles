@@ -36,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +50,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.Image
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -59,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.Role
 import com.example.primeraplicacionprueba.model.User
+import com.example.primeraplicacionprueba.ui.components.OperationResultHandler
 import com.example.primeraplicacionprueba.ui.theme.Accent
 import com.example.primeraplicacionprueba.ui.theme.BgLight
 import com.example.primeraplicacionprueba.ui.theme.BorderLight
@@ -79,6 +82,8 @@ fun RegisterScreen(
 ) {
     val mainViewModel = LocalMainViewModel.current
     val usersViewModel = mainViewModel.usersViewModel
+    val userResult by usersViewModel.userResult.collectAsState()
+
     var nombreCompleto by remember { mutableStateOf("") }
     var nombreUsuario by remember { mutableStateOf("") }
     var ciudad by remember { mutableStateOf("") }
@@ -199,16 +204,6 @@ fun RegisterScreen(
             isValid = false
         } else {
             contrasenaError = ""
-        }
-
-        if (usersViewModel.findByEmail(correo) != null) {
-            correoError = context.getString(R.string.txt_email_error_exists)
-            isValid = false
-        }
-
-        if (usersViewModel.findByUsername(nombreUsuario) != null) {
-            nombreUsuarioError = context.getString(R.string.txt_username_error_exists)
-            isValid = false
         }
 
         return isValid
@@ -502,23 +497,33 @@ fun RegisterScreen(
 
                         Spacer(modifier = Modifier.height(20.dp))
 
+                        OperationResultHandler(
+                            result = userResult,
+                            onSuccess = {
+                                onNavigateToLogin()
+                                usersViewModel.resetOperationResult()
+                            },
+                            onFailure ={
+                                usersViewModel.resetOperationResult()
+                            }
+                        )
+
                         // Botón de crear cuenta
                         Button(
                             onClick = {
                                 if (validarCampos()) {
                                     val user = User(
-                                        id = (usersViewModel.users.value.size + 1).toString(),
                                         nombre = nombreCompleto,
                                         username = nombreUsuario,
                                         city = ciudad,
                                         country = pais,
                                         email = correo,
                                         password = contrasena,
+                                        id = "",
                                         rol = Role.USER,
                                         joinDate = LocalDate.now()
                                     )
                                     usersViewModel.create(user)
-                                    onNavigateToLogin()
                                 }
                             },
                             modifier = Modifier

@@ -81,12 +81,12 @@ fun MyCommentScreen(
                         onReply = { replyText ->
                             // Crear respuesta usando ReviewViewModel
                             val newReply = ReviewReply(
-                                id = "reply_${System.currentTimeMillis()}",
+                                id = "", // Firebase will auto-generate
                                 reviewId = review.id,
                                 userID = currentUser?.id ?: "unknown_user",
                                 username = place?.title ?: "Mi Lugar", // Usar nombre del lugar
                                 replyText = replyText,
-                                date = java.time.LocalDateTime.now()
+                                date = com.google.firebase.Timestamp.now()
                             )
                             reviewViewModel.addReplyToReview(review.id, newReply)
                         }
@@ -197,15 +197,16 @@ fun CommentCard(
             )
             
             // Mostrar respuestas existentes
-            if (review.replies.isNotEmpty()) {
-                Column(
+            // TODO: Load replies from Firebase using review.replyIds
+            if (review.replyIds.isNotEmpty()) {
+                Text(
+                    text = "${review.replyIds.size} respuesta(s)",
                     modifier = Modifier.padding(start = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    review.replies.forEach { reply ->
-                        ReplyCard(reply = reply)
-                    }
-                }
+                    fontSize = 12.sp,
+                    color = Color.Gray
+                )
+                // Note: Replies need to be loaded from Firebase separately
+                // Use reviewViewModel.loadRepliesForReview(review.id) { replies -> ... }
             }
             
             // Campo de respuesta

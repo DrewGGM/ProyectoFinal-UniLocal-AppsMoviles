@@ -17,6 +17,8 @@ material3 = "1.4.0"
 foundation = "1.9.2"
 uiVersion = "1.9.3"
 mapsCompose = "11.11.0"
+googleGmsGoogleServices = "4.4.4"
+firebaseFirestore = "26.0.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,11 +45,13 @@ androidx-foundation = { group = "androidx.compose.foundation", name = "foundatio
 androidx-compose-ui-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "uiVersion" }
 maps-android = { module= "com.mapbox.maps:android", version.ref="mapsCompose"}
 maps-compose = { module= "com.mapbox.extension:maps-compose", version.ref ="mapsCompose"}
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin-serialization" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 
 

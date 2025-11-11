@@ -99,8 +99,9 @@ fun Map(
         //BARRA DE BUSQUEDA
         Search(
             query = query,
-            onSearch = {
-                placesViewModel.filtrarportitulotypo(query)
+            onSearch = { searchQuery ->
+                placesViewModel.filtrarportitulotypo(searchQuery)
+                filtered
             },
             placeholder = stringResource(id = R.string.txt_search_placeholder),
             itemText= {it.title} ,

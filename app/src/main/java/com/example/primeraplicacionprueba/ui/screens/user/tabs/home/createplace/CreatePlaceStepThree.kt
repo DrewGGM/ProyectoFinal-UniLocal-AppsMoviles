@@ -233,8 +233,8 @@ fun CreatePlaceStepThree(
                                     day?.let {
                                         Shedule(
                                             day = it,
-                                            open = LocalTime.parse(openTimeFormatted),
-                                            close = LocalTime.parse(closeTimeFormatted)
+                                            openHour = openTimeFormatted,
+                                            closeHour = closeTimeFormatted
                                         )
                                     }
                                 } catch (e: Exception) {
@@ -245,7 +245,7 @@ fun CreatePlaceStepThree(
                         }.filterNotNull()
 
                         // Guardar horarios (puede ser lista vacía si no se configuró ninguno)
-                        viewModel.updateSchedule(sheduleList)
+                        viewModel.updateCreateState(state.copy(schedule = sheduleList))
                         onNavigateToNext()
                     },
                     modifier = Modifier

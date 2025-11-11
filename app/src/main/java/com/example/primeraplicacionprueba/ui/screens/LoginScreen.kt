@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.User
+import com.example.primeraplicacionprueba.ui.components.OperationResultHandler
 import com.example.primeraplicacionprueba.ui.theme.*
 
 @Composable
@@ -70,6 +72,9 @@ fun LoginScreen(
     // Estados para validación
     var emailError by remember { mutableStateOf("") }
     var contrasenaError by remember { mutableStateOf("") }
+
+    val userResult by usersViewModel.userResult.collectAsState()
+    val contextU = LocalContext.current
 
     val context = LocalContext.current
 
@@ -247,21 +252,24 @@ fun LoginScreen(
 
                         Spacer(modifier = Modifier.height(20.dp))
 
+                        OperationResultHandler(
+                            result = userResult,
+                            onSuccess = {
+                                usersViewModel.currentUser.value?.let { user ->
+                                    onNavigateToHome(user)
+                                }
+                                usersViewModel.resetOperationResult()
+                            },
+                            onFailure = {
+                                usersViewModel.resetOperationResult()
+                            }
+                        )
+
                         // Botón de iniciar sesión
                         Button(
                             onClick = {
                                 if (validarCampos()) {
-                                    val usersLogged = usersViewModel.login(email, contrasena)
-                                    if (usersLogged != null) {
-                                        onNavigateToHome(usersLogged)
-                                    } else {
-                                        Toast.makeText(
-                                            context,
-                                            context.getString(R.string.txt_credentials_incorrect),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-
+                                    usersViewModel.login(email, contrasena, context)
                                 }
                             },
                             modifier = Modifier

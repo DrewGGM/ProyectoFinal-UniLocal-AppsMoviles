@@ -1,23 +1,26 @@
 package com.example.primeraplicacionprueba.model
 
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.PropertyName
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
 
 data class Place(
-    val id: String,
-    val title: String,
-    val imagenes: List<String>,
-    val description: String,
-    val phones: List<String>,
-    val type: PlaceType,
-    val shedule: List<Shedule>,
-    val location: Location,
-    val adress: String,
+    var id: String = "",
+    val title: String = "",
+    val imagenes: List<String> = emptyList(),
+    val description: String = "",
+    val phones: List<String> = emptyList(),
+    val type: PlaceType = PlaceType.RESTAURANT,
+    val shedule: List<Shedule> = emptyList(),
+    val location: Location = Location(),
+    val adress: String = "",
     val website: String? = null,
     val email: String? = null,
     val socialMedia: String? = null,
-    val reviews: List<Review> = emptyList(),
+    val reviewIds: List<String> = emptyList(), // Changed from List<Review> to List<String>
     val city: String = "",
     val neighborhood: String = "",
     val priceRange: String = "",
@@ -27,7 +30,9 @@ data class Place(
     val viewCount: Int = 0,
     val favoriteCount: Int = 0,
     var placeStatus: PlaceStatus = PlaceStatus.PENDING,
-    val createdDate: LocalDate,
+    @get:PropertyName("createdDate")
+    @set:PropertyName("createdDate")
+    var createdDate: Any? = null, // Changed to Any? to handle Timestamp/HashMap
 ) {
     fun changePlaceStatus(status: PlaceStatus) {
         placeStatus = status
@@ -51,11 +56,11 @@ data class Place(
         return todaySchedule?.close?.toString() ?: "N/A"
     }
     
-    fun getReviewCount(): Int = reviews.size
-    
-    fun getAverageRating(): Float = if (reviews.isNotEmpty()) {
-        reviews.map { it.rating }.average().toFloat()
-    } else 0f
+    fun getReviewCount(): Int = reviewIds.size
+
+    // Note: Average rating should be calculated from actual Review objects
+    // This is just a placeholder - implement in ViewModel by fetching reviews
+    fun getAverageRating(): Float = 0f
     
     fun getFormattedCloseTime(): String {
         val closeTime = getNextCloseTime()

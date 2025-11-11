@@ -204,7 +204,7 @@ fun PlaceDetail(
                                     rating = review.rating.toFloat(),
                                     comment = review.comment,
                                     avatarColor = if (review.rating >= 4) Tertiary else Primary,
-                                    replies = review.replies
+                                    replies = emptyList() // TODO: Load from Firebase using review.replyIds
                                 )
                             }
                         }
@@ -232,10 +232,10 @@ fun PlaceDetail(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             val currentUser by usersViewModel.currentUser.collectAsState()
-            val isFavorite = currentUser?.favorites?.any { it.id == place.id } == true
+            val isFavorite = currentUser?.favoriteIds?.contains(place.id) == true
             FloatingActionButton(
                 onClick = {
-                    usersViewModel.toggleFavorite(place)
+                    usersViewModel.toggleFavorite(place.id)
                 },
                 containerColor = Color.White,
                 contentColor = if (isFavorite) Primary else TextDark,

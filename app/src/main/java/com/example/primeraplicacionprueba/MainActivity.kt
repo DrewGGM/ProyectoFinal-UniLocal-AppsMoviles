@@ -18,17 +18,25 @@ class MainActivity : ComponentActivity() {
     private val reviewsViewModel: ReviewViewModel by viewModels()
     private val placesViewModel: PlacesViewModel by viewModels()
     private val achievementViewModel: AchievementViewModel by viewModels()
+    private val commentsViewModel: CommentsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Restore user session from SharedPreferences
+        usersViewModel.restoreUserFromPreferences(this)
+
+        // Set up cross-ViewModel dependencies
         placesViewModel.setReviewViewModel(reviewsViewModel)
+
         val mainViewModel = MainViewModel(
             placesViewModel = placesViewModel,
             reviewsViewModel = reviewsViewModel,
             usersViewModel = usersViewModel,
-            achievementViewModel = achievementViewModel
+            achievementViewModel = achievementViewModel,
+            commentsViewModel = commentsViewModel
         )
 
         setContent (

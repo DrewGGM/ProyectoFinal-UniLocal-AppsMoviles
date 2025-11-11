@@ -408,7 +408,13 @@ fun CreatePlaceStepOne(
 
                     if (isValid) {
                         // Guardar datos en el ViewModel antes de continuar
-                        viewModel.updateBasicInfo(nombreLugar, descripcion, selectedCategory)
+                        viewModel.updateCreateState(
+                            state.copy(
+                                title = nombreLugar,
+                                description = descripcion,
+                                type = selectedCategory!!
+                            )
+                        )
                         onNavigateToNext()
                     }
                 },

@@ -41,13 +41,13 @@ fun CommentScreen(
     fun saveComment() {
         if (rating > 0 && comment.isNotBlank()) {
             val newReview = Review(
-                id = "review_${System.currentTimeMillis()}",
+                id = "", // Firebase will auto-generate
                 userID = userId,
                 username = username,
                 placeID = placeId,
                 rating = rating,
                 comment = comment,
-                date = LocalDateTime.now()
+                date = com.google.firebase.Timestamp.now()
             )
             reviewViewModel.create(newReview)
             onNavigateBack()

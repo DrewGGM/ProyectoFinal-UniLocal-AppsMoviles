@@ -1,8 +1,6 @@
 package com.example.primeraplicacionprueba.model
 
-class Location(
-    val latitude: Double,
-    val longitude: Double
-
-) {
-}
+data class Location(
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0
+)

@@ -351,7 +351,7 @@ fun CreatePlaceStepFour(
                 Button(
                     onClick = {
                         // Guardar imágenes en el ViewModel antes de enviar
-                        viewModel.updateImages(selectedImages)
+                        viewModel.updateCreateState(state.copy(images = selectedImages))
                         onSubmit()
                     },
                     modifier = Modifier

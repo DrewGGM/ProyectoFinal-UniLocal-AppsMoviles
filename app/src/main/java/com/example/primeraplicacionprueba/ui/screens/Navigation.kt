@@ -348,13 +348,13 @@ fun Navigation(
                                     city = currentUser?.city ?: "No especificado",
                                     neighborhood = if (state.neighborhood.isBlank()) "No especificado" else state.neighborhood,
                                     ownerId = currentUser?.id ?: "",
-                                    createdDate = LocalDate.now()
+                                    createdDate = com.google.firebase.Timestamp.now()
                                 )
                                 placesViewModel.updatePlace(updatedPlace)
                             } else {
                                 // Modo creación: crear nuevo lugar
                                 val newPlace = Place(
-                                    id = (placesViewModel.places.value.size + 1).toString(),
+                                    id = "", // Firebase will generate ID
                                     title = state.title,
                                     imagenes = if (state.images.isEmpty()) emptyList() else state.images,
                                     description = state.description,
@@ -369,7 +369,7 @@ fun Navigation(
                                     city = currentUser?.city ?: "No especificado",
                                     neighborhood = if (state.neighborhood.isBlank()) "No especificado" else state.neighborhood,
                                     ownerId = currentUser?.id ?: "",
-                                    createdDate = LocalDate.now()
+                                    createdDate = com.google.firebase.Timestamp.now()
                                 )
                                 placesViewModel.create(newPlace)
                             }
@@ -472,7 +472,12 @@ fun Navigation(
                     val usersViewModel = mainViewModel.usersViewModel
                     val placesViewModel = mainViewModel.placesViewModel
                     val currentUser by usersViewModel.currentUser.collectAsState()
-                    val favorites = currentUser?.favorites ?: emptyList()
+                    val allPlaces by placesViewModel.places.collectAsState()
+
+                    // Convert favoriteIds to actual Place objects
+                    val favoriteIds = currentUser?.favoriteIds ?: emptyList()
+                    val favorites = allPlaces.filter { place -> favoriteIds.contains(place.id) }
+
                     currentUser?.let { user ->
                         FavoritesScreen(
                             favorites= favorites,
@@ -484,7 +489,6 @@ fun Navigation(
                                 navController.navigate(RouteScreen.PlaceDetail(placeId))
                             },
                             onRemoveFavorite= { placeId ->
-                                // TODO: Implementar remoción de favorito
                                 usersViewModel.removeFavorite(placeId)
                             }
                         )

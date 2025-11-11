@@ -169,10 +169,12 @@ fun CreatePlaceStepTwo(
                             activateClick = true,
                             onMapClickListener={ l ->
                                 clickedPoint = l
-                                viewModel.updateLocation(
-                                    Location(
-                                        latitude = l.latitude(),
-                                        longitude = l.longitude()
+                                viewModel.updateCreateState(
+                                    state.copy(
+                                        location = Location(
+                                            latitude = l.latitude(),
+                                            longitude = l.longitude()
+                                        )
                                     )
                                 )
                             }
@@ -310,22 +312,25 @@ fun CreatePlaceStepTwo(
                     onClick = {
                         // Validar al menos un dato de contacto (opcional pero recomendado)
                         // No bloqueamos si no hay datos, solo guardamos lo que hay
-                        viewModel.updateContactInfo(
-                            phone = telefonoContacto,
-                            website = sitioWeb,
-                            socialMedia = redesSociales,
-                            address = "",  // Valor por defecto hasta que se implemente el mapa
-                            city = "Armenia",     // Valor por defecto hasta que se implemente el mapa
-                            neighborhood = ""  // Valor por defecto hasta que se implemente el mapa
+                        viewModel.updateCreateState(
+                            state.copy(
+                                phones = if (telefonoContacto.isNotBlank()) listOf(telefonoContacto) else emptyList(),
+                                website = sitioWeb.ifBlank { null },
+                                socialMedia = redesSociales.ifBlank { null },
+                                address = "",  // Valor por defecto hasta que se implemente el mapa
+                                city = "Armenia",     // Valor por defecto hasta que se implemente el mapa
+                                neighborhood = ""  // Valor por defecto hasta que se implemente el mapa
+                            )
                         )
                         // Asegurar que la ubicación se persista si se seleccionó en el mapa
                         if (clickedPoint != null && state.location == null) {
                             val p = clickedPoint!!
-                            viewModel.updateLocation(
-                                Location(
-                                    latitude = p.latitude(),
-                                    longitude = p.longitude()
-                                    
+                            viewModel.updateCreateState(
+                                state.copy(
+                                    location = Location(
+                                        latitude = p.latitude(),
+                                        longitude = p.longitude()
+                                    )
                                 )
                             )
                         }

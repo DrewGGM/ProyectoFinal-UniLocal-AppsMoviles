@@ -1,54 +1,110 @@
 package com.example.primeraplicacionprueba.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.primeraplicacionprueba.model.Comment
-import com.example.primeraplicacionprueba.model.Place
+import com.example.primeraplicacionprueba.utils.RequestResult
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.time.LocalDateTime
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
-class CommentsViewModel : ViewModel(){
+class CommentsViewModel : ViewModel() {
+
+    private val db = FirebaseFirestore.getInstance()
+
     private val _comments = MutableStateFlow(emptyList<Comment>())
-    val places: StateFlow<List<Comment>> = _comments.asStateFlow()
+    val comments: StateFlow<List<Comment>> = _comments.asStateFlow()
+
+    private val _commentResult = MutableStateFlow<RequestResult?>(null)
+    val commentResult: StateFlow<RequestResult?> = _commentResult.asStateFlow()
+
+    private var commentsListener: ListenerRegistration? = null
 
     init {
         loadComments()
     }
+
+    // ========== FIREBASE CRUD OPERATIONS ==========
+
     fun loadComments() {
-        _comments.value = listOf(
-            Comment(
-                id = "c1",
-                placeId = "p1",
-                userId = "1",
-                username = "juanca",
-                rating = 5,
-                commentText = "Excelente lugar, el ambiente es muy tranquilo y el café tiene un sabor espectacular. Perfecto para trabajar o leer un rato.",
-                timestamp = LocalDateTime.now(),
-                imageUrl = "https://plus.unsplash.com/premium_photo-1670984940113-f3aa1cd1309a?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cmVzdGF1cmFudGVzfGVufDB8fDB8fHww"
-            ),
-            Comment(
-                id = "c2",
-                placeId = "p1",
-                userId = "1",
-                username = "juanca",
-                rating = 4,
-                commentText = "Muy buen sitio, la atención fue amable y los postres deliciosos. Solo recomendaría ampliar un poco el horario los fines de semana.",
-                timestamp = LocalDateTime.now(),
-                imageUrl = "https://plus.unsplash.com/premium_photo-1670984940113-f3aa1cd1309a?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cmVzdGF1cmFudGVzfGVufDB8fDB8fHww"
-            ),
-            Comment(
-                id = "c3",
-                placeId = "p1",
-                userId = "1",
-                username = "juanca",
-                rating = 3,
-                commentText = "El lugar es bonito, pero estaba un poco lleno cuando fui. La música era agradable y el café bastante bueno.",
-                timestamp = LocalDateTime.now(),
-                imageUrl = "https://plus.unsplash.com/premium_photo-1670984940113-f3aa1cd1309a?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cmVzdGF1cmFudGVzfGVufDB8fDB8fHww"
-            )
-        )
+        // Real-time listener for comments from Firebase
+        commentsListener = db.collection("comments")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("CommentsViewModel", "Error loading comments", error)
+                    return@addSnapshotListener
+                }
+
+                val commentsList = snapshot?.documents?.mapNotNull { doc ->
+                    doc.toObject(Comment::class.java)?.apply {
+                        this.id = doc.id
+                    }
+                } ?: emptyList()
+
+                _comments.value = commentsList
+            }
     }
+
+    fun create(comment: Comment) {
+        viewModelScope.launch {
+            _commentResult.value = RequestResult.Loading
+            _commentResult.value = runCatching { createFirebase(comment) }
+                .fold(
+                    onSuccess = { RequestResult.Success(message = "Comentario creado exitosamente") },
+                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: "Error creando el Comentario") }
+                )
+        }
+    }
+
+    private suspend fun createFirebase(comment: Comment) {
+        db.collection("comments").add(comment).await()
+    }
+
+    fun update(comment: Comment) {
+        viewModelScope.launch {
+            _commentResult.value = RequestResult.Loading
+            _commentResult.value = runCatching { updateFirebase(comment) }
+                .fold(
+                    onSuccess = { RequestResult.Success(message = "Comentario actualizado correctamente") },
+                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: "Error actualizando el Comentario") }
+                )
+        }
+    }
+
+    private suspend fun updateFirebase(comment: Comment) {
+        if (comment.id.isEmpty()) {
+            throw Exception("ID de comentario no válido")
+        }
+        db.collection("comments")
+            .document(comment.id)
+            .set(comment)
+            .await()
+    }
+
+    fun delete(commentId: String) {
+        viewModelScope.launch {
+            _commentResult.value = RequestResult.Loading
+            _commentResult.value = runCatching { deleteFirebase(commentId) }
+                .fold(
+                    onSuccess = { RequestResult.Success(message = "Comentario eliminado correctamente") },
+                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: "Error eliminando el Comentario") }
+                )
+        }
+    }
+
+    private suspend fun deleteFirebase(commentId: String) {
+        db.collection("comments")
+            .document(commentId)
+            .delete()
+            .await()
+    }
+
+    // ========== QUERIES ==========
 
     fun findById(id: String): Comment? {
         return _comments.value.find { it.id == id }
@@ -56,16 +112,22 @@ class CommentsViewModel : ViewModel(){
 
     fun findByPlaceId(placeId: String): List<Comment> {
         return _comments.value.filter { it.placeId == placeId }
-
     }
+
     fun findByUserId(userId: String): List<Comment> {
         return _comments.value.filter { it.userId == userId }
     }
+
     fun findByUserPlaceId(placeId: String, userId: String): List<Comment> {
         return _comments.value.filter { it.placeId == placeId && it.userId == userId }
     }
 
-    fun create(comment: Comment) {
-        _comments.value = _comments.value + comment
+    fun resetOperationResult() {
+        _commentResult.value = null
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        commentsListener?.remove()
     }
 }
