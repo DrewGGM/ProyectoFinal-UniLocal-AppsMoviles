@@ -194,7 +194,8 @@ fun Navigation(
                             onNavigateToLogin = {
                                 usersViewModel.logout(context)
                                 navController.navigate(RouteScreen.Login) {
-                                    popUpTo(RouteScreen.HomeAdmin) { inclusive = true }
+                                    popUpTo(0) { inclusive = true }
+                                    launchSingleTop = true
                                 }
                             }
                         )

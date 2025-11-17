@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import com.example.primeraplicacionprueba.ui.screens.Navigation
 import com.example.primeraplicacionprueba.ui.theme.PrimerAplicacionPruebaTheme
+import com.example.primeraplicacionprueba.utils.CloudinaryHelper
 import com.example.primeraplicacionprueba.utils.SharedPrefsUtil
 import com.example.primeraplicacionprueba.viewmodel.*
 import kotlin.getValue
@@ -24,6 +25,14 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Initialize Cloudinary
+        CloudinaryHelper.init(
+            context = this,
+            cloudName = getString(R.string.cloudinary_cloud_name),
+            apiKey = getString(R.string.cloudinary_api_key),
+            apiSecret = getString(R.string.cloudinary_api_secret)
+        )
 
         // Restore user session from SharedPreferences
         usersViewModel.restoreUserFromPreferences(this)

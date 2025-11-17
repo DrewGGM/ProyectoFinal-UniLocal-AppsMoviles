@@ -19,6 +19,9 @@ uiVersion = "1.9.3"
 mapsCompose = "11.11.0"
 googleGmsGoogleServices = "4.4.4"
 firebaseFirestore = "26.0.2"
+firebaseAuth = "23.1.0"
+playServicesAuth = "21.2.0"
+cloudinary = "3.0.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -46,6 +49,9 @@ androidx-compose-ui-ui = { group = "androidx.compose.ui", name = "ui", version.r
 maps-android = { module= "com.mapbox.maps:android", version.ref="mapsCompose"}
 maps-compose = { module= "com.mapbox.extension:maps-compose", version.ref ="mapsCompose"}
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
+cloudinary-android = { group = "com.cloudinary", name = "cloudinary-android", version.ref = "cloudinary" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

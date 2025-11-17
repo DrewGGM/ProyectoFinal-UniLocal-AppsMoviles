@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">Primer Aplicacion Prueba</string>
 
+    <!-- Google Sign-In Web Client ID - Replace with your actual Web Client ID from Firebase Console -->
+    <string name="default_web_client_id">697554561107-l9rbjoslklep85nle02nhnvc7phetvek.apps.googleusercontent.com</string>
+
+    <!-- Cloudinary Configuration -->
+    <string name="cloudinary_cloud_name">dpvecidb8</string>
+    <string name="cloudinary_api_key">166158945458968</string>
+    <string name="cloudinary_api_secret">xJsyBpZFwPgVVJ8K7tk-wingyZ8</string>
+
 //TEXTOS LOGIN
 
     <string name="txt_email">Correo electorinico</string>

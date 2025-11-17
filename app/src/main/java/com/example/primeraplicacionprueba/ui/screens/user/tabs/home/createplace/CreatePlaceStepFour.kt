@@ -35,6 +35,7 @@ import com.example.primeraplicacionprueba.R
 import androidx.compose.ui.res.stringResource
 import com.example.primeraplicacionprueba.ui.theme.*
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
+import com.example.primeraplicacionprueba.ui.components.MultipleImageUploader
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,7 +49,6 @@ fun CreatePlaceStepFour(
     val state by viewModel.createPlaceState.collectAsState()
 
     var selectedImages by remember(state.images) { mutableStateOf(state.images) }
-    var showImagePicker by remember { mutableStateOf(false) }
     var imageUrl by remember { mutableStateOf("") }
     var urlError by remember { mutableStateOf("") }
     
@@ -196,130 +196,15 @@ fun CreatePlaceStepFour(
                 }
             }
 
-            // Área de carga de imágenes
-            if (selectedImages.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clip(RoundedCornerShape(24.dp))
-                        .border(
-                            width = 2.dp,
-                            color = Tertiary,
-                            shape = RoundedCornerShape(24.dp)
-                        )
-                        .background(BgLight)
-                        .clickable {
-                            // TODO: Abrir selector de imágenes
-                            showImagePicker = true
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.padding(24.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AddPhotoAlternate,
-                            contentDescription = stringResource(R.string.txt_add_photo),
-                            tint = Secondary,
-                            modifier = Modifier.size(48.dp)
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = stringResource(R.string.txt_tap_to_upload),
-                            fontSize = 16.sp,
-                            color = TextMuted,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            } else {
-                // Grid de imágenes seleccionadas
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    // Título de vista previa
-                    Text(
-                        text = stringResource(R.string.txt_preview),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = TextDark
-                    )
-                    
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.height(400.dp) // Altura fija para permitir scroll del contenedor principal
-                    ) {
-                        // Botón agregar más
-                        item {
-                            Box(
-                                modifier = Modifier
-                                    .aspectRatio(1f)
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .border(
-                                        width = 2.dp,
-                                        color = Tertiary,
-                                        shape = RoundedCornerShape(16.dp)
-                                    )
-                                    .background(BgLight)
-                                    .clickable {
-                                        showImagePicker = true
-                                    },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.AddPhotoAlternate,
-                                    contentDescription = stringResource(R.string.txt_add_more_photos),
-                                    tint = Secondary,
-                                    modifier = Modifier.size(32.dp)
-                                )
-                            }
-                        }
-
-                        // Imágenes seleccionadas
-                        items(selectedImages) { imageUrl ->
-                            Box(
-                                modifier = Modifier
-                                    .aspectRatio(1f)
-                                    .clip(RoundedCornerShape(16.dp))
-                            ) {
-                                AsyncImage(
-                                    model = imageUrl,
-                                    contentDescription = stringResource(R.string.txt_place_image),
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.fillMaxSize()
-                                )
-
-                                // Botón eliminar
-                                IconButton(
-                                    onClick = {
-                                        selectedImages = selectedImages - imageUrl
-                                    },
-                                    modifier = Modifier
-                                        .align(Alignment.TopEnd)
-                                        .padding(4.dp)
-                                        .size(32.dp)
-                                        .background(
-                                            Color.Black.copy(alpha = 0.5f),
-                                            RoundedCornerShape(16.dp)
-                                        )
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Close,
-                                        contentDescription = stringResource(R.string.txt_remove),
-                                        tint = Color.White,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            // Cloudinary Image Uploader
+            MultipleImageUploader(
+                imageUrls = selectedImages,
+                onImagesUploaded = { urls ->
+                    selectedImages = urls
+                },
+                maxImages = 10,
+                folder = "places"
+            )
 
             Spacer(modifier = Modifier.height(32.dp))
 

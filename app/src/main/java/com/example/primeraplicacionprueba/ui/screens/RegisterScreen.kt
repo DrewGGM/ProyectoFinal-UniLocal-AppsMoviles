@@ -1,5 +1,8 @@
 package com.example.primeraplicacionprueba.ui.screens
 
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -71,6 +74,9 @@ import com.example.primeraplicacionprueba.ui.theme.Primary
 import com.example.primeraplicacionprueba.ui.theme.Secondary
 import com.example.primeraplicacionprueba.ui.theme.TextDark
 import com.example.primeraplicacionprueba.ui.theme.TextMuted
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import java.time.LocalDate
 import java.util.regex.Pattern
 
@@ -138,6 +144,32 @@ fun RegisterScreen(
     var contrasenaError by remember { mutableStateOf("") }
 
     val context = LocalContext.current
+
+    // Google Sign-In launcher
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            account?.let {
+                usersViewModel.signInWithGoogle(it, context)
+            }
+        } catch (e: ApiException) {
+            Toast.makeText(context, "Error al iniciar sesión con Google: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    // Función de Google Sign-In
+    fun signInWithGoogle() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+
+        val googleSignInClient = GoogleSignIn.getClient(context, gso)
+        googleSignInLauncher.launch(googleSignInClient.signInIntent)
+    }
 
     // Función de validación
     fun validarCampos(): Boolean {
@@ -595,7 +627,7 @@ fun RegisterScreen(
                                 contentDescription = stringResource(R.string.txt_continue_with_google),
                                 modifier = Modifier
                                     .size(42.dp)
-                                    .clickable { /* TODO: Implementar Google Sign In */ },
+                                    .clickable { signInWithGoogle() },
                                 tint = androidx.compose.ui.graphics.Color.Unspecified
                             )
 

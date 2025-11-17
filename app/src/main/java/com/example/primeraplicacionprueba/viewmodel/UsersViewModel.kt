@@ -8,7 +8,11 @@ import com.example.primeraplicacionprueba.model.Role
 import com.example.primeraplicacionprueba.model.User
 import com.example.primeraplicacionprueba.utils.RequestResult
 import com.example.primeraplicacionprueba.utils.SharedPrefsUtil
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,6 +28,9 @@ class UsersViewModel : ViewModel() {
 
     val db = Firebase.firestore
 
+    val auth : FirebaseAuth = FirebaseAuth.getInstance()
+
+
     private val _userResult = MutableStateFlow<RequestResult?>(value = null)
     val userResult: StateFlow<RequestResult?> = _userResult.asStateFlow()
 
@@ -33,79 +40,15 @@ class UsersViewModel : ViewModel() {
 
     private val visitedPlaceIds = mutableSetOf<String>()
 
-    init {
-        loadUsers()
-    }
-
     fun resetOperationResult() {
         _userResult.value = null
     }
 
-    fun loadUsers() {
-        /*_users.value = listOf(
-            User(
-                nombre = "Juan Camilo",
-                username = "juanca",
-                city = "Pereira",
-                country = "Colombia",
-                email = "user@email.com",
-                password = "user123",
-                id = "1",
-                rol = Role.USER,
-                placesCreated = 3,
-                placesVisited = 8,
-                reviewsWritten = 12,
-                favoritesAdded = 5,
-                joinDate = LocalDate.now()
-            ),
-            User(
-                nombre = "Valeria",
-                username = "vale",
-                city = "Armenia",
-                country = "Colombia",
-                email = "valeria@email.com",
-                password = "vale123",
-                id = "2",
-                rol = Role.USER,
-                placesCreated = 5,
-                placesVisited = 15,
-                reviewsWritten = 7,
-                favoritesAdded = 9,
-                joinDate = LocalDate.now().minusDays(10)
-            ),
-            User(
-                nombre = "Andrew",
-                username = "admin",
-                city = "Armenia",
-                country = "Colombia",
-                email = "admin@email.com",
-                password = "admin123",
-                id = "2",
-                rol = Role.ADMIN,
-                placesCreated = 15,
-                placesVisited = 25,
-                reviewsWritten = 35,
-                favoritesAdded = 12,
-                joinDate = LocalDate.now()
-            )
-        )*/
-
-    }
-
     private suspend fun createFirebase(user: User) {
-        // Check if email already exists
-        val emailSnapshot = db.collection("users")
-            .whereEqualTo("email", user.email)
-            .get()
-            .await()
-
-        if (!emailSnapshot.isEmpty) {
-            throw Exception("El correo electrónico ya está registrado")
-        }
-
-        // Check if username already exists
+        // Check if username already exists before creating auth account
         val usernameSnapshot = db.collection("users")
             .whereEqualTo("username", user.username)
+            .limit(1)
             .get()
             .await()
 
@@ -113,8 +56,21 @@ class UsersViewModel : ViewModel() {
             throw Exception("El nombre de usuario ya está en uso")
         }
 
-        // Create user
-        db.collection("users").add(user).await()
+        // Create Firebase Auth user (this will check email uniqueness automatically)
+        val authResult = auth.createUserWithEmailAndPassword(user.email, user.password).await()
+        val uid = authResult.user?.uid
+            ?: throw Exception("No se pudo obtener el UID del usuario")
+
+        // Store user profile in Firestore WITHOUT password
+        val userProfile = user.copy(
+            id = uid,
+            password = "" // Never store passwords in Firestore
+        )
+
+        db.collection("users")
+            .document(uid)
+            .set(userProfile)
+            .await()
     }
 
     fun create(user: User) {
@@ -269,35 +225,121 @@ class UsersViewModel : ViewModel() {
         // Clear current user before attempting login
         _currentUser.value = null
 
-        // Try to find user by email first
-        var snapshot = db.collection("users")
-            .whereEqualTo("email", emailOrUsername)
-            .whereEqualTo("password", password)
+        // Determine if input is email or username
+        val email = if (emailOrUsername.contains("@")) {
+            emailOrUsername
+        } else {
+            // Username provided - fetch email from Firestore
+            val snapshot = db.collection("users")
+                .whereEqualTo("username", emailOrUsername)
+                .limit(1)
+                .get()
+                .await()
+
+            if (snapshot.isEmpty) {
+                throw Exception("Usuario no encontrado")
+            }
+
+            snapshot.documents.firstOrNull()?.getString("email")
+                ?: throw Exception("Usuario no encontrado")
+        }
+
+        // Authenticate with Firebase Auth
+        val authResult = auth.signInWithEmailAndPassword(email, password).await()
+        val uid = authResult.user?.uid
+            ?: throw Exception("Error de autenticación")
+
+        // Load user profile from Firestore
+        findByIdFirebase(id = uid)
+
+        // Verify user was loaded successfully
+        if (_currentUser.value == null) {
+            throw Exception("Error al cargar perfil de usuario")
+        }
+    }
+    fun signInWithGoogle(account: GoogleSignInAccount, context: Context) {
+        viewModelScope.launch {
+            _userResult.value = RequestResult.Loading
+            try {
+                signInWithGoogleFirebase(account)
+
+                // Save to SharedPreferences
+                val user = _currentUser.value
+                if (user != null) {
+                    SharedPrefsUtil.savePreferences(
+                        context,
+                        userId = user.id,
+                        role = user.rol.toString(),
+                        name = user.nombre,
+                        email = user.email
+                    )
+                    _userResult.value = RequestResult.Success(message = "Inicio de sesión exitoso con Google")
+                } else {
+                    _userResult.value = RequestResult.Failure(errorMessage = "Error: Usuario no encontrado")
+                }
+            } catch (e: Exception) {
+                _currentUser.value = null
+                _userResult.value = RequestResult.Failure(errorMessage = e.message ?: "Error al iniciar sesión con Google")
+            }
+        }
+    }
+
+    private suspend fun signInWithGoogleFirebase(account: GoogleSignInAccount) {
+        // Clear current user
+        _currentUser.value = null
+
+        // Get Google credentials
+        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+
+        // Sign in with Firebase Auth using Google credentials
+        val authResult = auth.signInWithCredential(credential).await()
+        val uid = authResult.user?.uid
+            ?: throw Exception("Error de autenticación con Google")
+
+        // Check if user exists in Firestore
+        val userSnapshot = db.collection("users")
+            .document(uid)
             .get()
             .await()
 
-        // If not found by email, try by username
-        if (snapshot.isEmpty) {
-            snapshot = db.collection("users")
-                .whereEqualTo("username", emailOrUsername)
-                .whereEqualTo("password", password)
-                .get()
+        if (userSnapshot.exists()) {
+            // Load existing user profile
+            val user = userSnapshot.toObject(User::class.java)?.apply {
+                this.id = userSnapshot.id
+            }
+            _currentUser.value = user
+        } else {
+            // Create new user profile in Firestore
+            val firebaseUser = authResult.user!!
+            val newUser = User(
+                id = uid,
+                nombre = firebaseUser.displayName ?: "Usuario",
+                username = firebaseUser.email?.substringBefore("@") ?: "user_${uid.take(8)}",
+                email = firebaseUser.email ?: "",
+                password = "", // No password for Google sign-in
+                rol = Role.USER,
+                city = "",
+                country = "",
+                imageUrl = firebaseUser.photoUrl?.toString(),
+                favoriteIds = emptyList(),
+                placesVisited = 0,
+                placesCreated = 0,
+                reviewsWritten = 0,
+                favoritesAdded = 0,
+                joinDate = com.google.firebase.Timestamp.now(),
+                isActive = true
+            )
+
+            // Save to Firestore
+            db.collection("users")
+                .document(uid)
+                .set(newUser)
                 .await()
+
+            _currentUser.value = newUser
         }
-
-        if (snapshot.isEmpty) {
-            throw Exception("Credenciales incorrectas")
-        }
-
-        val userDoc = snapshot.documents.firstOrNull()
-            ?: throw Exception("Credenciales incorrectas")
-
-        val user = userDoc.toObject(User::class.java)
-            ?: throw Exception("Error al obtener datos del usuario")
-
-        user.id = userDoc.id
-        _currentUser.value = user
     }
+
     fun restoreUserFromPreferences(context: Context) {
         val prefs = SharedPrefsUtil.getPreferences(context)
         val userId = prefs["userId"] ?: ""
@@ -315,6 +357,7 @@ class UsersViewModel : ViewModel() {
 
     fun logout(context: Context) {
         _currentUser.value = null
+        auth.signOut()
         SharedPrefsUtil.clearPreferences(context)
     }
 
