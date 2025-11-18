@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.ui.theme.*
 import com.example.primeraplicacionprueba.ui.screens.LocalMainViewModel
+import com.example.primeraplicacionprueba.ui.components.SingleImageUploader
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,6 +38,7 @@ fun EditProfileScreen(
     var nombreCompleto by remember(currentUser) { mutableStateOf(currentUser?.nombre ?: "") }
     var nombreUsuario by remember(currentUser) { mutableStateOf(currentUser?.username ?: "") }
     var ciudad by remember(currentUser) { mutableStateOf(currentUser?.city ?: "") }
+    var imageUrl by remember(currentUser) { mutableStateOf(currentUser?.imageUrl) }
 
     // Estados para campos no editables (solo mostrar)
     val correoElectronico = currentUser?.email ?: ""
@@ -124,21 +126,25 @@ fun EditProfileScreen(
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Foto de perfil circular (placeholder)
-            Box(
-                modifier = Modifier
-                    .size(100.dp)
-                    .background(
-                        color = BorderLight,
-                        shape = RoundedCornerShape(50.dp)
-                    )
-                    .align(Alignment.CenterHorizontally),
-                contentAlignment = Alignment.Center
+            // Foto de perfil con SingleImageUploader
+            Column(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                SingleImageUploader(
+                    imageUrl = imageUrl,
+                    onImageUploaded = { newUrl ->
+                        imageUrl = newUrl
+                    },
+                    folder = "unilocal/profiles",
+                    modifier = Modifier
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Text(
-                    text = "CR",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
+                    text = stringResource(R.string.txt_tap_to_change_photo),
+                    fontSize = 12.sp,
                     color = TextMuted
                 )
             }
@@ -309,7 +315,8 @@ fun EditProfileScreen(
                         usersViewModel.updateCurrentUserProfile(
                             nombre = nombreCompleto,
                             username = nombreUsuario,
-                            city = ciudad
+                            city = ciudad,
+                            imageUrl = imageUrl
                         )
                         onSaveChanges()
                     }

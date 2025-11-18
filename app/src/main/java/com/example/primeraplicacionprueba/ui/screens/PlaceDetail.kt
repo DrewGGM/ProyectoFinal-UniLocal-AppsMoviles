@@ -204,6 +204,7 @@ fun PlaceDetail(
                                     rating = review.rating.toFloat(),
                                     comment = review.comment,
                                     avatarColor = if (review.rating >= 4) Tertiary else Primary,
+                                    imageUrls = review.imageUrls,
                                     replies = emptyList() // TODO: Load from Firebase using review.replyIds
                                 )
                             }
@@ -473,6 +474,7 @@ fun ReviewCard(
     rating: Float,
     comment: String,
     avatarColor: Color,
+    imageUrls: List<String> = emptyList(),
     replies: List<ReviewReply> = emptyList()
 ) {
     Surface(
@@ -542,7 +544,29 @@ fun ReviewCard(
                 color = TextSecondary,
                 lineHeight = 20.sp
             )
-            
+
+            // Mostrar imágenes del review si existen
+            if (imageUrls.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    imageUrls.forEach { imageUrl ->
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = stringResource(R.string.cd_review_image),
+                            modifier = Modifier
+                                .size(120.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+            }
+
             // Mostrar respuestas si existen
             if (replies.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))

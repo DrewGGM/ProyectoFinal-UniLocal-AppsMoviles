@@ -201,7 +201,7 @@ fun ReviewQueueSection(placesViewModel: PlacesViewModel, onItemClick: (String) -
                 color = AdminTextDark
             )
             Text(
-                text = "${pendingPlaces.size} ${stringResource(R.string.txt_pending)}",
+                text = stringResource(R.string.txt_pending_count, pendingPlaces.size, stringResource(R.string.txt_pending)),
                 fontSize = 14.sp,
                 color = AdminTextMuted
             )

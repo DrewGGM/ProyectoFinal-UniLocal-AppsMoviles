@@ -1,8 +1,10 @@
 package com.example.primeraplicacionprueba.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.Comment
 import com.example.primeraplicacionprueba.utils.RequestResult
 import com.google.firebase.firestore.FirebaseFirestore
@@ -13,8 +15,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class CommentsViewModel : ViewModel() {
+class CommentsViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val app: Application = getApplication()
     private val db = FirebaseFirestore.getInstance()
 
     private val _comments = MutableStateFlow(emptyList<Comment>())
@@ -29,10 +32,7 @@ class CommentsViewModel : ViewModel() {
         loadComments()
     }
 
-    // ========== FIREBASE CRUD OPERATIONS ==========
-
     fun loadComments() {
-        // Real-time listener for comments from Firebase
         commentsListener = db.collection("comments")
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
@@ -55,8 +55,8 @@ class CommentsViewModel : ViewModel() {
             _commentResult.value = RequestResult.Loading
             _commentResult.value = runCatching { createFirebase(comment) }
                 .fold(
-                    onSuccess = { RequestResult.Success(message = "Comentario creado exitosamente") },
-                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: "Error creando el Comentario") }
+                    onSuccess = { RequestResult.Success(message = app.getString(R.string.msg_comment_created)) },
+                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: app.getString(R.string.error_creating_comment)) }
                 )
         }
     }
@@ -70,15 +70,15 @@ class CommentsViewModel : ViewModel() {
             _commentResult.value = RequestResult.Loading
             _commentResult.value = runCatching { updateFirebase(comment) }
                 .fold(
-                    onSuccess = { RequestResult.Success(message = "Comentario actualizado correctamente") },
-                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: "Error actualizando el Comentario") }
+                    onSuccess = { RequestResult.Success(message = app.getString(R.string.msg_comment_updated)) },
+                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: app.getString(R.string.error_updating_comment)) }
                 )
         }
     }
 
     private suspend fun updateFirebase(comment: Comment) {
         if (comment.id.isEmpty()) {
-            throw Exception("ID de comentario no válido")
+            throw Exception(app.getString(R.string.error_invalid_comment_id))
         }
         db.collection("comments")
             .document(comment.id)
@@ -91,8 +91,8 @@ class CommentsViewModel : ViewModel() {
             _commentResult.value = RequestResult.Loading
             _commentResult.value = runCatching { deleteFirebase(commentId) }
                 .fold(
-                    onSuccess = { RequestResult.Success(message = "Comentario eliminado correctamente") },
-                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: "Error eliminando el Comentario") }
+                    onSuccess = { RequestResult.Success(message = app.getString(R.string.msg_comment_deleted)) },
+                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: app.getString(R.string.error_deleting_comment)) }
                 )
         }
     }
@@ -103,8 +103,6 @@ class CommentsViewModel : ViewModel() {
             .delete()
             .await()
     }
-
-    // ========== QUERIES ==========
 
     fun findById(id: String): Comment? {
         return _comments.value.find { it.id == id }

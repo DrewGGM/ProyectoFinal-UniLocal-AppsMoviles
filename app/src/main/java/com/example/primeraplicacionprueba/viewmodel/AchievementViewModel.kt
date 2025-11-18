@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.Icons
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.example.primeraplicacionprueba.model.Achievement
 import com.example.primeraplicacionprueba.model.User
@@ -84,8 +85,6 @@ class AchievementViewModel : ViewModel() {
     }
 
     private fun loadAllAchievements() {
-        // Los achievements se cargan dinámicamente basados en el usuario
-        // Esta función mantiene la estructura base
         _achievements.value = getBaseAchievements()
     }
     
@@ -95,36 +94,36 @@ class AchievementViewModel : ViewModel() {
                 id = "first_place",
                 title = "Primer Lugar",
                 description = "Crea tu primer lugar en la plataforma",
-                icon = androidx.compose.material.icons.Icons.Default.EmojiEvents,
+                icon = Icons.Default.EmojiEvents,
                 isUnlocked = false,
                 progress = 0f,
                 colorGradient = listOf(
-                    androidx.compose.ui.graphics.Color(0xFFFF6B6B),
-                    androidx.compose.ui.graphics.Color(0xFFFFE066)
+                    Color(0xFFFF6B6B),
+                    Color(0xFFFFE066)
                 )
             ),
             Achievement(
                 id = "explorer",
                 title = "Explorador",
                 description = "Visita 5 lugares diferentes",
-                icon = androidx.compose.material.icons.Icons.Default.LocationOn,
+                icon = Icons.Default.LocationOn,
                 isUnlocked = false,
                 progress = 0f,
                 colorGradient = listOf(
-                    androidx.compose.ui.graphics.Color(0xFF4ECDC4),
-                    androidx.compose.ui.graphics.Color(0xFFA8E6CF)
+                    Color(0xFF4ECDC4),
+                    Color(0xFFA8E6CF)
                 )
             ),
             Achievement(
                 id = "local_guide",
                 title = "Guía Local",
                 description = "Crea 10 lugares en la plataforma",
-                icon = androidx.compose.material.icons.Icons.Default.Rocket,
+                icon = Icons.Default.Rocket,
                 isUnlocked = false,
                 progress = 0f,
                 colorGradient = listOf(
-                    androidx.compose.ui.graphics.Color(0xFFFFE066),
-                    androidx.compose.ui.graphics.Color(0xFFFFB347)
+                    Color(0xFFFFE066),
+                    Color(0xFFFFB347)
                 )
             ),
             Achievement(
@@ -135,56 +134,56 @@ class AchievementViewModel : ViewModel() {
                 isUnlocked = false,
                 progress = 0f,
                 colorGradient = listOf(
-                    androidx.compose.ui.graphics.Color(0xFFA8E6CF),
-                    androidx.compose.ui.graphics.Color(0xFF4ECDC4)
+                    Color(0xFFA8E6CF),
+                    Color(0xFF4ECDC4)
                 )
             ),
             Achievement(
                 id = "golden_commentator",
                 title = "Comentarista Dorado",
                 description = "Escribe 50 reseñas",
-                icon = androidx.compose.material.icons.Icons.Default.Star,
+                icon = Icons.Default.Star,
                 isUnlocked = false,
                 progress = 0f,
                 colorGradient = listOf(
-                    androidx.compose.ui.graphics.Color(0xFFFFB347),
-                    androidx.compose.ui.graphics.Color(0xFFFFE066)
+                    Color(0xFFFFB347),
+                    Color(0xFFFFE066)
                 )
             ),
             Achievement(
                 id = "collector",
                 title = "Coleccionista",
                 description = "Agrega 10 lugares a favoritos",
-                icon = androidx.compose.material.icons.Icons.Default.Favorite,
+                icon = Icons.Default.Favorite,
                 isUnlocked = false,
                 progress = 0f,
                 colorGradient = listOf(
-                    androidx.compose.ui.graphics.Color(0xFFFF6B6B),
-                    androidx.compose.ui.graphics.Color(0xFFA8E6CF)
+                    Color(0xFFFF6B6B),
+                    Color(0xFFA8E6CF)
                 )
             ),
             Achievement(
                 id = "veteran",
                 title = "Veterano",
                 description = "Lleva 30 días en la plataforma",
-                icon = androidx.compose.material.icons.Icons.Default.Schedule,
+                icon = Icons.Default.Schedule,
                 isUnlocked = false,
                 progress = 0f,
                 colorGradient = listOf(
-                    androidx.compose.ui.graphics.Color(0xFF4ECDC4),
-                    androidx.compose.ui.graphics.Color(0xFFFF6B6B)
+                    Color(0xFF4ECDC4),
+                    Color(0xFFFF6B6B)
                 )
             ),
             Achievement(
                 id = "super_user",
                 title = "Super Usuario",
                 description = "Crea 5 lugares y escribe 10 reseñas",
-                icon = androidx.compose.material.icons.Icons.Default.Verified,
+                icon = Icons.Default.Verified,
                 isUnlocked = false,
                 progress = 0f,
                 colorGradient = listOf(
-                    androidx.compose.ui.graphics.Color(0xFFFFE066),
-                    androidx.compose.ui.graphics.Color(0xFFFF6B6B)
+                    Color(0xFFFFE066),
+                    Color(0xFFFF6B6B)
                 )
             )
         )

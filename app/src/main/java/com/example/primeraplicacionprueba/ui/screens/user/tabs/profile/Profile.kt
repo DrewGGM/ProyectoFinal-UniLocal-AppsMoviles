@@ -42,11 +42,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.MenuItemData
 import com.example.primeraplicacionprueba.model.StatData
@@ -138,12 +140,21 @@ fun ProfileHeader(user: User?) {
                         .background(Color.White),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = stringResource(R.string.txt_avatar),
-                        modifier = Modifier.size(60.dp),
-                        tint = Primary
-                    )
+                    if (user?.imageUrl != null && user.imageUrl!!.isNotEmpty()) {
+                        AsyncImage(
+                            model = user.imageUrl,
+                            contentDescription = stringResource(R.string.txt_avatar),
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = stringResource(R.string.txt_avatar),
+                            modifier = Modifier.size(60.dp),
+                            tint = Primary
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))

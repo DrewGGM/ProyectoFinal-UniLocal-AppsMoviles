@@ -19,6 +19,8 @@ import com.example.primeraplicacionprueba.model.Role
 import com.example.primeraplicacionprueba.model.Place
 import com.example.primeraplicacionprueba.model.Location
 import com.example.primeraplicacionprueba.ui.config.RouteScreen
+import com.example.primeraplicacionprueba.R
+import com.google.firebase.Timestamp
 import java.time.LocalDate
 import com.example.primeraplicacionprueba.ui.screens.admin.HomeAdmin
 import com.example.primeraplicacionprueba.ui.screens.admin.DetailPlaceAdmin
@@ -75,6 +77,10 @@ fun Navigation(
                 startDestination = startDestination
             ) {
                 composable<RouteScreen.Login> {
+                    val mainViewModel = LocalMainViewModel.current
+                    val usersViewModel = mainViewModel.usersViewModel
+                    val needsProfileCompletion by usersViewModel.needsProfileCompletion.collectAsState()
+
                     LoginScreen(
                         onNavigateToRegister = {
                             navController.navigate(RouteScreen.Register)
@@ -88,7 +94,13 @@ fun Navigation(
                                 user.email
                             )
 
-                            if(user.rol == Role.ADMIN) {
+                            // Check if profile needs completion (for Google/Facebook sign-in)
+                            if (needsProfileCompletion) {
+                                navController.navigate(RouteScreen.CompleteProfile) {
+                                    popUpTo(RouteScreen.Login) { inclusive = true }
+                                    launchSingleTop = true
+                                }
+                            } else if(user.rol == Role.ADMIN) {
                                 navController.navigate(RouteScreen.HomeAdmin)
                             } else {
                                 navController.navigate(RouteScreen.Home)
@@ -106,15 +118,42 @@ fun Navigation(
                     },
                     onNavigateToHome = { user ->
                         SharedPrefsUtil.savePreferences(
-                            context, 
-                            user.id, 
-                            user.rol.name, 
-                            user.nombre, 
+                            context,
+                            user.id,
+                            user.rol.name,
+                            user.nombre,
                             user.email
                         )
                         navController.navigate(RouteScreen.Home)
+                    },
+                    onNavigateToCompleteProfile = { user ->
+                        navController.navigate(RouteScreen.CompleteProfile)
                     }
                 )
+            }
+            composable<RouteScreen.CompleteProfile> {
+                val mainViewModel = LocalMainViewModel.current
+                val usersViewModel = mainViewModel.usersViewModel
+                val currentUser by usersViewModel.currentUser.collectAsState()
+
+                currentUser?.let { user ->
+                    CompleteProfileScreen(
+                        user = user,
+                        onNavigateToHome = { updatedUser ->
+                            SharedPrefsUtil.savePreferences(
+                                context,
+                                updatedUser.id,
+                                updatedUser.rol.name,
+                                updatedUser.nombre,
+                                updatedUser.email
+                            )
+                            navController.navigate(RouteScreen.Home) {
+                                popUpTo(0) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
             }
             composable<RouteScreen.Home> {
                 val mainViewModel = LocalMainViewModel.current
@@ -317,6 +356,7 @@ fun Navigation(
                     val placesViewModel = mainViewModel.placesViewModel
                     val usersViewModel = mainViewModel.usersViewModel
                     val currentUser by usersViewModel.currentUser.collectAsState()
+                    val context = LocalContext.current
                     CreatePlaceStepFour(
                         viewModel = placesViewModel,
                         onNavigateToHome = {
@@ -338,18 +378,18 @@ fun Navigation(
                                     title = state.title,
                                     imagenes = if (state.images.isEmpty()) emptyList() else state.images,
                                     description = state.description,
-                                    phones = if (state.phones.isEmpty()) listOf("N/A") else state.phones,
+                                    phones = if (state.phones.isEmpty()) listOf(context.getString(R.string.txt_not_available_short)) else state.phones,
                                     type = state.type!!,
                                     shedule = state.schedule,
                                     location = state.location ?: Location(0.0, 0.0),
-                                    adress = if (state.address.isBlank()) "No especificado" else state.address,
+                                    adress = if (state.address.isBlank()) context.getString(R.string.txt_not_specified) else state.address,
                                     website = state.website,
                                     email = null,
                                     socialMedia = state.socialMedia,
-                                    city = currentUser?.city ?: "No especificado",
-                                    neighborhood = if (state.neighborhood.isBlank()) "No especificado" else state.neighborhood,
+                                    city = currentUser?.city ?: context.getString(R.string.txt_not_specified),
+                                    neighborhood = if (state.neighborhood.isBlank()) context.getString(R.string.txt_not_specified) else state.neighborhood,
                                     ownerId = currentUser?.id ?: "",
-                                    createdDate = com.google.firebase.Timestamp.now()
+                                    createdDate = Timestamp.now()
                                 )
                                 placesViewModel.updatePlace(updatedPlace)
                             } else {
@@ -359,18 +399,18 @@ fun Navigation(
                                     title = state.title,
                                     imagenes = if (state.images.isEmpty()) emptyList() else state.images,
                                     description = state.description,
-                                    phones = if (state.phones.isEmpty()) listOf("N/A") else state.phones,
+                                    phones = if (state.phones.isEmpty()) listOf(context.getString(R.string.txt_not_available_short)) else state.phones,
                                     type = state.type!!,
                                     shedule = state.schedule,
                                     location = state.location ?: Location(0.0, 0.0),
-                                    adress = if (state.address.isBlank()) "No especificado" else state.address,
+                                    adress = if (state.address.isBlank()) context.getString(R.string.txt_not_specified) else state.address,
                                     website = state.website,
                                     email = null,
                                     socialMedia = state.socialMedia,
-                                    city = currentUser?.city ?: "No especificado",
-                                    neighborhood = if (state.neighborhood.isBlank()) "No especificado" else state.neighborhood,
+                                    city = currentUser?.city ?: context.getString(R.string.txt_not_specified),
+                                    neighborhood = if (state.neighborhood.isBlank()) context.getString(R.string.txt_not_specified) else state.neighborhood,
                                     ownerId = currentUser?.id ?: "",
-                                    createdDate = com.google.firebase.Timestamp.now()
+                                    createdDate = Timestamp.now()
                                 )
                                 placesViewModel.create(newPlace)
                             }
@@ -497,7 +537,11 @@ fun Navigation(
                 }
 
                 composable<RouteScreen.ForgotPassword> {
+                    val mainViewModel = LocalMainViewModel.current
+                    val usersViewModel = mainViewModel.usersViewModel
+
                     ForgotPasswordScreen(
+                        usersViewModel = usersViewModel,
                         onNavigateToLogin = {
                             navController.popBackStack()
                         }

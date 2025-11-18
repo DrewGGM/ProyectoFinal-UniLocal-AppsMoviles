@@ -1,6 +1,7 @@
 package com.example.primeraplicacionprueba.ui.screens
 
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -61,6 +62,11 @@ import com.example.primeraplicacionprueba.ui.theme.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 
 @Composable
 fun LoginScreen(
@@ -94,7 +100,7 @@ fun LoginScreen(
                 usersViewModel.signInWithGoogle(it, context)
             }
         } catch (e: ApiException) {
-            Toast.makeText(context, "Error al iniciar sesión con Google: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.toast_error_google_signin, e.message ?: ""), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -107,6 +113,40 @@ fun LoginScreen(
 
         val googleSignInClient = GoogleSignIn.getClient(context, gso)
         googleSignInLauncher.launch(googleSignInClient.signInIntent)
+    }
+
+    // Facebook CallbackManager
+    val callbackManager = remember { CallbackManager.Factory.create() }
+
+    // Facebook Sign-In launcher
+    val facebookLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        callbackManager.onActivityResult(result.resultCode, result.resultCode, result.data)
+    }
+
+    // Función de Facebook Sign-In
+    fun signInWithFacebook() {
+        val loginManager = LoginManager.getInstance()
+        loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+            override fun onSuccess(result: LoginResult) {
+                val accessToken = result.accessToken
+                usersViewModel.signInWithFacebook(accessToken, context)
+            }
+
+            override fun onCancel() {
+                Toast.makeText(context, context.getString(R.string.toast_facebook_signin_cancelled), Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onError(error: FacebookException) {
+                Toast.makeText(context, context.getString(R.string.toast_error_facebook_signin, error.message ?: ""), Toast.LENGTH_LONG).show()
+            }
+        })
+        loginManager.logInWithReadPermissions(
+            context as ComponentActivity,
+            callbackManager,
+            listOf("email", "public_profile")
+        )
     }
 
     // Función de validación
@@ -187,7 +227,7 @@ fun LoginScreen(
                         
                             Image(
                                 painter = painterResource(id = R.drawable.unilocal_logo),
-                                contentDescription = "UniLocal Logo",
+                                contentDescription = stringResource(R.string.cd_unilocal_logo),
                                 modifier = Modifier.size(120.dp)
                             )
                         
@@ -350,7 +390,7 @@ fun LoginScreen(
                                 modifier = Modifier
                                     .size(42.dp)
                                     .clickable { signInWithGoogle() },
-                                tint = androidx.compose.ui.graphics.Color.Unspecified
+                                tint = Color.Unspecified
                             )
 
                             Spacer(modifier = Modifier.width(20.dp))
@@ -361,8 +401,8 @@ fun LoginScreen(
                                 contentDescription = stringResource(R.string.txt_continue_with_facebook),
                                 modifier = Modifier
                                     .size(42.dp)
-                                    .clickable { /* TODO: Implementar Facebook Sign In */ },
-                                tint = androidx.compose.ui.graphics.Color.Unspecified
+                                    .clickable { signInWithFacebook() },
+                                tint = Color.Unspecified
                             )
                         }
 

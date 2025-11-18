@@ -66,7 +66,6 @@ fun Home(
             modifier = Modifier
                 .fillMaxSize()
                 .background(BgLight)
-                .padding(top = 16.dp)
         ) {
             item {
                 HeaderSection(

@@ -1,8 +1,10 @@
 package com.example.primeraplicacionprueba.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.Review
 import com.example.primeraplicacionprueba.model.ReviewReply
 import com.example.primeraplicacionprueba.utils.RequestResult
@@ -14,8 +16,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class ReviewViewModel : ViewModel() {
+class ReviewViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val app: Application = getApplication()
     private val db = FirebaseFirestore.getInstance()
 
     private val _reviews = MutableStateFlow(emptyList<Review>())
@@ -30,10 +33,7 @@ class ReviewViewModel : ViewModel() {
         loadReviews()
     }
 
-    // ========== FIREBASE CRUD OPERATIONS ==========
-
     fun loadReviews() {
-        // Real-time listener for reviews from Firebase
         reviewsListener = db.collection("reviews")
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
@@ -56,8 +56,8 @@ class ReviewViewModel : ViewModel() {
             _reviewResult.value = RequestResult.Loading
             _reviewResult.value = runCatching { createFirebase(review) }
                 .fold(
-                    onSuccess = { RequestResult.Success(message = "Reseña creada exitosamente") },
-                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: "Error creando la Reseña") }
+                    onSuccess = { RequestResult.Success(message = app.getString(R.string.msg_review_created)) },
+                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: app.getString(R.string.error_creating_review)) }
                 )
         }
     }
@@ -71,15 +71,15 @@ class ReviewViewModel : ViewModel() {
             _reviewResult.value = RequestResult.Loading
             _reviewResult.value = runCatching { updateFirebase(review) }
                 .fold(
-                    onSuccess = { RequestResult.Success(message = "Reseña actualizada correctamente") },
-                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: "Error actualizando la Reseña") }
+                    onSuccess = { RequestResult.Success(message = app.getString(R.string.msg_review_updated)) },
+                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: app.getString(R.string.error_updating_review)) }
                 )
         }
     }
 
     private suspend fun updateFirebase(review: Review) {
         if (review.id.isEmpty()) {
-            throw Exception("ID de reseña no válido")
+            throw Exception(app.getString(R.string.error_invalid_review_id))
         }
         db.collection("reviews")
             .document(review.id)
@@ -92,8 +92,8 @@ class ReviewViewModel : ViewModel() {
             _reviewResult.value = RequestResult.Loading
             _reviewResult.value = runCatching { deleteFirebase(reviewId) }
                 .fold(
-                    onSuccess = { RequestResult.Success(message = "Reseña eliminada correctamente") },
-                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: "Error eliminando la Reseña") }
+                    onSuccess = { RequestResult.Success(message = app.getString(R.string.msg_review_deleted)) },
+                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: app.getString(R.string.error_deleting_review)) }
                 )
         }
     }
@@ -105,15 +105,11 @@ class ReviewViewModel : ViewModel() {
             .await()
     }
 
-    // ========== REVIEW REPLIES ==========
-
     fun addReplyToReview(reviewId: String, reply: ReviewReply) {
         viewModelScope.launch {
             try {
-                // Add reply to review_replies collection
                 val replyDoc = db.collection("review_replies").add(reply).await()
 
-                // Update review's replyIds
                 val review = _reviews.value.find { it.id == reviewId }
                 if (review != null) {
                     val updatedReplyIds = review.replyIds + replyDoc.id
@@ -145,8 +141,6 @@ class ReviewViewModel : ViewModel() {
             }
         }
     }
-
-    // ========== QUERIES ==========
 
     fun getReviewsByPlace(placeID: String): List<Review> {
         return _reviews.value.filter { it.placeID == placeID }

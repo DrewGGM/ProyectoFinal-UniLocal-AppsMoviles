@@ -47,7 +47,8 @@ fun ContentUser(
         }
         composable<RouteTab.Map> {
             Map(
-                onMapToFilter = onNavigateToFilter
+                onMapToFilter = onNavigateToFilter,
+                onNavigateToDetail = onNavigateToPlace
             )
         }
         composable<RouteTab.Profile> {

@@ -1,6 +1,6 @@
 package com.example.primeraplicacionprueba.ui.screens
 
-import android.widget.Toast
+import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,37 +14,40 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.Image
 import com.example.primeraplicacionprueba.R
+import com.example.primeraplicacionprueba.ui.components.OperationResultHandler
 import com.example.primeraplicacionprueba.ui.theme.*
+import com.example.primeraplicacionprueba.utils.RequestResult
+import com.example.primeraplicacionprueba.viewmodel.UsersViewModel
 
 @Composable
 fun ForgotPasswordScreen(
+    usersViewModel: UsersViewModel,
     onNavigateToLogin: () -> Unit = {}
 ) {
     var email by remember { mutableStateOf("") }
     var emailError by remember { mutableStateOf("") }
-    var emailSent by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
-    
-    // Strings para validación
+    val userResult by usersViewModel.userResult.collectAsState()
+
     val emailRequiredText = stringResource(R.string.txt_email_required)
     val emailInvalidText = stringResource(R.string.txt_email_invalid)
-    val emailSentText = stringResource(R.string.txt_email_sent, email)
 
     // Función de validación
     fun validateEmail(): Boolean {
         return if (email.isBlank()) {
             emailError = emailRequiredText
             false
-        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             emailError = emailInvalidText
             false
         } else {
@@ -101,20 +104,14 @@ fun ForgotPasswordScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         // Logo circular con backdrop blur effect
-                        Box(
+                        Image(
+                            painter = painterResource(id = R.drawable.unilocal_logo),
+                            contentDescription = stringResource(R.string.cd_unilocal_logo),
                             modifier = Modifier
                                 .size(100.dp)
-                                .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.2f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "uL",
-                                fontSize = 40.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Fit
+                        )
                     }
 
                     // Contenido del formulario
@@ -173,15 +170,10 @@ fun ForgotPasswordScreen(
                         Button(
                             onClick = {
                                 if (validateEmail()) {
-                                    // TODO: Implementar lógica de recuperación
-                                    emailSent = true
-                                    Toast.makeText(
-                                        context,
-                                        emailSentText,
-                                        Toast.LENGTH_LONG
-                                    ).show()
+                                    usersViewModel.sendPasswordResetEmail(email)
                                 }
                             },
+                            enabled = userResult !is RequestResult.Loading,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp),
@@ -234,29 +226,24 @@ fun ForgotPasswordScreen(
                     }
                 }
             }
+        }
 
-            // Mensaje de confirmación (opcional)
-            if (emailSent) {
-                Spacer(modifier = Modifier.height(24.dp))
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Tertiary
-                    )
-                ) {
-                    Text(
-                        text = stringResource(R.string.txt_check_inbox),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = SuccessGreen,
-                        modifier = Modifier.padding(16.dp),
-                        textAlign = TextAlign.Center
-                    )
-                }
+        OperationResultHandler(
+            result = userResult,
+            onSuccess = {
+                usersViewModel.resetOperationResult()
+                onNavigateToLogin()
+            },
+            onFailure = {
+                usersViewModel.resetOperationResult()
             }
+        )
+
+        if (userResult is RequestResult.Loading) {
+            LinearProgressIndicator(
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }

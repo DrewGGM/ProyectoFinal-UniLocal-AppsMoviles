@@ -1,8 +1,13 @@
 <resources>
-    <string name="app_name">Primer Aplicacion Prueba</string>
+    <string name="app_name">UniLocal</string>
 
     <!-- Google Sign-In Web Client ID - Replace with your actual Web Client ID from Firebase Console -->
-    <string name="default_web_client_id">697554561107-l9rbjoslklep85nle02nhnvc7phetvek.apps.googleusercontent.com</string>
+    <string name="default_web_client_id">1001743666068-ond4o62f07vv182rjdtsr1ig87sjj9e2.apps.googleusercontent.com</string>
+
+    <!-- Facebook App ID -->
+    <string name="facebook_app_id">1536150971045600</string>
+    <string name="facebook_client_token">9d9e5049689976fa7735349004906e2f</string>
+    <string name="fb_login_protocol_scheme">fb1536150971045600</string>
 
     <!-- Cloudinary Configuration -->
     <string name="cloudinary_cloud_name">dpvecidb8</string>
@@ -32,7 +37,7 @@
     <string name="txt_phone_number">Numero de telefono</string>
     <string name="txt_city">Selecione la ciudad</string>
     <string name="txt_country">Selecione el pais</string>
-    <string name="txt_confirm_password">Selecione el pais</string>
+    <string name="txt_confirm_password">Confirmar contraseña</string>
     <string name="txt_errorGeneral">Este espacio es obligatorio</string>
     <string name="btn_Register">Registrarse</string>
     <string name="txt_register_title">Únete a la comunidad</string>
@@ -66,6 +71,7 @@
 
     <!-- TEXTOS EDITAR PERFIL -->
     <string name="txt_edit_profile">Editar Perfil</string>
+    <string name="txt_tap_to_change_photo">Toca para cambiar tu foto de perfil</string>
     <string name="txt_full_name_label">Nombre Completo</string>
     <string name="txt_username_label">Nombre de Usuario</string>
     <string name="txt_city_residence">Ciudad de Residencia</string>
@@ -272,6 +278,8 @@
     <string name="txt_send">Enviar</string>
     <string name="txt_back_to_login">Volver al inicio de sesión</string>
     <string name="txt_check_inbox">✓ Revisa tu bandeja de entrada</string>
+    <string name="msg_recovery_email_sent">Se ha enviado un correo de recuperación. Revisa tu bandeja de entrada.</string>
+    <string name="error_sending_email">Error al enviar el correo de recuperación</string>
 
     <!-- SOCIAL LOGIN CONTENT DESCRIPTIONS -->
     <string name="txt_continue_with_google">Continuar con Google</string>
@@ -361,4 +369,159 @@
     
     <!-- PLACE DETAIL -->
     <string name="txt_schedule_format">%1$s - %2$s</string>
+
+    <!-- COMPLETE PROFILE (Google/Facebook Sign-In) -->
+    <string name="txt_complete_profile_title">¡Completa tu perfil!</string>
+    <string name="txt_complete_profile_subtitle">Solo faltan algunos datos para comenzar</string>
+    <string name="txt_welcome">Bienvenido</string>
+    <string name="txt_complete_profile_message">Para brindarte la mejor experiencia, necesitamos algunos datos adicionales.</string>
+    <string name="txt_username_hint">Nombre de usuario</string>
+    <string name="txt_city_hint">Ciudad</string>
+    <string name="txt_country_hint">País</string>
+    <string name="btn_complete_profile">Completar perfil</string>
+
+    <!-- ADMIN DETAIL PLACE -->
+    <string name="txt_description">Descripción</string>
+    <string name="txt_category_label">Categoría: %1$s</string>
+    <string name="txt_phone_label">Teléfono: %1$s</string>
+    <string name="txt_web_label">Web: %1$s</string>
+    <string name="txt_open_today">Abierto hoy: %1$s</string>
+    <string name="txt_not_available_short">N/A</string>
+
+    <!-- LOCATION PICKER DIALOG -->
+    <string name="btn_cancel">Cancelar</string>
+    <string name="btn_confirm">Confirmar</string>
+
+    <!-- TOAST MESSAGES -->
+    <string name="toast_error_google_signin">Error al iniciar sesión con Google: %1$s</string>
+    <string name="toast_error_facebook_signin">Error al iniciar sesión con Facebook: %1$s</string>
+    <string name="toast_facebook_signin_cancelled">Inicio de sesión con Facebook cancelado</string>
+    <string name="toast_location_permission_granted">Ha concedido permiso para acceder a su ubicación</string>
+    <string name="toast_location_permission_denied">No concedió permisos</string>
+    <string name="toast_location_permission_granted_alt">Ha concedido permiso para accerder a su ubicacion</string>
+    <string name="toast_location_permission_denied_alt">No concedio permisos</string>
+
+    <!-- MY PLACES SCREEN -->
+    <string name="txt_comments_label">Comentarios</string>
+    <string name="txt_edit_label">Editar</string>
+    <string name="txt_delete_label">Eliminar</string>
+
+    <!-- MY COMMENT SCREEN -->
+    <string name="txt_write_reply_placeholder">Escribe tu respuesta...</string>
+
+    <!-- MAP SCREEN -->
+    <string name="txt_rating_star">⭐ %1$.1f</string>
+
+    <!-- CONTENT DESCRIPTIONS -->
+    <string name="cd_unilocal_logo">UniLocal Logo</string>
+    <string name="cd_back">Volver</string>
+    <string name="cd_close">Cerrar</string>
+    <string name="cd_search">Buscar</string>
+    <string name="cd_filter_icon">IconoFiltro</string>
+    <string name="cd_review_image">Review image</string>
+    <string name="cd_avatar">Avatar</string>
+    <string name="cd_profile_photo">Foto de perfil</string>
+    <string name="cd_change_photo">Cambiar foto</string>
+    <string name="cd_image_index">Imagen %1$d</string>
+    <string name="cd_remove">Eliminar</string>
+    <string name="cd_uploaded_image">Uploaded image</string>
+    <string name="cd_add_image">Add image</string>
+    <string name="cd_send">Enviar</string>
+
+    <!-- SCHEDULE SELECTOR (UniLocal) -->
+    <string name="txt_time_separator">:</string>
+
+    <!-- LOCATION PICKER -->
+    <string name="txt_select_location">Selecciona la ubicación</string>
+    <string name="txt_location_selected">Ubicación seleccionada</string>
+    <string name="txt_location_selected_tap">Ubicación seleccionada\nToca para cambiar</string>
+    <string name="txt_tap_to_select_location">Toca para seleccionar ubicación</string>
+
+    <!-- IMAGE UPLOADER -->
+    <string name="txt_place_photos_count">Fotos del lugar (%1$d/%2$d)</string>
+    <string name="txt_uploading_images">Subiendo %1$d imagen(es)...</string>
+    <string name="txt_add_photos_count">Agregar fotos (%1$d/%2$d)</string>
+    <string name="txt_image_counter">%1$d / %2$d</string>
+
+    <!-- COMMENTS -->
+    <string name="txt_no_comments">No hay comentarios para este lugar</string>
+    <string name="txt_replies_count">%1$d respuesta(s)</string>
+    <string name="txt_time_ago_2min">2min</string>
+
+    <!-- PLACE INFO -->
+    <string name="txt_place_type_distance">%1$s · %2$s</string>
+    <string name="txt_rating_percentage">(%1$d)</string>
+
+    <!-- ACHIEVEMENTS -->
+    <string name="txt_achievements_progress">%1$d / %2$d %3$s</string>
+    <string name="txt_percentage">%1$d%%</string>
+
+    <!-- ADMIN -->
+    <string name="txt_pending_count">%1$d %2$s</string>
+
+    <!-- VIEWMODEL MESSAGES -->
+    <string name="msg_user_created">Usuario creado correctamente</string>
+    <string name="msg_user_updated">Usuario actualizado correctamente</string>
+    <string name="msg_user_obtained">Usuario obtenido exitosamente</string>
+    <string name="msg_user_deleted">Usuario eliminado correctamente</string>
+    <string name="msg_login_success">Inicio de sesión exitoso</string>
+    <string name="msg_login_success_google">Inicio de sesión exitoso con Google</string>
+    <string name="msg_login_success_facebook">Inicio de sesión exitoso con Facebook</string>
+    <string name="msg_profile_completed">Perfil completado exitosamente</string>
+    <string name="msg_review_created">Reseña creada exitosamente</string>
+    <string name="msg_review_updated">Reseña actualizada correctamente</string>
+    <string name="msg_review_deleted">Reseña eliminada correctamente</string>
+    <string name="msg_place_created">Lugar creado exitosamente</string>
+    <string name="msg_place_updated">Lugar actualizado correctamente</string>
+    <string name="msg_place_deleted">Lugar eliminado correctamente</string>
+    <string name="msg_comment_created">Comentario creado exitosamente</string>
+    <string name="msg_comment_updated">Comentario actualizado correctamente</string>
+    <string name="msg_comment_deleted">Comentario eliminado correctamente</string>
+
+    <!-- ERROR MESSAGES FOR VIEWMODELS -->
+    <string name="error_creating_place">Error creando el Lugar</string>
+    <string name="error_updating_place">Error actualizando el Lugar</string>
+    <string name="error_deleting_place">Error eliminando el Lugar</string>
+    <string name="error_creating_user">Error creando el Usuario</string>
+    <string name="error_updating_user">Error actualizando el Usuario</string>
+    <string name="error_obtaining_user">Error obteniendo el Usuario</string>
+    <string name="error_deleting_user">Error eliminando el Usuario</string>
+    <string name="error_user_not_found">Error: Usuario no encontrado</string>
+    <string name="error_credentials_incorrect">Credenciales incorrectas</string>
+    <string name="error_authentication">Error de autenticación</string>
+    <string name="error_loading_user_profile">Error al cargar perfil de usuario</string>
+    <string name="error_google_signin">Error al iniciar sesión con Google</string>
+    <string name="error_facebook_signin">Error al iniciar sesión con Facebook</string>
+    <string name="error_authentication_google">Error de autenticación con Google</string>
+    <string name="error_authentication_facebook">Error de autenticación con Facebook</string>
+    <string name="error_removing_favorite">Error al eliminar favorito</string>
+    <string name="error_adding_favorite">Error al agregar favorito</string>
+    <string name="error_updating_profile">Error al actualizar el perfil</string>
+    <string name="error_completing_profile">Error al completar perfil</string>
+    <string name="error_creating_review">Error creando la Reseña</string>
+    <string name="error_updating_review">Error actualizando la Reseña</string>
+    <string name="error_deleting_review">Error eliminando la Reseña</string>
+    <string name="error_creating_comment">Error creando el Comentario</string>
+    <string name="error_updating_comment">Error actualizando el Comentario</string>
+    <string name="error_deleting_comment">Error eliminando el Comentario</string>
+    <string name="error_invalid_place_id">ID de lugar no válido</string>
+    <string name="error_invalid_user_id">ID de usuario no válido</string>
+    <string name="error_invalid_review_id">ID de reseña no válido</string>
+    <string name="error_invalid_comment_id">ID de comentario no válido</string>
+    <string name="error_username_in_use">El nombre de usuario ya está en uso</string>
+    <string name="error_email_in_use">El correo electrónico ya está en uso</string>
+    <string name="error_could_not_get_uid">No se pudo obtener el UID del usuario</string>
+    <string name="error_user_not_found_exception">Usuario no encontrado</string>
+
+    <!-- DEFAULT VALUES -->
+    <string name="default_user_name">Usuario</string>
+    <string name="default_place_name">Mi Lugar</string>
+    <string name="default_city_armenia">Armenia</string>
+    <string name="txt_select_country_first">Primero selecciona un país</string>
+    <string name="txt_select_city">Selecciona una ciudad</string>
+    <string name="txt_select_country">Selecciona un país</string>
+    <string name="txt_comments_of_place">Comentarios de \'%1$s\'</string>
+    <string name="cd_clear">Limpiar</string>
+    <string name="cd_dropdown">Menú desplegable</string>
+
 </resources>

@@ -1,15 +1,20 @@
 package com.example.primeraplicacionprueba.viewmodel
 
 import android.content.Context
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.Role
 import com.example.primeraplicacionprueba.model.User
 import com.example.primeraplicacionprueba.utils.RequestResult
 import com.example.primeraplicacionprueba.utils.SharedPrefsUtil
+import com.facebook.AccessToken
+import com.facebook.GraphRequest
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
@@ -19,10 +24,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.suspendCancellableCoroutine
+import org.json.JSONException
 import java.time.LocalDate
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
-class UsersViewModel : ViewModel() {
+class UsersViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val app: Application = getApplication()
     private val _users = MutableStateFlow(emptyList<User>())
     val users: StateFlow<List<User>> = _users.asStateFlow()
 
@@ -38,6 +48,9 @@ class UsersViewModel : ViewModel() {
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
 
+    private val _needsProfileCompletion = MutableStateFlow(false)
+    val needsProfileCompletion: StateFlow<Boolean> = _needsProfileCompletion.asStateFlow()
+
     private val visitedPlaceIds = mutableSetOf<String>()
 
     fun resetOperationResult() {
@@ -45,7 +58,6 @@ class UsersViewModel : ViewModel() {
     }
 
     private suspend fun createFirebase(user: User) {
-        // Check if username already exists before creating auth account
         val usernameSnapshot = db.collection("users")
             .whereEqualTo("username", user.username)
             .limit(1)
@@ -53,18 +65,16 @@ class UsersViewModel : ViewModel() {
             .await()
 
         if (!usernameSnapshot.isEmpty) {
-            throw Exception("El nombre de usuario ya está en uso")
+            throw Exception(app.getString(R.string.error_username_in_use))
         }
 
-        // Create Firebase Auth user (this will check email uniqueness automatically)
         val authResult = auth.createUserWithEmailAndPassword(user.email, user.password).await()
         val uid = authResult.user?.uid
-            ?: throw Exception("No se pudo obtener el UID del usuario")
+            ?: throw Exception(app.getString(R.string.error_could_not_get_uid))
 
-        // Store user profile in Firestore WITHOUT password
         val userProfile = user.copy(
             id = uid,
-            password = "" // Never store passwords in Firestore
+            password = ""
         )
 
         db.collection("users")
@@ -78,8 +88,8 @@ class UsersViewModel : ViewModel() {
             _userResult.value = RequestResult.Loading
             _userResult.value = runCatching { createFirebase(user) }
                 .fold(
-                    onSuccess = { RequestResult.Success(message = "Usuario creado correctamente") },
-                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: "Error creando el Usuario") }
+                    onSuccess = { RequestResult.Success(message = app.getString(R.string.msg_user_created)) },
+                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: app.getString(R.string.error_creating_user)) }
                 )
         }
     }
@@ -88,22 +98,21 @@ class UsersViewModel : ViewModel() {
             _userResult.value = RequestResult.Loading
             _userResult.value = runCatching { updateFirebase(user) }
                 .fold(
-                    onSuccess = { RequestResult.Success(message = "Usuario actualizado correctamente") },
-                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: "Error actualizando el Usuario") }
+                    onSuccess = { RequestResult.Success(message = app.getString(R.string.msg_user_updated)) },
+                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: app.getString(R.string.error_updating_user)) }
                 )
         }
     }
 
     private suspend fun updateFirebase(user: User) {
         if (user.id.isEmpty()) {
-            throw Exception("ID de usuario no válido")
+            throw Exception(app.getString(R.string.error_invalid_user_id))
         }
         db.collection("users")
             .document(user.id)
             .set(user)
             .await()
 
-        // Update current user if it's the same
         if (_currentUser.value?.id == user.id) {
             _currentUser.value = user
         }
@@ -114,8 +123,8 @@ class UsersViewModel : ViewModel() {
             _userResult.value = RequestResult.Loading
             _userResult.value = runCatching { findByIdFirebase(id) }
                 .fold(
-                    onSuccess = { RequestResult.Success(message = "Usuario obtenido exitosamente") },
-                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: "Error obteniendo el Usuario") }
+                    onSuccess = { RequestResult.Success(message = app.getString(R.string.msg_user_obtained)) },
+                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: app.getString(R.string.error_obtaining_user)) }
                 )
         }
     }
@@ -174,8 +183,8 @@ class UsersViewModel : ViewModel() {
             _userResult.value = RequestResult.Loading
             _userResult.value = runCatching { deleteFirebase(userId) }
                 .fold(
-                    onSuccess = { RequestResult.Success(message = "Usuario eliminado correctamente") },
-                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: "Error eliminando el Usuario") }
+                    onSuccess = { RequestResult.Success(message = app.getString(R.string.msg_user_deleted)) },
+                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: app.getString(R.string.error_deleting_user)) }
                 )
         }
     }
@@ -186,7 +195,6 @@ class UsersViewModel : ViewModel() {
             .delete()
             .await()
 
-        // Clear current user if it's the same
         if (_currentUser.value?.id == userId) {
             _currentUser.value = null
         }
@@ -198,7 +206,6 @@ class UsersViewModel : ViewModel() {
             try {
                 loginFirebase(emailOrUsername, password)
 
-                // Only save if login was successful and currentUser is not null
                 val user = _currentUser.value
                 if (user != null) {
                     context?.let {
@@ -210,26 +217,23 @@ class UsersViewModel : ViewModel() {
                             email = user.email
                         )
                     }
-                    _userResult.value = RequestResult.Success(message = "Inicio de sesión exitoso")
+                    _userResult.value = RequestResult.Success(message = app.getString(R.string.msg_login_success))
                 } else {
-                    _userResult.value = RequestResult.Failure(errorMessage = "Error: Usuario no encontrado")
+                    _userResult.value = RequestResult.Failure(errorMessage = app.getString(R.string.error_user_not_found))
                 }
             } catch (e: Exception) {
-                _currentUser.value = null // Clear current user on failure
-                _userResult.value = RequestResult.Failure(errorMessage = e.message ?: "Credenciales incorrectas")
+                _currentUser.value = null
+                _userResult.value = RequestResult.Failure(errorMessage = e.message ?: app.getString(R.string.error_credentials_incorrect))
             }
         }
     }
 
     private suspend fun loginFirebase(emailOrUsername: String, password: String) {
-        // Clear current user before attempting login
         _currentUser.value = null
 
-        // Determine if input is email or username
         val email = if (emailOrUsername.contains("@")) {
             emailOrUsername
         } else {
-            // Username provided - fetch email from Firestore
             val snapshot = db.collection("users")
                 .whereEqualTo("username", emailOrUsername)
                 .limit(1)
@@ -237,24 +241,21 @@ class UsersViewModel : ViewModel() {
                 .await()
 
             if (snapshot.isEmpty) {
-                throw Exception("Usuario no encontrado")
+                throw Exception(app.getString(R.string.error_user_not_found_exception))
             }
 
             snapshot.documents.firstOrNull()?.getString("email")
-                ?: throw Exception("Usuario no encontrado")
+                ?: throw Exception(app.getString(R.string.error_user_not_found_exception))
         }
 
-        // Authenticate with Firebase Auth
         val authResult = auth.signInWithEmailAndPassword(email, password).await()
         val uid = authResult.user?.uid
-            ?: throw Exception("Error de autenticación")
+            ?: throw Exception(app.getString(R.string.error_authentication))
 
-        // Load user profile from Firestore
         findByIdFirebase(id = uid)
 
-        // Verify user was loaded successfully
         if (_currentUser.value == null) {
-            throw Exception("Error al cargar perfil de usuario")
+            throw Exception(app.getString(R.string.error_loading_user_profile))
         }
     }
     fun signInWithGoogle(account: GoogleSignInAccount, context: Context) {
@@ -262,6 +263,86 @@ class UsersViewModel : ViewModel() {
             _userResult.value = RequestResult.Loading
             try {
                 signInWithGoogleFirebase(account)
+
+                val user = _currentUser.value
+                if (user != null) {
+                    SharedPrefsUtil.savePreferences(
+                        context,
+                        userId = user.id,
+                        role = user.rol.toString(),
+                        name = user.nombre,
+                        email = user.email
+                    )
+                    _userResult.value = RequestResult.Success(message = app.getString(R.string.msg_login_success_google))
+                } else {
+                    _userResult.value = RequestResult.Failure(errorMessage = app.getString(R.string.error_user_not_found))
+                }
+            } catch (e: Exception) {
+                _currentUser.value = null
+                _userResult.value = RequestResult.Failure(errorMessage = e.message ?: app.getString(R.string.error_google_signin))
+            }
+        }
+    }
+
+    private suspend fun signInWithGoogleFirebase(account: GoogleSignInAccount) {
+        _currentUser.value = null
+
+        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+
+        val authResult = auth.signInWithCredential(credential).await()
+        val uid = authResult.user?.uid
+            ?: throw Exception(app.getString(R.string.error_authentication_google))
+
+        val userSnapshot = db.collection("users")
+            .document(uid)
+            .get()
+            .await()
+
+        if (userSnapshot.exists()) {
+            val user = userSnapshot.toObject(User::class.java)?.apply {
+                this.id = userSnapshot.id
+            }
+            _currentUser.value = user
+
+            _needsProfileCompletion.value = user?.let {
+                it.email.isBlank() || it.city.isBlank() || it.country.isBlank()
+            } ?: false
+        } else {
+            val firebaseUser = authResult.user!!
+            val newUser = User(
+                id = uid,
+                nombre = firebaseUser.displayName ?: app.getString(R.string.default_user_name),
+                username = firebaseUser.email?.substringBefore("@") ?: "user_${uid.take(8)}",
+                email = firebaseUser.email ?: "",
+                password = "",
+                rol = Role.USER,
+                city = "",
+                country = "",
+                imageUrl = firebaseUser.photoUrl?.toString(),
+                favoriteIds = emptyList(),
+                placesVisited = 0,
+                placesCreated = 0,
+                reviewsWritten = 0,
+                favoritesAdded = 0,
+                joinDate = Timestamp.now(),
+                isActive = true
+            )
+
+            db.collection("users")
+                .document(uid)
+                .set(newUser)
+                .await()
+
+            _currentUser.value = newUser
+            _needsProfileCompletion.value = true
+        }
+    }
+
+    fun signInWithFacebook(accessToken: AccessToken, context: Context) {
+        viewModelScope.launch {
+            _userResult.value = RequestResult.Loading
+            try {
+                signInWithFacebookFirebase(accessToken)
 
                 // Save to SharedPreferences
                 val user = _currentUser.value
@@ -273,28 +354,25 @@ class UsersViewModel : ViewModel() {
                         name = user.nombre,
                         email = user.email
                     )
-                    _userResult.value = RequestResult.Success(message = "Inicio de sesión exitoso con Google")
+                    _userResult.value = RequestResult.Success(message = app.getString(R.string.msg_login_success_facebook))
                 } else {
-                    _userResult.value = RequestResult.Failure(errorMessage = "Error: Usuario no encontrado")
+                    _userResult.value = RequestResult.Failure(errorMessage = app.getString(R.string.error_user_not_found))
                 }
             } catch (e: Exception) {
                 _currentUser.value = null
-                _userResult.value = RequestResult.Failure(errorMessage = e.message ?: "Error al iniciar sesión con Google")
+                _userResult.value = RequestResult.Failure(errorMessage = e.message ?: app.getString(R.string.error_facebook_signin))
             }
         }
     }
 
-    private suspend fun signInWithGoogleFirebase(account: GoogleSignInAccount) {
-        // Clear current user
+    private suspend fun signInWithFacebookFirebase(accessToken: AccessToken) {
         _currentUser.value = null
 
-        // Get Google credentials
-        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+        val credential = FacebookAuthProvider.getCredential(accessToken.token)
 
-        // Sign in with Firebase Auth using Google credentials
         val authResult = auth.signInWithCredential(credential).await()
         val uid = authResult.user?.uid
-            ?: throw Exception("Error de autenticación con Google")
+            ?: throw Exception(app.getString(R.string.error_authentication_facebook))
 
         // Check if user exists in Firestore
         val userSnapshot = db.collection("users")
@@ -303,20 +381,22 @@ class UsersViewModel : ViewModel() {
             .await()
 
         if (userSnapshot.exists()) {
-            // Load existing user profile
             val user = userSnapshot.toObject(User::class.java)?.apply {
                 this.id = userSnapshot.id
             }
             _currentUser.value = user
+
+            _needsProfileCompletion.value = user?.let {
+                it.email.isBlank() || it.city.isBlank() || it.country.isBlank()
+            } ?: false
         } else {
-            // Create new user profile in Firestore
             val firebaseUser = authResult.user!!
             val newUser = User(
                 id = uid,
-                nombre = firebaseUser.displayName ?: "Usuario",
+                nombre = firebaseUser.displayName ?: app.getString(R.string.default_user_name),
                 username = firebaseUser.email?.substringBefore("@") ?: "user_${uid.take(8)}",
                 email = firebaseUser.email ?: "",
-                password = "", // No password for Google sign-in
+                password = "", // No password for Facebook sign-in
                 rol = Role.USER,
                 city = "",
                 country = "",
@@ -326,17 +406,17 @@ class UsersViewModel : ViewModel() {
                 placesCreated = 0,
                 reviewsWritten = 0,
                 favoritesAdded = 0,
-                joinDate = com.google.firebase.Timestamp.now(),
+                joinDate = Timestamp.now(),
                 isActive = true
             )
 
-            // Save to Firestore
             db.collection("users")
                 .document(uid)
                 .set(newUser)
                 .await()
 
             _currentUser.value = newUser
+            _needsProfileCompletion.value = true
         }
     }
 
@@ -348,7 +428,6 @@ class UsersViewModel : ViewModel() {
             viewModelScope.launch {
                 runCatching { findByIdFirebase(userId) }
                     .onFailure {
-                        // If user not found in Firebase, clear preferences
                         SharedPrefsUtil.clearPreferences(context)
                     }
             }
@@ -365,24 +444,20 @@ class UsersViewModel : ViewModel() {
         viewModelScope.launch {
             _currentUser.value?.let { user ->
                 try {
-                    // Remove from Firestore
                     db.collection("user_favorites")
                         .document("${user.id}_$placeId")
                         .delete()
                         .await()
 
-                    // Update local user
                     val updatedFavorites = user.favoriteIds.filter { it != placeId }
                     val updatedUser = user.copy(
                         favoriteIds = updatedFavorites,
                         favoritesAdded = updatedFavorites.size
                     )
                     _currentUser.value = updatedUser
-
-                    // Update user in Firestore
                     updateFirebase(updatedUser)
                 } catch (e: Exception) {
-                    _userResult.value = RequestResult.Failure(errorMessage = "Error al eliminar favorito")
+                    _userResult.value = RequestResult.Failure(errorMessage = app.getString(R.string.error_removing_favorite))
                 }
             }
         }
@@ -394,7 +469,6 @@ class UsersViewModel : ViewModel() {
                 if (user.favoriteIds.contains(placeId)) return@launch
 
                 try {
-                    // Add to Firestore user_favorites collection
                     val favoriteData = hashMapOf(
                         "userId" to user.id,
                         "placeId" to placeId,
@@ -412,11 +486,9 @@ class UsersViewModel : ViewModel() {
                         favoritesAdded = updatedFavorites.size
                     )
                     _currentUser.value = updatedUser
-
-                    // Update user in Firestore
                     updateFirebase(updatedUser)
                 } catch (e: Exception) {
-                    _userResult.value = RequestResult.Failure(errorMessage = "Error al agregar favorito")
+                    _userResult.value = RequestResult.Failure(errorMessage = app.getString(R.string.error_adding_favorite))
                 }
             }
         }
@@ -470,15 +542,110 @@ class UsersViewModel : ViewModel() {
         }
     }
 
-    fun updateCurrentUserProfile(nombre: String, username: String, city: String) {
+    fun updateCurrentUserProfile(nombre: String, username: String, city: String, imageUrl: String? = null) {
         val current = _currentUser.value ?: return
         val updated = current.copy(
             nombre = nombre,
             username = username,
-            city = city
+            city = city,
+            imageUrl = imageUrl ?: current.imageUrl
         )
         _currentUser.value = updated
         _users.value = _users.value.map { if (it.id == updated.id) updated else it }
+
+        viewModelScope.launch {
+            runCatching { updateFirebase(updated) }
+                .onFailure {
+                    _userResult.value = RequestResult.Failure(errorMessage = app.getString(R.string.error_updating_profile))
+                }
+        }
+    }
+
+    fun completeProfile(email: String, username: String, city: String, country: String, context: Context) {
+        viewModelScope.launch {
+            _userResult.value = RequestResult.Loading
+            try {
+                val current = _currentUser.value ?: throw Exception(app.getString(R.string.error_user_not_found_exception))
+
+                // Validar que el email no esté en uso si se cambió
+                if (email != current.email && email.isNotBlank()) {
+                    val emailSnapshot = db.collection("users")
+                        .whereEqualTo("email", email)
+                        .limit(1)
+                        .get()
+                        .await()
+
+                    if (!emailSnapshot.isEmpty) {
+                        throw Exception(app.getString(R.string.error_email_in_use))
+                    }
+                }
+
+                if (username != current.username) {
+                    val usernameSnapshot = db.collection("users")
+                        .whereEqualTo("username", username)
+                        .limit(1)
+                        .get()
+                        .await()
+
+                    if (!usernameSnapshot.isEmpty) {
+                        throw Exception(app.getString(R.string.error_username_in_use))
+                    }
+                }
+
+                val updated = current.copy(
+                    email = if (email.isNotBlank()) email else current.email,
+                    username = username,
+                    city = city,
+                    country = country
+                )
+
+                updateFirebase(updated)
+
+                _currentUser.value = updated
+                _users.value = _users.value.map { if (it.id == updated.id) updated else it }
+
+                SharedPrefsUtil.savePreferences(
+                    context,
+                    userId = updated.id,
+                    role = updated.rol.toString(),
+                    name = updated.nombre,
+                    email = updated.email
+                )
+
+                _needsProfileCompletion.value = false
+
+                _userResult.value = RequestResult.Success(message = app.getString(R.string.msg_profile_completed))
+            } catch (e: Exception) {
+                _userResult.value = RequestResult.Failure(errorMessage = e.message ?: app.getString(R.string.error_completing_profile))
+            }
+        }
+    }
+
+    fun sendPasswordResetEmail(email: String) {
+        viewModelScope.launch {
+            _userResult.value = RequestResult.Loading
+            _userResult.value = runCatching {
+                sendPasswordResetEmailFirebase(email)
+            }.fold(
+                onSuccess = {
+                    RequestResult.Success(message = app.getString(R.string.msg_recovery_email_sent))
+                },
+                onFailure = {
+                    RequestResult.Failure(errorMessage = it.message ?: app.getString(R.string.error_sending_email))
+                }
+            )
+        }
+    }
+
+    private suspend fun sendPasswordResetEmailFirebase(email: String) {
+        if (email.isBlank()) {
+            throw Exception(app.getString(R.string.txt_email_required))
+        }
+        if (!email.contains("@")) {
+            throw Exception(app.getString(R.string.txt_email_invalid))
+        }
+
+        auth.sendPasswordResetEmail(email).await()
     }
 
 }

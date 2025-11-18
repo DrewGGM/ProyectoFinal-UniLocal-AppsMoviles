@@ -20,8 +20,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.utils.CloudinaryHelper
 import kotlinx.coroutines.launch
 
@@ -63,7 +65,7 @@ fun MultipleImageUploader(
 
     Column(modifier = modifier) {
         Text(
-            text = "Fotos del lugar (${uploadedImages.size}/$maxImages)",
+            text = stringResource(R.string.txt_place_photos_count, uploadedImages.size, maxImages),
             style = MaterialTheme.typography.titleSmall
         )
 
@@ -81,7 +83,7 @@ fun MultipleImageUploader(
                 ) {
                     Image(
                         painter = rememberAsyncImagePainter(url),
-                        contentDescription = "Uploaded image",
+                        contentDescription = stringResource(R.string.cd_uploaded_image),
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
                     )
@@ -101,7 +103,7 @@ fun MultipleImageUploader(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Remove",
+                            contentDescription = stringResource(R.string.cd_remove),
                             tint = Color.White,
                             modifier = Modifier.size(16.dp)
                         )
@@ -131,7 +133,7 @@ fun MultipleImageUploader(
                     } else {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = "Add image",
+                            contentDescription = stringResource(R.string.cd_add_image),
                             modifier = Modifier.size(32.dp),
                             tint = MaterialTheme.colorScheme.primary
                         )

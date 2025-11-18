@@ -1,6 +1,7 @@
 package com.example.primeraplicacionprueba.ui.screens
 
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -39,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,6 +67,9 @@ import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.Role
 import com.example.primeraplicacionprueba.model.User
 import com.example.primeraplicacionprueba.ui.components.OperationResultHandler
+import com.example.primeraplicacionprueba.ui.components.SearchableDropdown
+import com.example.primeraplicacionprueba.viewmodel.LocationViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.primeraplicacionprueba.ui.theme.Accent
 import com.example.primeraplicacionprueba.ui.theme.BgLight
 import com.example.primeraplicacionprueba.ui.theme.BorderLight
@@ -77,6 +82,11 @@ import com.example.primeraplicacionprueba.ui.theme.TextMuted
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import java.time.LocalDate
 import java.util.regex.Pattern
 
@@ -84,53 +94,36 @@ import java.util.regex.Pattern
 @Composable
 fun RegisterScreen(
     onNavigateToLogin: () -> Unit = {},
-    onNavigateToHome: (user: User) -> Unit = {}
+    onNavigateToHome: (user: User) -> Unit = {},
+    onNavigateToCompleteProfile: (user: User) -> Unit = {}
 ) {
     val mainViewModel = LocalMainViewModel.current
     val usersViewModel = mainViewModel.usersViewModel
     val userResult by usersViewModel.userResult.collectAsState()
+    val currentUser by usersViewModel.currentUser.collectAsState()
+    val needsProfileCompletion by usersViewModel.needsProfileCompletion.collectAsState()
+
+    // LocationViewModel para países y ciudades
+    val locationViewModel: LocationViewModel = viewModel()
+    val countries by locationViewModel.countries.collectAsState()
+    val cities by locationViewModel.cities.collectAsState()
+    val isLoadingCountries by locationViewModel.isLoadingCountries.collectAsState()
+    val isLoadingCities by locationViewModel.isLoadingCities.collectAsState()
 
     var nombreCompleto by remember { mutableStateOf("") }
     var nombreUsuario by remember { mutableStateOf("") }
     var ciudad by remember { mutableStateOf("") }
     var pais by remember { mutableStateOf("") }
-    var ciudadExpanded by remember { mutableStateOf(false) }
-    var paisExpanded by remember { mutableStateOf(false) }
 
-    val ciudades = listOf(
-        "Bogotá",
-        "Medellín",
-        "Cali",
-        "Barranquilla",
-        "Cartagena",
-        "Cúcuta",
-        "Bucaramanga",
-        "Pereira",
-        "Santa Marta",
-        "Ibagué",
-        "Pasto",
-        "Manizales",
-        "Neiva",
-        "Villavicencio",
-        "Armenia"
-    )
-    val paises = listOf(
-        "Colombia",
-        "México",
-        "Argentina",
-        "Chile",
-        "Perú",
-        "Ecuador",
-        "Venezuela",
-        "Bolivia",
-        "Paraguay",
-        "Uruguay",
-        "Brasil",
-        "Estados Unidos",
-        "España",
-        "Francia",
-        "Italia"
-    )
+    // Efecto para cargar ciudades cuando se selecciona un país
+    LaunchedEffect(pais) {
+        if (pais.isNotEmpty()) {
+            locationViewModel.loadCitiesByCountry(pais)
+        } else {
+            locationViewModel.resetCities()
+            ciudad = "" // Limpiar ciudad cuando se cambia o limpia el país
+        }
+    }
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -156,7 +149,7 @@ fun RegisterScreen(
                 usersViewModel.signInWithGoogle(it, context)
             }
         } catch (e: ApiException) {
-            Toast.makeText(context, "Error al iniciar sesión con Google: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.toast_error_google_signin, e.message ?: ""), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -169,6 +162,40 @@ fun RegisterScreen(
 
         val googleSignInClient = GoogleSignIn.getClient(context, gso)
         googleSignInLauncher.launch(googleSignInClient.signInIntent)
+    }
+
+    // Facebook CallbackManager
+    val callbackManager = remember { CallbackManager.Factory.create() }
+
+    // Facebook Sign-In launcher
+    val facebookLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        callbackManager.onActivityResult(result.resultCode, result.resultCode, result.data)
+    }
+
+    // Función de Facebook Sign-In
+    fun signInWithFacebook() {
+        val loginManager = LoginManager.getInstance()
+        loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+            override fun onSuccess(result: LoginResult) {
+                val accessToken = result.accessToken
+                usersViewModel.signInWithFacebook(accessToken, context)
+            }
+
+            override fun onCancel() {
+                Toast.makeText(context, context.getString(R.string.toast_facebook_signin_cancelled), Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onError(error: FacebookException) {
+                Toast.makeText(context, context.getString(R.string.toast_error_facebook_signin, error.message ?: ""), Toast.LENGTH_LONG).show()
+            }
+        })
+        loginManager.logInWithReadPermissions(
+            context as ComponentActivity,
+            callbackManager,
+            listOf("email", "public_profile")
+        )
     }
 
     // Función de validación
@@ -292,7 +319,7 @@ fun RegisterScreen(
                         
                             Image(
                                 painter = painterResource(id = R.drawable.unilocal_logo),
-                                contentDescription = "UniLocal Logo",
+                                contentDescription = stringResource(R.string.cd_unilocal_logo),
                                 modifier = Modifier.size(120.dp)
                             )
                         
@@ -382,91 +409,40 @@ fun RegisterScreen(
 
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        // Dropdown para Ciudad
-                        ExposedDropdownMenuBox(
-                            expanded = ciudadExpanded,
-                            onExpandedChange = { ciudadExpanded = !ciudadExpanded }
-                        ) {
-                            OutlinedTextField(
-                                value = ciudad,
-                                onValueChange = {},
-                                readOnly = true,
-                                label = { Text(stringResource(R.string.txt_city)) },
-                                trailingIcon = {
-                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = ciudadExpanded)
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                                isError = ciudadError.isNotEmpty(),
-                                supportingText = if (ciudadError.isNotEmpty()) {
-                                    { Text(ciudadError, color = MaterialTheme.colorScheme.error) }
-                                } else null,
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = Secondary,
-                                    focusedLabelColor = Secondary
-                                )
-                            )
-                            ExposedDropdownMenu(
-                                expanded = ciudadExpanded,
-                                onDismissRequest = { ciudadExpanded = false }
-                            ) {
-                                ciudades.forEach { ciudadOption ->
-                                    DropdownMenuItem(
-                                        text = { Text(ciudadOption) },
-                                        onClick = {
-                                            ciudad = ciudadOption
-                                            ciudadExpanded = false
-                                            if (ciudadError.isNotEmpty()) ciudadError = ""
-                                        }
-                                    )
-                                }
-                            }
-                        }
+                        // Dropdown para País con búsqueda
+                        SearchableDropdown(
+                            label = stringResource(R.string.txt_country),
+                            selectedValue = pais,
+                            options = countries,
+                            onValueChange = {
+                                pais = it
+                                if (paisError.isNotEmpty()) paisError = ""
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            isLoading = isLoadingCountries,
+                            placeholder = stringResource(R.string.txt_select_country),
+                            isError = paisError.isNotEmpty(),
+                            errorMessage = paisError.ifEmpty { null }
+                        )
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Dropdown para País
-                        ExposedDropdownMenuBox(
-                            expanded = paisExpanded,
-                            onExpandedChange = { paisExpanded = !paisExpanded }
-                        ) {
-                            OutlinedTextField(
-                                value = pais,
-                                onValueChange = {},
-                                readOnly = true,
-                                label = { Text(stringResource(R.string.txt_country)) },
-                                trailingIcon = {
-                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = paisExpanded)
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                                isError = paisError.isNotEmpty(),
-                                supportingText = if (paisError.isNotEmpty()) {
-                                    { Text(paisError, color = MaterialTheme.colorScheme.error) }
-                                } else null,
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = Secondary,
-                                    focusedLabelColor = Secondary
-                                )
-                            )
-                            ExposedDropdownMenu(
-                                expanded = paisExpanded,
-                                onDismissRequest = { paisExpanded = false }
-                            ) {
-                                paises.forEach { paisOption ->
-                                    DropdownMenuItem(
-                                        text = { Text(paisOption) },
-                                        onClick = {
-                                            pais = paisOption
-                                            paisExpanded = false
-                                            if (paisError.isNotEmpty()) paisError = ""
-                                        }
-                                    )
-                                }
-                            }
-                        }
+                        // Dropdown para Ciudad con búsqueda
+                        SearchableDropdown(
+                            label = stringResource(R.string.txt_city),
+                            selectedValue = ciudad,
+                            options = cities,
+                            onValueChange = {
+                                ciudad = it
+                                if (ciudadError.isNotEmpty()) ciudadError = ""
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            enabled = pais.isNotEmpty(), // Solo habilitado si hay país seleccionado
+                            isLoading = isLoadingCities,
+                            placeholder = if (pais.isEmpty()) stringResource(R.string.txt_select_country_first) else stringResource(R.string.txt_select_city),
+                            isError = ciudadError.isNotEmpty(),
+                            errorMessage = ciudadError.ifEmpty { null }
+                        )
 
                         Spacer(modifier = Modifier.height(16.dp))
 
@@ -532,10 +508,26 @@ fun RegisterScreen(
                         OperationResultHandler(
                             result = userResult,
                             onSuccess = {
-                                onNavigateToLogin()
+                                val result = userResult
+                                if (result is com.example.primeraplicacionprueba.utils.RequestResult.Success) {
+                                    if (result.message.contains("Google") || result.message.contains("Facebook")) {
+                                        // Social sign-in succeeded - check if profile needs completion
+                                        val user = currentUser
+                                        if (user != null) {
+                                            if (needsProfileCompletion) {
+                                                onNavigateToCompleteProfile(user)
+                                            } else {
+                                                onNavigateToHome(user)
+                                            }
+                                        }
+                                    } else {
+                                        // Regular registration - navigate to login
+                                        onNavigateToLogin()
+                                    }
+                                }
                                 usersViewModel.resetOperationResult()
                             },
-                            onFailure ={
+                            onFailure = {
                                 usersViewModel.resetOperationResult()
                             }
                         )
@@ -628,7 +620,7 @@ fun RegisterScreen(
                                 modifier = Modifier
                                     .size(42.dp)
                                     .clickable { signInWithGoogle() },
-                                tint = androidx.compose.ui.graphics.Color.Unspecified
+                                tint = Color.Unspecified
                             )
 
                             Spacer(modifier = Modifier.width(20.dp))
@@ -639,8 +631,8 @@ fun RegisterScreen(
                                 contentDescription = stringResource(R.string.txt_continue_with_facebook),
                                 modifier = Modifier
                                     .size(42.dp)
-                                    .clickable { /* TODO: Implementar Facebook Sign In */ },
-                                tint = androidx.compose.ui.graphics.Color.Unspecified
+                                    .clickable { signInWithFacebook() },
+                                tint = Color.Unspecified
                             )
                         }
 

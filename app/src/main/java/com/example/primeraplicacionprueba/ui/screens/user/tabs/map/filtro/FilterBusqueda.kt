@@ -8,21 +8,29 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -35,8 +43,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.ui.theme.BgLight
+import com.example.primeraplicacionprueba.ui.theme.BorderLight
+import com.example.primeraplicacionprueba.ui.theme.Primary
+import com.example.primeraplicacionprueba.ui.theme.Secondary
 import com.example.primeraplicacionprueba.ui.theme.TextDark
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -65,200 +78,290 @@ fun FilterBusqueda(
     val categorias = listOf("Restaurante", "Cafetería", "Museo", "Hotel", "Comidas rápidas")
     val categoriasSeleccionadas = remember { mutableStateListOf<String>() }
 
-    Surface (
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        shape = RoundedCornerShape(12.dp),
-        color = Color(0xFFF9F9F9)
+    Dialog(
+        onDismissRequest = { onNavigateBack() },
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            decorFitsSystemWindows = false
+        )
     ) {
-        Column(
+        Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .fillMaxWidth(0.95f)
+                .fillMaxSize(0.9f),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
-            //  Encabezado
-            Row (
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.fillMaxSize()
             ) {
-                    TopAppBar(
-                        title = {
-                            Text(
-                                text = stringResource(R.string.txt_filtrosplace),
-                                fontSize = 25.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = TextDark
+                // Header fijo
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            Brush.horizontalGradient(
+                                colors = listOf(Primary, Secondary)
                             )
-                        },
-                        navigationIcon = {
-                            IconButton(onClick = { onNavigateBack() }) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = stringResource(R.string.txt_back),
-                                    tint = TextDark
-                                )
-                            }
-                        },
-
+                        )
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.txt_filtrosplace),
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
                     )
-
-
-            }
-
-            // 🔍 Palabra clave
-            Text("Palabra clave", fontWeight = FontWeight.Medium)
-            OutlinedTextField(
-                value = palabraClave,
-                onValueChange = { palabraClave = it },
-                placeholder = { Text( text = stringResource(R.string.txt_find)) },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp)
-            )
-
-            // 🍽️ Categorías
-            Text("Categorías", fontWeight = FontWeight.Medium)
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                categorias.forEach { categoria ->
-                    val seleccionada = categoria in categoriasSeleccionadas
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(50))
-                            .background(if (seleccionada) Color(0xFF1976D2) else Color.White)
-                            .border(
-                                1.dp,
-                                if (seleccionada) Color(0xFF1976D2) else Color.LightGray,
-                                RoundedCornerShape(50)
-                            )
-                            .clickable() {
-                                if (seleccionada) categoriasSeleccionadas.remove(categoria)
-                                else categoriasSeleccionadas.add(categoria)
-                            }
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    ) {
-                        Text(
-                            text = categoria,
-                            color = if (seleccionada) Color.White else Color.Black
+                    IconButton(onClick = { onNavigateBack() }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(R.string.txt_close),
+                            tint = Color.White
                         )
                     }
                 }
-            }
 
-            // 📏 Distancia
-            Text("Distancia (km)", fontWeight = FontWeight.Medium)
-            OutlinedTextField(
-                value = distancia,
-                onValueChange = { distancia = it },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp)
-            )
-
-            // 🏙️ Ciudad
-            Text("Ciudad", fontWeight = FontWeight.Medium)
-            OutlinedTextField(
-                value = ciudad,
-                onValueChange = { ciudad = it },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp)
-            )
-
-            //  Calificación mínima
-            Text("Calificación mínima", fontWeight = FontWeight.Medium)
-            OutlinedTextField(
-                value = calificacion,
-                onValueChange = { calificacion = it },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp)
-            )
-
-            //  Abierto ahora
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(
-                    checked = abiertoAhora,
-                    onCheckedChange = { abiertoAhora = it }
-                )
-                Text("Abierto ahora")
-            }
-
-            //  Botones
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Botón "Limpiar"
-                Button (
-                    onClick = {
-                        palabraClave = ""
-                        distancia = ""
-                        ciudad = ""
-                        calificacion = "Cualquiera"
-                        abiertoAhora = false
-                        categoriasSeleccionadas.clear()
-                    },
+                // Contenido con scroll
+                Column(
                     modifier = Modifier
-                        .weight(1.5f)
-                        .height(50.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                    shape = RoundedCornerShape(12.dp)
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                        .padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Text("Limpiar", color = Color.Black, fontWeight = FontWeight.Medium)
+
+                    // 🔍 Palabra clave
+                    Text(
+                        "Palabra clave",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp,
+                        color = TextDark
+                    )
+                    OutlinedTextField(
+                        value = palabraClave,
+                        onValueChange = { palabraClave = it },
+                        placeholder = { Text(text = stringResource(R.string.txt_find)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = BorderLight,
+                            focusedBorderColor = Secondary,
+                            unfocusedContainerColor = BgLight,
+                            focusedContainerColor = BgLight
+                        )
+                    )
+
+                    // 🍽️ Categorías
+                    Text(
+                        "Categorías",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp,
+                        color = TextDark
+                    )
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        categorias.forEach { categoria ->
+                            val seleccionada = categoria in categoriasSeleccionadas
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(20.dp))
+                                    .background(if (seleccionada) Primary else Color.White)
+                                    .border(
+                                        2.dp,
+                                        if (seleccionada) Primary else BorderLight,
+                                        RoundedCornerShape(20.dp)
+                                    )
+                                    .clickable {
+                                        if (seleccionada) categoriasSeleccionadas.remove(categoria)
+                                        else categoriasSeleccionadas.add(categoria)
+                                    }
+                                    .padding(horizontal = 16.dp, vertical = 10.dp)
+                            ) {
+                                Text(
+                                    text = categoria,
+                                    color = if (seleccionada) Color.White else TextDark,
+                                    fontSize = 14.sp,
+                                    fontWeight = if (seleccionada) FontWeight.SemiBold else FontWeight.Normal
+                                )
+                            }
+                        }
+                    }
+
+                    // 📏 Distancia
+                    Text(
+                        "Distancia (km)",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp,
+                        color = TextDark
+                    )
+                    OutlinedTextField(
+                        value = distancia,
+                        onValueChange = { distancia = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = BorderLight,
+                            focusedBorderColor = Secondary,
+                            unfocusedContainerColor = BgLight,
+                            focusedContainerColor = BgLight
+                        )
+                    )
+
+                    // 🏙️ Ciudad
+                    Text(
+                        "Ciudad",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp,
+                        color = TextDark
+                    )
+                    OutlinedTextField(
+                        value = ciudad,
+                        onValueChange = { ciudad = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = BorderLight,
+                            focusedBorderColor = Secondary,
+                            unfocusedContainerColor = BgLight,
+                            focusedContainerColor = BgLight
+                        )
+                    )
+
+                    //  Calificación mínima
+                    Text(
+                        "Calificación mínima",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp,
+                        color = TextDark
+                    )
+                    OutlinedTextField(
+                        value = calificacion,
+                        onValueChange = { calificacion = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = BorderLight,
+                            focusedBorderColor = Secondary,
+                            unfocusedContainerColor = BgLight,
+                            focusedContainerColor = BgLight
+                        )
+                    )
+
+                    //  Abierto ahora
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    ) {
+                        Checkbox(
+                            checked = abiertoAhora,
+                            onCheckedChange = { abiertoAhora = it }
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            "Abierto ahora",
+                            fontSize = 15.sp,
+                            color = TextDark
+                        )
+                    }
                 }
 
-                // Botón "Aplicar filtros"
-                Button(
-                    onClick = {
-                        val selectedTypes = categoriasSeleccionadas.mapNotNull { nombre ->
-                            when (nombre) {
-                                "Restaurante" -> PlaceType.RESTAURANT
-                                "Cafetería" -> PlaceType.CAFE
-                                "Museo" -> PlaceType.MUSEUM
-                                "Hotel" -> PlaceType.HOTEL
-                                "Comidas rápidas" -> PlaceType.FAST_FOOD
-                                else -> null
-                            }
-                        }.toSet()
-
-                        val minRating = calificacion.trim().takeIf { it.isNotEmpty() && it != "Cualquiera" }?.toFloatOrNull()
-                        val maxDist = distancia.trim().takeIf { it.isNotEmpty() }?.toFloatOrNull()
-
-                        val filters = MapFilters(
-                            keyword = palabraClave.ifBlank { null },
-                            categories = selectedTypes,
-                            city = ciudad.ifBlank { null },
-                            minRating = minRating,
-                            openNow = abiertoAhora,
-                            maxDistanceKm = maxDist
-                        )
-                        placesViewModel.applyFilters(filters)
-                        onNavigateBack()
-                    },
+                // Botones fijos en la parte inferior
+                Row(
                     modifier = Modifier
-                        .weight(1.5f)
-                        .height(65.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+                        .fillMaxWidth()
+                        .background(Color.White)
+                        .padding(20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Box(
+                    // Botón "Limpiar"
+                    OutlinedButton(
+                        onClick = {
+                            palabraClave = ""
+                            distancia = ""
+                            ciudad = ""
+                            calificacion = "Cualquiera"
+                            abiertoAhora = false
+                            categoriasSeleccionadas.clear()
+                        },
                         modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                brush = Brush.horizontalGradient(
-                                    colors = listOf(Color(0xFFFF6B6B), Color(0xFFFFA726))
-                                ),
-                                shape = RoundedCornerShape(12.dp)
-                            ),
-                        contentAlignment = Alignment.Center
+                            .weight(1f)
+                            .height(56.dp),
+                        shape = RoundedCornerShape(28.dp),
+                        border = ButtonDefaults.outlinedButtonBorder.copy(
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(BorderLight, BorderLight)
+                            )
+                        )
                     ) {
-                        Text("Aplicar filtros", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text(
+                            "Limpiar",
+                            color = TextDark,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 16.sp
+                        )
+                    }
+
+                    // Botón "Aplicar filtros"
+                    Button(
+                        onClick = {
+                            val selectedTypes = categoriasSeleccionadas.mapNotNull { nombre ->
+                                when (nombre) {
+                                    "Restaurante" -> PlaceType.RESTAURANT
+                                    "Cafetería" -> PlaceType.CAFE
+                                    "Museo" -> PlaceType.MUSEUM
+                                    "Hotel" -> PlaceType.HOTEL
+                                    "Comidas rápidas" -> PlaceType.FAST_FOOD
+                                    else -> null
+                                }
+                            }.toSet()
+
+                            val minRating = calificacion.trim()
+                                .takeIf { it.isNotEmpty() && it != "Cualquiera" }?.toFloatOrNull()
+                            val maxDist = distancia.trim().takeIf { it.isNotEmpty() }?.toFloatOrNull()
+
+                            val filters = MapFilters(
+                                keyword = palabraClave.ifBlank { null },
+                                categories = selectedTypes,
+                                city = ciudad.ifBlank { null },
+                                minRating = minRating,
+                                openNow = abiertoAhora,
+                                maxDistanceKm = maxDist
+                            )
+                            placesViewModel.applyFilters(filters)
+                            onNavigateBack()
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(56.dp),
+                        shape = RoundedCornerShape(28.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    brush = Brush.horizontalGradient(
+                                        colors = listOf(Primary, Secondary)
+                                    ),
+                                    shape = RoundedCornerShape(28.dp)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                "Aplicar filtros",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp
+                            )
+                        }
                     }
                 }
             }
         }
     }
-
 }

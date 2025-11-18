@@ -15,7 +15,8 @@ data class Review(
     @get:PropertyName("date")
     @set:PropertyName("date")
     var date: Any? = null, // Changed to Any? to handle Timestamp/HashMap
-    val replyIds: List<String> = emptyList() // Changed from List<ReviewReply> to IDs
+    val replyIds: List<String> = emptyList(), // Changed from List<ReviewReply> to IDs
+    val imageUrls: List<String> = emptyList() // URLs of images uploaded with the review
 ) {
     // Helper to convert date to LocalDateTime
     fun getDateAsLocalDateTime(): LocalDateTime {

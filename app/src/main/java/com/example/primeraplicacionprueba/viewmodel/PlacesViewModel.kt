@@ -1,12 +1,14 @@
 package com.example.primeraplicacionprueba.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.primeraplicacionprueba.model.CreatePlaceState
 import com.example.primeraplicacionprueba.model.MapFilters
 import com.example.primeraplicacionprueba.model.Place
 import com.example.primeraplicacionprueba.model.PlaceType
+import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.PlaceStatus
 import com.example.primeraplicacionprueba.model.Review
 import com.example.primeraplicacionprueba.utils.RequestResult
@@ -18,8 +20,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class PlacesViewModel : ViewModel() {
+class PlacesViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val app: Application = getApplication()
     private val db = FirebaseFirestore.getInstance()
 
     private val _places = MutableStateFlow(emptyList<Place>())
@@ -28,19 +31,14 @@ class PlacesViewModel : ViewModel() {
     private val _placeResult = MutableStateFlow<RequestResult?>(null)
     val placeResult: StateFlow<RequestResult?> = _placeResult.asStateFlow()
 
-    // Estado de filtros y lista filtrada
     private val _activeFilters = MutableStateFlow<MapFilters?>(null)
     private val _filteredPlaces = MutableStateFlow(emptyList<Place>())
     val filteredPlaces: StateFlow<List<Place>> = _filteredPlaces.asStateFlow()
 
-    // Estado para creación de lugares
     private val _createPlaceState = MutableStateFlow(CreatePlaceState())
     val createPlaceState: StateFlow<CreatePlaceState> = _createPlaceState.asStateFlow()
 
-    // Reference to ReviewViewModel for getting reviews
     private var reviewViewModel: ReviewViewModel? = null
-
-    // Firestore listener
     private var placesListener: ListenerRegistration? = null
 
     init {
@@ -66,10 +64,7 @@ class PlacesViewModel : ViewModel() {
         return getReviewsForPlace(placeId).size
     }
 
-    // ========== FIREBASE CRUD OPERATIONS ==========
-
     fun loadPlaces() {
-        // Real-time listener for places from Firebase
         placesListener = db.collection("places")
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
@@ -93,8 +88,8 @@ class PlacesViewModel : ViewModel() {
             _placeResult.value = RequestResult.Loading
             _placeResult.value = runCatching { createFirebase(place) }
                 .fold(
-                    onSuccess = { RequestResult.Success(message = "Lugar creado exitosamente") },
-                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: "Error creando el Lugar") }
+                    onSuccess = { RequestResult.Success(message = app.getString(R.string.msg_place_created)) },
+                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: app.getString(R.string.error_creating_place)) }
                 )
         }
     }
@@ -108,15 +103,15 @@ class PlacesViewModel : ViewModel() {
             _placeResult.value = RequestResult.Loading
             _placeResult.value = runCatching { updateFirebase(place) }
                 .fold(
-                    onSuccess = { RequestResult.Success(message = "Lugar actualizado correctamente") },
-                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: "Error actualizando el Lugar") }
+                    onSuccess = { RequestResult.Success(message = app.getString(R.string.msg_place_updated)) },
+                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: app.getString(R.string.error_updating_place)) }
                 )
         }
     }
 
     private suspend fun updateFirebase(place: Place) {
         if (place.id.isEmpty()) {
-            throw Exception("ID de lugar no válido")
+            throw Exception(app.getString(R.string.error_invalid_place_id))
         }
         db.collection("places")
             .document(place.id)
@@ -129,8 +124,8 @@ class PlacesViewModel : ViewModel() {
             _placeResult.value = RequestResult.Loading
             _placeResult.value = runCatching { deleteFirebase(placeId) }
                 .fold(
-                    onSuccess = { RequestResult.Success(message = "Lugar eliminado correctamente") },
-                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: "Error eliminando el Lugar") }
+                    onSuccess = { RequestResult.Success(message = app.getString(R.string.msg_place_deleted)) },
+                    onFailure = { RequestResult.Failure(errorMessage = it.message ?: app.getString(R.string.error_deleting_place)) }
                 )
         }
     }
@@ -185,8 +180,6 @@ class PlacesViewModel : ViewModel() {
         return _places.value.filter { it.ownerId == userId }
     }
 
-    // ========== FILTERS ==========
-
     fun applyFilters(filters: MapFilters?) {
         _activeFilters.value = filters
         _filteredPlaces.value = if (filters == null) {
@@ -232,8 +225,6 @@ class PlacesViewModel : ViewModel() {
             )
         }
     }
-
-    // ========== CREATE PLACE STATE MANAGEMENT ==========
 
     fun updateCreateState(state: CreatePlaceState) {
         _createPlaceState.value = state

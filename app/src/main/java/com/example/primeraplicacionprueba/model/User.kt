@@ -4,6 +4,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.PropertyName
 import java.time.LocalDate
 import java.time.ZoneId
+import java.util.Date
 
 data class User(
     val nombre: String = "",
@@ -60,7 +61,7 @@ data class User(
         placesVisited = placesVisited,
         reviewsWritten = reviewsWritten,
         favoritesAdded = favoritesAdded,
-        joinDate = Timestamp(java.util.Date.from(joinDate.atStartOfDay(ZoneId.systemDefault()).toInstant())) as Any,
+        joinDate = Timestamp(Date.from(joinDate.atStartOfDay(ZoneId.systemDefault()).toInstant())) as Any,
         isActive = isActive
     )
 
@@ -91,7 +92,7 @@ data class User(
     private fun getJoinDateAsTimestamp(): Timestamp? {
         return when (joinDate) {
             is Timestamp -> joinDate as Timestamp
-            is com.google.firebase.Timestamp -> joinDate as Timestamp
+            is Timestamp -> joinDate as Timestamp
             is Map<*, *> -> {
                 // Handle HashMap from Firebase
                 val map = joinDate as Map<*, *>

@@ -1,6 +1,7 @@
 package com.example.primeraplicacionprueba.ui.screens.user.tabs.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,6 +21,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -120,69 +122,102 @@ fun MyPlaceCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(16.dp)
         ) {
-            // Imagen/Icono del lugar
-            Box(
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Tertiary),
-                contentAlignment = Alignment.Center
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                AsyncImage(
-                    model = place.imagenes.first(),
-                    contentDescription = stringResource(R.string.txt_place_image),
-                    contentScale = ContentScale.Crop,
+                // Imagen del lugar
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                )
+                        .size(80.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(BgLight),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (place.imagenes.isNotEmpty()) {
+                        AsyncImage(
+                            model = place.imagenes.first(),
+                            contentDescription = stringResource(R.string.txt_place_image),
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Icon(
+                            imageVector = getIconForPlaceType(place.type),
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp),
+                            tint = Secondary
+                        )
+                    }
+                }
+
+                // Información del lugar
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = place.title,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextDark,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CalendarToday,
+                            contentDescription = null,
+                            modifier = Modifier.size(14.dp),
+                            tint = TextMuted
+                        )
+                        Text(
+                            text = place.getFormattedCreatedDate(),
+                            fontSize = 13.sp,
+                            color = TextMuted
+                        )
+                    }
+
+                    StatusBadge(status = place.placeStatus)
+                }
             }
 
-            // Información del lugar
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(
-                    text = place.title,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = TextDark
-                )
-                Text(
-                    text = "Creado el ${place.createdDate}",
-                    fontSize = 14.sp,
-                    color = TextMuted
-                )
-                StatusBadge(status = place.placeStatus)
-            }
+            // Botones de acción en fila separada
+            Spacer(modifier = Modifier.height(12.dp))
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                ActionButton(
+                ActionButtonWithLabel(
                     icon = Icons.AutoMirrored.Filled.Comment,
-                    tint = TextDark,
+                    label = stringResource(R.string.txt_comments_label),
+                    tint = Primary,
                     onClick = onViewComments
                 )
-                ActionButton(
+                ActionButtonWithLabel(
                     icon = Icons.Default.Edit,
+                    label = stringResource(R.string.txt_edit_label),
                     tint = Secondary,
                     onClick = onEdit
                 )
-                ActionButton(
+                ActionButtonWithLabel(
                     icon = Icons.Default.Delete,
+                    label = stringResource(R.string.txt_delete_label),
                     tint = ErrorRed,
                     onClick = onDelete
                 )
@@ -232,6 +267,36 @@ fun ActionButton(
             contentDescription = null,
             tint = tint,
             modifier = Modifier.size(20.dp)
+        )
+    }
+}
+
+@Composable
+fun ActionButtonWithLabel(
+    icon: ImageVector,
+    label: String,
+    tint: Color,
+    onClick: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier
+            .clip(RoundedCornerShape(12.dp))
+            .clickable { onClick() }
+            .padding(8.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = tint,
+            modifier = Modifier.size(24.dp)
+        )
+        Text(
+            text = label,
+            fontSize = 11.sp,
+            color = tint,
+            fontWeight = FontWeight.Medium
         )
     }
 }

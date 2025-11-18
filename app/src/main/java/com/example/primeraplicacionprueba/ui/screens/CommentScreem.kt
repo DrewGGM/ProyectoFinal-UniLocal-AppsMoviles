@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -24,6 +25,8 @@ import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.Review
 import com.example.primeraplicacionprueba.viewmodel.ReviewViewModel
+import com.example.primeraplicacionprueba.ui.components.MultiImageUploader
+import com.google.firebase.Timestamp
 import java.time.LocalDateTime
 
 @Composable
@@ -47,7 +50,8 @@ fun CommentScreen(
                 placeID = placeId,
                 rating = rating,
                 comment = comment,
-                date = com.google.firebase.Timestamp.now()
+                date = Timestamp.now(),
+                imageUrls = selectedPhotos
             )
             reviewViewModel.create(newReview)
             onNavigateBack()
@@ -99,7 +103,7 @@ fun CommentScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Cerrar",
+                            contentDescription = stringResource(R.string.cd_close),
                             tint = Color(0xFF333333)
                         )
                     }
@@ -236,7 +240,7 @@ fun CommentSection(
                     .fillMaxWidth()
                     .padding(16.dp)
                     .height(120.dp),
-                textStyle = androidx.compose.ui.text.TextStyle(
+                textStyle = TextStyle(
                     fontSize = 14.sp,
                     color = Color(0xFF333333)
                 ),
@@ -263,66 +267,11 @@ fun PhotoSection(
     Column {
         Spacer(modifier = Modifier.height(15.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .border(
-                    width = 2.dp,
-                    color = Color(0xFF4CAF50).copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .clickable {
-                    onPhotosChanged(selectedPhotos + "foto_${selectedPhotos.size + 1}")
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Icon(
-                    imageVector = Icons.Default.AddAPhoto,
-                    contentDescription = null,
-                    tint = Color(0xFF4CAF50),
-                    modifier = Modifier.size(36.dp)
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = stringResource(R.string.txt_add_photos_visit),
-                    fontSize = 14.sp,
-                    color = Color(0xFF4CAF50),
-                    fontWeight = FontWeight.Medium
-                )
-            }
-        }
-
-        // Mostrar fotos seleccionadas
-        if (selectedPhotos.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(selectedPhotos.size) { index ->
-                    Card(
-                        modifier = Modifier
-                            .size(60.dp)
-                            .clickable {
-                                onPhotosChanged(selectedPhotos.filterIndexed { i, _ -> i != index })
-                            },
-                        shape = RoundedCornerShape(8.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Image,
-                                contentDescription = null,
-                                tint = Color.Gray
-                            )
-                        }
-                    }
-                }
-            }
-        }
+        MultiImageUploader(
+            imageUrls = selectedPhotos,
+            onImagesChanged = onPhotosChanged,
+            folder = "unilocal/reviews",
+            maxImages = 5
+        )
     }
 }

@@ -13,6 +13,9 @@ sealed class RouteScreen{
     data object Register: RouteScreen()
 
     @Serializable
+    data object CompleteProfile: RouteScreen()
+
+    @Serializable
     data object EditProfile: RouteScreen();
 
     @Serializable

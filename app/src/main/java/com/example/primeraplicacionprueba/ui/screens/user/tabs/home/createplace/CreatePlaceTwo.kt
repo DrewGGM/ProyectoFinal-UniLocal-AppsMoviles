@@ -30,9 +30,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import com.example.primeraplicacionprueba.R
 import androidx.compose.ui.res.stringResource
 import com.example.primeraplicacionprueba.ui.components.Map
+import com.example.primeraplicacionprueba.ui.components.LocationPickerDialog
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 import com.mapbox.geojson.Point
 import com.example.primeraplicacionprueba.model.Location
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.LocationOn
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,6 +55,8 @@ fun CreatePlaceStepTwo(
     var sitioWebError by remember { mutableStateOf("") }
     var redesSocialesError by remember { mutableStateOf("") }
     var clickedPoint by rememberSaveable { mutableStateOf<Point?>(null) }
+    var showLocationPicker by remember { mutableStateOf(false) }
+    val defaultCity = stringResource(R.string.default_city_armenia)
 
     Column(
         modifier = Modifier
@@ -143,49 +148,77 @@ fun CreatePlaceStepTwo(
                     color = TextDark
                 )
 
+                // Mapa clickeable
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
-                        .clip(RoundedCornerShape(16.dp))
+                        .clip(RoundedCornerShape(12.dp))
                         .border(
                             width = 2.dp,
-                            color = BorderLight,
-                            shape = RoundedCornerShape(16.dp)
+                            color = if (clickedPoint != null) SuccessGreen else Secondary,
+                            shape = RoundedCornerShape(12.dp)
                         )
-                        .background(BgLight)
-                        .clickable {
-                            // TODO: Abrir selector de mapa
-                        },
-                    contentAlignment = Alignment.Center
+                        .clickable { showLocationPicker = true }
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
+                    // Mapa de fondo
+                    Map(
+                        modifierr = Modifier.fillMaxSize()
+                    )
 
-                        Map(
-                            modifierr = Modifier.fillMaxSize(),
-                            activateClick = true,
-                            onMapClickListener={ l ->
-                                clickedPoint = l
-                                viewModel.updateCreateState(
-                                    state.copy(
-                                        location = Location(
-                                            latitude = l.latitude(),
-                                            longitude = l.longitude()
-                                        )
-                                    )
+                    // Overlay con indicador si ya hay ubicación seleccionada
+                    if (clickedPoint != null) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black.copy(alpha = 0.3f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.CheckCircle,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(48.dp)
+                                )
+                                Text(
+                                    text = stringResource(R.string.txt_location_selected_tap),
+                                    color = Color.White,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    textAlign = TextAlign.Center
                                 )
                             }
-                        )
-
-                        Text(
-                            text = stringResource(R.string.txt_tap_to_select_map),
-                            fontSize = 14.sp,
-                            color = TextMuted,
-                            textAlign = TextAlign.Center
-                        )
+                        }
+                    } else {
+                        // Overlay cuando no hay ubicación seleccionada
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black.copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.LocationOn,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(48.dp)
+                                )
+                                Text(
+                                    text = stringResource(R.string.txt_tap_to_select_location),
+                                    color = Color.White,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -318,7 +351,7 @@ fun CreatePlaceStepTwo(
                                 website = sitioWeb.ifBlank { null },
                                 socialMedia = redesSociales.ifBlank { null },
                                 address = "",  // Valor por defecto hasta que se implemente el mapa
-                                city = "Armenia",     // Valor por defecto hasta que se implemente el mapa
+                                city = defaultCity,     // Valor por defecto hasta que se implemente el mapa
                                 neighborhood = ""  // Valor por defecto hasta que se implemente el mapa
                             )
                         )
@@ -368,6 +401,27 @@ fun CreatePlaceStepTwo(
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        // LocationPickerDialog fuera del scroll
+        if (showLocationPicker) {
+            LocationPickerDialog(
+                onDismiss = { showLocationPicker = false },
+                onLocationSelected = { point ->
+                    clickedPoint = point
+                    viewModel.updateCreateState(
+                        state.copy(
+                            location = Location(
+                                latitude = point.latitude(),
+                                longitude = point.longitude()
+                            )
+                        )
+                    )
+                },
+                initialLocation = clickedPoint
+            )
         }
     }
 }

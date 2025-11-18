@@ -149,7 +149,7 @@ fun FavoriteCard(
                     color = TextDark
                 )
                 Text(
-                    text = "${place.type} · ${place.getDistanceFromUser()}",
+                    text = stringResource(R.string.txt_place_type_distance, place.type, place.getDistanceFromUser()),
                     fontSize = 14.sp,
                     color = TextMuted
                 )
@@ -174,7 +174,7 @@ fun FavoriteCard(
                         }
                     }
                     Text(
-                        text = "(${(placesViewModel.getAverageRatingForPlace(place.id) * 10).toInt()})",
+                        text = stringResource(R.string.txt_rating_percentage, (placesViewModel.getAverageRatingForPlace(place.id) * 10).toInt()),
                         fontSize = 13.sp,
                         color = TextMuted
                     )

@@ -4,8 +4,10 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.PropertyName
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 data class Place(
     var id: String = "",
@@ -34,6 +36,31 @@ data class Place(
     @set:PropertyName("createdDate")
     var createdDate: Any? = null, // Changed to Any? to handle Timestamp/HashMap
 ) {
+    // Helper to convert createdDate to LocalDateTime
+    private fun getCreatedDateAsLocalDateTime(): LocalDateTime {
+        return when (createdDate) {
+            is Timestamp -> {
+                (createdDate as Timestamp).toDate().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime()
+            }
+            is Map<*, *> -> {
+                val map = createdDate as Map<*, *>
+                val seconds = (map["seconds"] as? Number)?.toLong() ?: return LocalDateTime.now()
+                val nanoseconds = (map["nanoseconds"] as? Number)?.toInt() ?: 0
+                Timestamp(seconds, nanoseconds).toDate().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime()
+            }
+            else -> LocalDateTime.now()
+        }
+    }
+
+    fun getFormattedCreatedDate(): String {
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        return getCreatedDateAsLocalDateTime().format(formatter)
+    }
+
     fun changePlaceStatus(status: PlaceStatus) {
         placeStatus = status
     }
@@ -44,14 +71,14 @@ data class Place(
     
     fun isCurrentlyOpen(): Boolean {
         val now = LocalTime.now()
-        val today = DayOfWeek.from(java.time.LocalDate.now())
+        val today = DayOfWeek.from(LocalDate.now())
         val todaySchedule = shedule.find { it.day.name == today.name }
         return todaySchedule?.let { now.isAfter(it.open) && now.isBefore(it.close) } ?: false
     }
     
     fun getNextCloseTime(): String {
         val now = LocalTime.now()
-        val today = DayOfWeek.from(java.time.LocalDate.now())
+        val today = DayOfWeek.from(LocalDate.now())
         val todaySchedule = shedule.find { it.day.name == today.name }
         return todaySchedule?.close?.toString() ?: "N/A"
     }

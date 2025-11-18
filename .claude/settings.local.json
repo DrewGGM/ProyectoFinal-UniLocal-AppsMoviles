@@ -1,7 +1,17 @@
 {
   "permissions": {
     "allow": [
-      "Bash(./gradlew clean:*)"
+      "Bash(./gradlew clean:*)",
+      "Bash(.gradlew.bat assembleDebug)",
+      "Bash(gradlew assembleDebug:*)",
+      "Bash(cmd /c gradlew.bat assembleDebug)",
+      "Bash(cmd /c \"gradlew.bat clean && gradlew.bat assembleDebug\")",
+      "Bash(gradlew.bat assembleDebug)",
+      "Bash(cmd /c \"cd C:\\Users\\andre\\Downloads\\AppsMoviles\\UniLocal-Ejemplo && gradlew.bat assembleDebug\")",
+      "Bash(cmd /c \"cd /d C:\\Users\\andre\\Downloads\\AppsMoviles\\UniLocal-Ejemplo && gradlew.bat assembleDebug\")",
+      "Bash(C:/Users/andre/Downloads/AppsMoviles/UniLocal-Ejemplo/gradlew.bat assembleDebug)",
+      "Bash(C:/Users/andre/Downloads/AppsMoviles/UniLocal-Ejemplo/gradlew.bat --stop)",
+      "Bash(C:/Users/andre/Downloads/AppsMoviles/UniLocal-Ejemplo/gradlew.bat clean assembleDebug)"
     ],
     "deny": [],
     "ask": []

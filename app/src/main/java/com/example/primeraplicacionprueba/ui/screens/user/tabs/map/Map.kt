@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import com.example.primeraplicacionprueba.ui.components.Search
+import com.example.primeraplicacionprueba.ui.components.PlaceSearchItem
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 import com.example.primeraplicacionprueba.ui.screens.LocalMainViewModel
 import com.example.primeraplicacionprueba.R
@@ -65,6 +67,7 @@ import com.mapbox.maps.plugin.viewport.data.DefaultViewportTransitionOptions
 @OptIn(ExperimentalMaterial3Api::class)
 fun Map(
     onMapToFilter: () -> Unit = {},
+    onNavigateToDetail: (String) -> Unit = {}
 ){
 
     var query by remember { mutableStateOf("") }
@@ -109,10 +112,15 @@ fun Map(
             expanded = expanded,
             onExpandedChange = { expanded = it },
             onItemClick = { place ->
-                // Centrar el mapa en el lugar seleccionado
-                centerPointState = Point.fromLngLat(place.location.longitude, place.location.latitude)
-                centerZoomState = 14.0
-                selectedPlace = place
+                // Navegar al detalle del lugar
+                onNavigateToDetail(place.id)
+            },
+            itemContent = { place, onClick ->
+                PlaceSearchItem(
+                    place = place,
+                    rating = placesViewModel.getAverageRatingForPlace(place.id),
+                    onClick = onClick
+                )
             }
         )
 
@@ -120,7 +128,10 @@ fun Map(
             onClick = {onMapToFilter()},
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 120.dp)
+                .padding(
+                    end = 16.dp,
+                    bottom = if (selectedPlace != null) 120.dp else 20.dp
+                )
                 .zIndex(1f),
             containerColor = Accent,
             contentColor = Color.White,
@@ -128,7 +139,7 @@ fun Map(
         ) {
             Icon(
                 imageVector = Icons.Default.FilterAlt,
-                contentDescription = "IconoFiltro"
+                contentDescription = stringResource(R.string.cd_filter_icon)
             )
         }
 
@@ -162,13 +173,14 @@ fun Map(
                     .fillMaxWidth(0.9f)
                     .clip(RoundedCornerShape(25.dp))
                     .background(Color.White)
+                    .clickable { onNavigateToDetail(place.id) }
                     .padding(16.dp)
             ) {
                 Column {
                     Text(place.title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Text(place.type.name.lowercase().replaceFirstChar { it.titlecase() }, color = Color.Gray, fontSize = 14.sp)
                     Row (verticalAlignment = Alignment.CenterVertically) {
-                        Text("⭐ ${String.format("%.1f", rating)}", color = Color(0xFFFFC107), fontSize = 16.sp)
+                        Text(stringResource(R.string.txt_rating_star, rating), color = Color(0xFFFFC107), fontSize = 16.sp)
                     }
                 }
             }

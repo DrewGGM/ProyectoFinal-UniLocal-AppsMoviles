@@ -16,14 +16,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.Review
 import com.example.primeraplicacionprueba.model.ReviewReply
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 import com.example.primeraplicacionprueba.viewmodel.ReviewViewModel
+import com.google.firebase.Timestamp
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
@@ -42,13 +45,14 @@ fun MyCommentScreen(
     // Obtener usuario actual para las respuestas
     val mainViewModel = LocalMainViewModel.current
     val currentUser by mainViewModel.usersViewModel.currentUser.collectAsState()
-    
+    val defaultPlaceName = stringResource(R.string.default_place_name)
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { 
                     Text(
-                        "Comentarios de '${place?.title ?: "Mi Lugar"}'",
+                        stringResource(R.string.txt_comments_of_place, place?.title ?: stringResource(R.string.default_place_name)),
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
                     )
@@ -57,7 +61,7 @@ fun MyCommentScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Volver",
+                            contentDescription = stringResource(R.string.cd_back),
                             tint = Color.Black
                         )
                     }
@@ -84,9 +88,9 @@ fun MyCommentScreen(
                                 id = "", // Firebase will auto-generate
                                 reviewId = review.id,
                                 userID = currentUser?.id ?: "unknown_user",
-                                username = place?.title ?: "Mi Lugar", // Usar nombre del lugar
+                                username = place?.title ?: defaultPlaceName, // Usar nombre del lugar
                                 replyText = replyText,
-                                date = com.google.firebase.Timestamp.now()
+                                date = Timestamp.now()
                             )
                             reviewViewModel.addReplyToReview(review.id, newReply)
                         }
@@ -101,7 +105,7 @@ fun MyCommentScreen(
                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
                         Text(
-                            text = "No hay comentarios para este lugar",
+                            text = stringResource(R.string.txt_no_comments),
                             modifier = Modifier.padding(16.dp),
                             color = Color.Gray,
                             fontSize = 14.sp,
@@ -151,7 +155,7 @@ fun CommentCard(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Person,
-                            contentDescription = "Avatar",
+                            contentDescription = stringResource(R.string.cd_avatar),
                             tint = Color(0xFF1976D2),
                             modifier = Modifier.size(20.dp)
                         )
@@ -191,7 +195,7 @@ fun CommentCard(
             
             // Timestamp
             Text(
-                text = "2min",
+                text = stringResource(R.string.txt_time_ago_2min),
                 fontSize = 12.sp,
                 color = Color.Gray
             )
@@ -200,7 +204,7 @@ fun CommentCard(
             // TODO: Load replies from Firebase using review.replyIds
             if (review.replyIds.isNotEmpty()) {
                 Text(
-                    text = "${review.replyIds.size} respuesta(s)",
+                    text = stringResource(R.string.txt_replies_count, review.replyIds.size),
                     modifier = Modifier.padding(start = 16.dp),
                     fontSize = 12.sp,
                     color = Color.Gray
@@ -218,7 +222,7 @@ fun CommentCard(
                 OutlinedTextField(
                     value = replyText,
                     onValueChange = { replyText = it },
-                    placeholder = { Text("Escribe tu respuesta...", color = Color.Gray) },
+                    placeholder = { Text(stringResource(R.string.txt_write_reply_placeholder), color = Color.Gray) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -240,7 +244,7 @@ fun CommentCard(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Enviar",
+                        contentDescription = stringResource(R.string.cd_send),
                         tint = Color.White,
                         modifier = Modifier.size(20.dp)
                     )

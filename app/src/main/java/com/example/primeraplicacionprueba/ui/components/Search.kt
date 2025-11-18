@@ -1,18 +1,22 @@
 package com.example.primeraplicacionprueba.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
@@ -23,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
@@ -32,10 +37,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.Place
 import com.example.primeraplicacionprueba.model.PlaceType
+import com.example.primeraplicacionprueba.ui.theme.Accent
+import com.example.primeraplicacionprueba.ui.theme.BgLight
+import com.example.primeraplicacionprueba.ui.theme.BorderLight
 import com.example.primeraplicacionprueba.ui.theme.Primary
+import com.example.primeraplicacionprueba.ui.theme.Secondary
+import com.example.primeraplicacionprueba.ui.theme.TextDark
 import com.example.primeraplicacionprueba.ui.theme.TextSecondary
 import com.example.primeraplicacionprueba.ui.theme.TextMuted
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
@@ -52,7 +63,8 @@ import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
         expanded: Boolean,
         onExpandedChange: (Boolean) -> Unit,
         onItemClick: (T) -> Unit = {},
-        modifier: Modifier = Modifier
+        modifier: Modifier = Modifier,
+        itemContent: @Composable ((T, () -> Unit) -> Unit)? = null
     ) {
         Column(
             modifier = modifier
@@ -78,7 +90,7 @@ import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Search,
-                                contentDescription = "Buscar",
+                                contentDescription = stringResource(R.string.cd_search),
                                 tint = Color(0xFFFFC1CC) // color rosado del icono
                             )
                         }
@@ -102,28 +114,38 @@ import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color.White)
-                            .padding(horizontal = 12.dp)
+                            .padding(horizontal = 8.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(places) { item ->
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { 
-                                        onItemClick(item)
-                                        onExpandedChange(false) 
-                                    }
-                                    .padding(vertical = 8.dp)
-                            ) {
-                                Text(
-                                    text = itemText(item),
-                                    color = Color(0xFF4A4A4A),
-                                    fontSize = 16.sp
-                                )
-                                HorizontalDivider(
-                                    color = Color(0xFFF0F0F0),
-                                    thickness = 1.dp,
-                                    modifier = Modifier.padding(top = 4.dp)
-                                )
+                            if (itemContent != null) {
+                                // Usar contenido personalizado
+                                itemContent(item) {
+                                    onItemClick(item)
+                                    onExpandedChange(false)
+                                }
+                            } else {
+                                // Usar contenido por defecto (solo texto)
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            onItemClick(item)
+                                            onExpandedChange(false)
+                                        }
+                                        .padding(vertical = 8.dp)
+                                ) {
+                                    Text(
+                                        text = itemText(item),
+                                        color = Color(0xFF4A4A4A),
+                                        fontSize = 16.sp
+                                    )
+                                    HorizontalDivider(
+                                        color = Color(0xFFF0F0F0),
+                                        thickness = 1.dp,
+                                        modifier = Modifier.padding(top = 4.dp)
+                                    )
+                                }
                             }
                         }
                     }
@@ -132,3 +154,111 @@ import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
         }
 
     }
+
+@Composable
+fun PlaceSearchItem(
+    place: Place,
+    rating: Float,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // Imagen del lugar
+            Box(
+                modifier = Modifier
+                    .size(70.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(BgLight)
+            ) {
+                if (place.imagenes.isNotEmpty()) {
+                    AsyncImage(
+                        model = place.imagenes.first(),
+                        contentDescription = place.title,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(32.dp)
+                            .align(Alignment.Center),
+                        tint = Secondary
+                    )
+                }
+            }
+
+            // Información del lugar
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                // Título
+                Text(
+                    text = place.title,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = TextDark,
+                    maxLines = 1
+                )
+
+                // Tipo/Categoría
+                Text(
+                    text = place.type.name.lowercase().replaceFirstChar { it.titlecase() },
+                    fontSize = 13.sp,
+                    color = TextMuted
+                )
+
+                // Calificación
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = Accent
+                    )
+                    Text(
+                        text = String.format("%.1f", rating),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = TextDark
+                    )
+                }
+            }
+
+            // Ciudad
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = BgLight
+                ) {
+                    Text(
+                        text = place.city,
+                        fontSize = 11.sp,
+                        color = TextSecondary,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+            }
+        }
+    }
+}

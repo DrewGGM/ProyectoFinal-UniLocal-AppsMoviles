@@ -1,5 +1,6 @@
 package com.example.primeraplicacionprueba.ui.components
 
+import android.Manifest
 import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -45,7 +46,7 @@ centerZoom: Double? = null
     val hasPermission = rememberLocationPermissionState{
         Toast.makeText(
             context,
-            if(it)"Ha concedido permiso para accerder a su ubicacion" else "No concedio permisos",
+            if(it) context.getString(R.string.toast_location_permission_granted_alt) else context.getString(R.string.toast_location_permission_denied_alt),
             Toast.LENGTH_SHORT
         ).show()
     }
@@ -128,7 +129,7 @@ centerZoom: Double? = null
 
 @Composable
 fun rememberLocationPermissionState(
-    permission: String = android.Manifest.permission.ACCESS_FINE_LOCATION,
+    permission: String = Manifest.permission.ACCESS_FINE_LOCATION,
     onPermissionResult: (Boolean) -> Unit
 ): Boolean {
     val context = LocalContext.current

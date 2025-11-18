@@ -12,11 +12,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 
 @Composable
@@ -35,7 +38,7 @@ fun DetailPlaceAdmin(
                 title = { Text("") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Volver")
+                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.cd_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
@@ -58,7 +61,7 @@ fun DetailPlaceAdmin(
                         shape = RoundedCornerShape(10.dp),
                         onClick = { placesViewModel.rejectPlace(place.id); onNavigateBack() }
                     ) {
-                        Text("Rechazar", color = Color.White)
+                        Text(stringResource(R.string.txt_reject), color = Color.White)
                     }
 
                     Button(
@@ -69,7 +72,7 @@ fun DetailPlaceAdmin(
                         shape = RoundedCornerShape(10.dp),
                         onClick = { placesViewModel.approvePlace(place.id); onNavigateBack() }
                     ) {
-                        Text("Aprobar", color = Color.White)
+                        Text(stringResource(R.string.txt_approve), color = Color.White)
                     }
                 }
             }
@@ -82,7 +85,7 @@ fun DetailPlaceAdmin(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "Lugar no encontrado")
+                Text(text = stringResource(R.string.txt_place_not_found))
             }
         } else {
             LazyColumn(
@@ -117,7 +120,7 @@ fun DetailPlaceAdmin(
                                 color = Color.White
                             )
                             Text(
-                                text = "Creado por ${place.ownerId}",
+                                text = stringResource(R.string.txt_created_by, place.ownerId),
                                 fontSize = 13.sp,
                                 color = Color.White.copy(alpha = 0.9f)
                             )
@@ -135,7 +138,7 @@ fun DetailPlaceAdmin(
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                     ) {
                         Column(Modifier.padding(25.dp)) {
-                            Text("Descripción", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                            Text(stringResource(R.string.txt_description), fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
                             Spacer(Modifier.height(8.dp))
                             Text(
                                 text = place.description,
@@ -157,12 +160,12 @@ fun DetailPlaceAdmin(
 
                     ) {
                         Column(Modifier.padding(25.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Text("Información y Contacto", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                            Text(stringResource(R.string.txt_information_contact), fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
 
-                            InfoRow(Icons.Filled.Category, "Categoría: ${place.type}")
-                            InfoRow(Icons.Filled.Call, "Teléfono: ${place.phones.firstOrNull() ?: "N/A"}")
-                            InfoRow(Icons.Filled.Public, "Web: ${place.website ?: "N/A"}")
-                            InfoRow(Icons.Filled.Schedule, "Abierto hoy: 7:00 AM - 8:00 PM")
+                            InfoRow(Icons.Filled.Category, stringResource(R.string.txt_category_label, place.type))
+                            InfoRow(Icons.Filled.Call, stringResource(R.string.txt_phone_label, place.phones.firstOrNull() ?: stringResource(R.string.txt_not_available_short)))
+                            InfoRow(Icons.Filled.Public, stringResource(R.string.txt_web_label, place.website ?: stringResource(R.string.txt_not_available_short)))
+                            InfoRow(Icons.Filled.Schedule, stringResource(R.string.txt_open_today, "7:00 AM - 8:00 PM"))
                         }
                     }
                 }
@@ -177,7 +180,7 @@ fun DetailPlaceAdmin(
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                     ) {
                         Column(Modifier.padding(25.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Text("Ubicación", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                            Text(stringResource(R.string.txt_location), fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
                             Surface(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -186,7 +189,7 @@ fun DetailPlaceAdmin(
                                 shape = RoundedCornerShape(12.dp)
                             ) {
                                 Image(
-                                    painter = painterResource(id = com.example.primeraplicacionprueba.R.drawable.mapa),
+                                    painter = painterResource(id = R.drawable.mapa),
                                     contentDescription = null,
                                 )
                             }
@@ -200,7 +203,7 @@ fun DetailPlaceAdmin(
 }
 
 @Composable
-fun InfoRow(icon: androidx.compose.ui.graphics.vector.ImageVector, text: String) {
+fun InfoRow(icon: ImageVector, text: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(icon, contentDescription = null, tint = Color(0xFF4CAF50))
         Spacer(Modifier.width(8.dp))

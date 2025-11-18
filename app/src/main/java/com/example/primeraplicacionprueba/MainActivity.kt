@@ -26,7 +26,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Initialize Cloudinary
         CloudinaryHelper.init(
             context = this,
             cloudName = getString(R.string.cloudinary_cloud_name),
@@ -34,10 +33,7 @@ class MainActivity : ComponentActivity() {
             apiSecret = getString(R.string.cloudinary_api_secret)
         )
 
-        // Restore user session from SharedPreferences
         usersViewModel.restoreUserFromPreferences(this)
-
-        // Set up cross-ViewModel dependencies
         placesViewModel.setReviewViewModel(reviewsViewModel)
 
         val mainViewModel = MainViewModel(
@@ -60,39 +56,3 @@ class MainActivity : ComponentActivity() {
         )
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Text(
-//                           modifier = Modifier.background(Color.Yellow),
-//                           text = "Hola Todos",
-//                           color = Color.Blue,
-//                           fontSize = 35.sp
-//                       )
-//                       Spacer(
-//                           modifier = Modifier.height(20.dp)
-//                       )
-//                       Text(
-//                           text = "Hola Todos",
-//                           fontSize = 35.sp
-//                       )
-//                       Text(
-//                           text = "Hola Todos",
-//                           fontSize = 35.sp
-//                       )

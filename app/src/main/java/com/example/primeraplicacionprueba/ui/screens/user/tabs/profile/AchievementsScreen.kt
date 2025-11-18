@@ -257,7 +257,7 @@ fun AchievementProgressCard(
             )
             
             Text(
-                text = "$unlockedCount / $totalCount ${stringResource(R.string.txt_achievements_unlocked)}",
+                text = stringResource(R.string.txt_achievements_progress, unlockedCount, totalCount, stringResource(R.string.txt_achievements_unlocked)),
                 fontSize = 14.sp,
                 color = TextMuted
             )
@@ -273,7 +273,7 @@ fun AchievementProgressCard(
             )
             
             Text(
-                text = "${(progressPercentage * 100).toInt()}%",
+                text = stringResource(R.string.txt_percentage, (progressPercentage * 100).toInt()),
                 fontSize = 12.sp,
                 color = TextMuted,
                 fontWeight = FontWeight.Medium
