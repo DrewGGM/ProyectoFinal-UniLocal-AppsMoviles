@@ -26,6 +26,7 @@ import com.example.primeraplicacionprueba.model.Place
 import com.example.primeraplicacionprueba.ui.theme.*
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
+import com.example.primeraplicacionprueba.ui.screens.LocalMainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,6 +37,9 @@ fun FavoritesScreen(
     onPlaceClick: (String) -> Unit = {},
     onRemoveFavorite: (String) -> Unit = {}
 ) {
+    val mainViewModel = LocalMainViewModel.current
+    val usersViewModel = mainViewModel.usersViewModel
+    val userLocation by usersViewModel.userLocation.collectAsState()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -51,7 +55,7 @@ fun FavoritesScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.txt_back),
-                            tint = TextDark
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
@@ -71,7 +75,7 @@ fun FavoritesScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(BgLight)
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(paddingValues),
                 contentPadding = PaddingValues(24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -80,6 +84,7 @@ fun FavoritesScreen(
                     FavoriteCard(
                         place = place,
                         placesViewModel = placesViewModel,
+                        userLocation = userLocation,
                         onClick = { onPlaceClick(place.id) },
                         onRemoveFavorite = { onRemoveFavorite(place.id) }
                     )
@@ -93,6 +98,7 @@ fun FavoritesScreen(
 fun FavoriteCard(
     place: Place,
     placesViewModel: PlacesViewModel,
+    userLocation: com.example.primeraplicacionprueba.model.Location?,
     onClick: () -> Unit,
     onRemoveFavorite: () -> Unit
 ) {
@@ -146,12 +152,12 @@ fun FavoriteCard(
                     text = place.title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextDark
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = stringResource(R.string.txt_place_type_distance, place.type, place.getDistanceFromUser()),
+                    text = stringResource(R.string.txt_place_type_distance, place.type, place.getDistanceFromUser(userLocation)),
                     fontSize = 14.sp,
-                    color = TextMuted
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 // Rating con estrellas
@@ -176,7 +182,7 @@ fun FavoriteCard(
                     Text(
                         text = stringResource(R.string.txt_rating_percentage, (placesViewModel.getAverageRatingForPlace(place.id) * 10).toInt()),
                         fontSize = 13.sp,
-                        color = TextMuted
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -203,7 +209,7 @@ fun FavoriteCard(
 fun EmptyFavoritesState(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .background(BgLight),
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -214,19 +220,19 @@ fun EmptyFavoritesState(modifier: Modifier = Modifier) {
             Icon(
                 imageVector = Icons.Default.HeartBroken,
                 contentDescription = null,
-                tint = TextSecondary,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(80.dp)
             )
             Text(
                 text = stringResource(R.string.txt_no_favorites_yet),
                 fontSize = 16.sp,
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Medium
             )
             Text(
                 text = stringResource(R.string.txt_explore_to_find_favorite),
                 fontSize = 14.sp,
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
         }

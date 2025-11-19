@@ -37,6 +37,7 @@ import com.example.primeraplicacionprueba.ui.theme.*
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 import com.example.primeraplicacionprueba.viewmodel.UsersViewModel
 import com.example.primeraplicacionprueba.ui.components.Search
+import com.example.primeraplicacionprueba.ui.screens.LocalMainViewModel
 
 @Composable
 fun Home(
@@ -45,6 +46,9 @@ fun Home(
     placesViewModel: PlacesViewModel,
     user: User
 ) {
+    val mainViewModel = LocalMainViewModel.current
+    val usersViewModel = mainViewModel.usersViewModel
+    val userLocation by usersViewModel.userLocation.collectAsState()
 
     val places by placesViewModel.places.collectAsState()
     val mostPopularPlaces = places
@@ -134,7 +138,7 @@ fun Home(
                     name = it.title ,
                     category = it.type ,
                     rating = placesViewModel.getAverageRatingForPlace(it.id) ,
-                    distance = it.getDistanceFromUser(),
+                    distance = it.getDistanceFromUser(userLocation),
                     imageUrl = it.imagenes.firstOrNull() ?: "",
                     onClick = { onNavigateToPlace(it.id) }
                 )
@@ -376,7 +380,23 @@ fun PlaceCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = category.toString(),
+                    text = when (category) {
+                        PlaceType.RESTAURANT -> stringResource(R.string.category_restaurant)
+                        PlaceType.CAFE -> stringResource(R.string.category_cafe)
+                        PlaceType.FAST_FOOD -> stringResource(R.string.category_fastfood)
+                        PlaceType.MUSEUM -> stringResource(R.string.category_museum)
+                        PlaceType.HOTEL -> stringResource(R.string.category_hotel)
+                        PlaceType.BAR -> stringResource(R.string.place_type_bar)
+                        PlaceType.PARK -> stringResource(R.string.category_park)
+                        PlaceType.SHOPPING -> stringResource(R.string.category_shopping)
+                        PlaceType.GAS_STATION -> stringResource(R.string.place_type_gas_station)
+                        PlaceType.PHARMACY -> stringResource(R.string.place_type_pharmacy)
+                        PlaceType.HOSPITAL -> stringResource(R.string.place_type_hospital)
+                        PlaceType.BANK -> stringResource(R.string.place_type_bank)
+                        PlaceType.GYM -> stringResource(R.string.place_type_gym)
+                        PlaceType.CINEMA -> stringResource(R.string.place_type_cinema)
+                        PlaceType.OTHER -> stringResource(R.string.category_other)
+                    },
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

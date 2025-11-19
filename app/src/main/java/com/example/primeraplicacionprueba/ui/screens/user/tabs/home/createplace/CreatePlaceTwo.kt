@@ -48,10 +48,12 @@ fun CreatePlaceStepTwo(
     val state by viewModel.createPlaceState.collectAsState()
 
     var telefonoContacto by remember(state.phones) { mutableStateOf(state.phones.firstOrNull() ?: "") }
+    var emailContacto by remember(state.email) { mutableStateOf(state.email ?: "") }
     var sitioWeb by remember(state.website) { mutableStateOf(state.website ?: "") }
     var redesSociales by remember(state.socialMedia) { mutableStateOf(state.socialMedia ?: "") }
 
     var telefonoError by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf("") }
     var sitioWebError by remember { mutableStateOf("") }
     var redesSocialesError by remember { mutableStateOf("") }
     var clickedPoint by rememberSaveable { mutableStateOf<Point?>(null) }
@@ -79,7 +81,7 @@ fun CreatePlaceStepTwo(
                 text = stringResource(R.string.txt_add_new_place),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextDark,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )
@@ -89,7 +91,7 @@ fun CreatePlaceStepTwo(
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.txt_close),
-                    tint = TextDark
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -97,7 +99,7 @@ fun CreatePlaceStepTwo(
         // Línea divisoria
         HorizontalDivider(
             thickness = 1.dp,
-            color = BorderLight
+            color = MaterialTheme.colorScheme.outline
         )
 
         Column(
@@ -112,7 +114,7 @@ fun CreatePlaceStepTwo(
                     .fillMaxWidth()
                     .height(8.dp)
                     .clip(RoundedCornerShape(4.dp))
-                    .background(BgLight)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 Box(
                     modifier = Modifier
@@ -135,7 +137,7 @@ fun CreatePlaceStepTwo(
                 text = stringResource(R.string.txt_step_two_title),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextDark
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Column(
@@ -145,10 +147,10 @@ fun CreatePlaceStepTwo(
                     text = stringResource(R.string.txt_location),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextDark
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
-                // Mapa clickeable
+                // Mapa clickeable - Bloqueado para solo abrir dialog
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -159,21 +161,26 @@ fun CreatePlaceStepTwo(
                             color = if (clickedPoint != null) SuccessGreen else Secondary,
                             shape = RoundedCornerShape(12.dp)
                         )
-                        .clickable { showLocationPicker = true }
                 ) {
-                    // Mapa de fondo
+                    // Mapa de fondo (sin interacción) - muestra ubicación seleccionada
                     Map(
-                        modifierr = Modifier.fillMaxSize()
+                        modifierr = Modifier.fillMaxSize(),
+                        activateClick = false,
+                        selectedPoint = clickedPoint,
+                        centerPoint = clickedPoint,
+                        centerZoom = if (clickedPoint != null) 15.0 else null
                     )
 
-                    // Overlay con indicador si ya hay ubicación seleccionada
-                    if (clickedPoint != null) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.Black.copy(alpha = 0.3f)),
-                            contentAlignment = Alignment.Center
-                        ) {
+                    // Overlay completo que bloquea el mapa y captura el click
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = if (clickedPoint != null) 0.3f else 0.2f))
+                            .clickable { showLocationPicker = true },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (clickedPoint != null) {
+                            // Indicador de ubicación seleccionada
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -192,15 +199,8 @@ fun CreatePlaceStepTwo(
                                     textAlign = TextAlign.Center
                                 )
                             }
-                        }
-                    } else {
-                        // Overlay cuando no hay ubicación seleccionada
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.Black.copy(alpha = 0.2f)),
-                            contentAlignment = Alignment.Center
-                        ) {
+                        } else {
+                            // Indicador para seleccionar ubicación
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -228,7 +228,7 @@ fun CreatePlaceStepTwo(
                     text = stringResource(R.string.txt_contact_phone),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextDark,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 OutlinedTextField(
@@ -245,10 +245,41 @@ fun CreatePlaceStepTwo(
                         { Text(telefonoError, color = MaterialTheme.colorScheme.error) }
                     } else null,
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = BorderLight,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedBorderColor = Secondary,
-                        unfocusedContainerColor = BgLight,
-                        focusedContainerColor = BgLight
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                )
+            }
+
+            Column {
+                Text(
+                    text = stringResource(R.string.txt_contact_email),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                OutlinedTextField(
+                    value = emailContacto,
+                    onValueChange = {
+                        emailContacto = it
+                        if (emailError.isNotEmpty()) emailError = ""
+                    },
+                    placeholder = { Text(stringResource(R.string.txt_email_placeholder)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    isError = emailError.isNotEmpty(),
+                    supportingText = if (emailError.isNotEmpty()) {
+                        { Text(emailError, color = MaterialTheme.colorScheme.error) }
+                    } else null,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        focusedBorderColor = Secondary,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
@@ -259,7 +290,7 @@ fun CreatePlaceStepTwo(
                     text = stringResource(R.string.txt_website),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextDark,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 OutlinedTextField(
@@ -276,10 +307,10 @@ fun CreatePlaceStepTwo(
                         { Text(sitioWebError, color = MaterialTheme.colorScheme.error) }
                     } else null,
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = BorderLight,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedBorderColor = Secondary,
-                        unfocusedContainerColor = BgLight,
-                        focusedContainerColor = BgLight
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
@@ -290,7 +321,7 @@ fun CreatePlaceStepTwo(
                     text = stringResource(R.string.txt_social_media),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextDark,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 OutlinedTextField(
@@ -306,10 +337,10 @@ fun CreatePlaceStepTwo(
                         { Text(redesSocialesError, color = MaterialTheme.colorScheme.error) }
                     } else null,
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = BorderLight,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                         focusedBorderColor = Secondary,
-                        unfocusedContainerColor = BgLight,
-                        focusedContainerColor = BgLight
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
@@ -329,7 +360,7 @@ fun CreatePlaceStepTwo(
                     shape = RoundedCornerShape(28.dp),
                     border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
                         brush = Brush.horizontalGradient(
-                            colors = listOf(BorderLight, BorderLight)
+                            colors = listOf(MaterialTheme.colorScheme.outline, MaterialTheme.colorScheme.outline)
                         )
                     )
                 ) {
@@ -337,7 +368,7 @@ fun CreatePlaceStepTwo(
                         text = stringResource(R.string.txt_previous),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = TextMuted
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -348,6 +379,7 @@ fun CreatePlaceStepTwo(
                         viewModel.updateCreateState(
                             state.copy(
                                 phones = if (telefonoContacto.isNotBlank()) listOf(telefonoContacto) else emptyList(),
+                                email = emailContacto.ifBlank { null },
                                 website = sitioWeb.ifBlank { null },
                                 socialMedia = redesSociales.ifBlank { null },
                                 address = "",  // Valor por defecto hasta que se implemente el mapa

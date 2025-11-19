@@ -180,7 +180,7 @@ fun PlaceSearchItem(
                 modifier = Modifier
                     .size(70.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(BgLight)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 if (place.imagenes.isNotEmpty()) {
                     AsyncImage(
@@ -249,12 +249,12 @@ fun PlaceSearchItem(
             ) {
                 Surface(
                     shape = RoundedCornerShape(12.dp),
-                    color = BgLight
+                    color = MaterialTheme.colorScheme.surfaceVariant
                 ) {
                     Text(
                         text = place.city,
                         fontSize = 11.sp,
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                     )
                 }

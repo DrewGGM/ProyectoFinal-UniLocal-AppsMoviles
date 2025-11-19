@@ -21,6 +21,7 @@ googleGmsGoogleServices = "4.4.4"
 firebaseFirestore = "26.0.2"
 firebaseAuth = "23.1.0"
 playServicesAuth = "21.2.0"
+playServicesLocation = "21.3.0"
 cloudinary = "3.0.2"
 credentials = "1.5.0"
 credentialsPlayServicesAuth = "1.5.0"
@@ -58,6 +59,7 @@ maps-compose = { module= "com.mapbox.extension:maps-compose", version.ref ="maps
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 cloudinary-android = { group = "com.cloudinary", name = "cloudinary-android", version.ref = "cloudinary" }
 androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialsPlayServicesAuth" }

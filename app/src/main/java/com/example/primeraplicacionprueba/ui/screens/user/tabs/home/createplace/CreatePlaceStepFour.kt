@@ -74,7 +74,7 @@ fun CreatePlaceStepFour(
                 text = stringResource(R.string.txt_add_new_place),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextDark,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )
@@ -82,12 +82,12 @@ fun CreatePlaceStepFour(
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.txt_close),
-                    tint = TextDark
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
 
-            HorizontalDivider(color = BorderLight, thickness = 1.dp)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline, thickness = 1.dp)
 
         // Contenido
         Column(
@@ -119,13 +119,13 @@ fun CreatePlaceStepFour(
                 text = stringResource(R.string.txt_step_four_title),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextDark
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Text(
                 text = stringResource(R.string.txt_gallery_description),
                 fontSize = 14.sp,
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 20.sp
             )
 
@@ -137,7 +137,7 @@ fun CreatePlaceStepFour(
                     text = stringResource(R.string.txt_or_add_urls),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextDark
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 
                 Row(
@@ -159,10 +159,10 @@ fun CreatePlaceStepFour(
                             { Text(urlError, color = MaterialTheme.colorScheme.error) }
                         } else null,
                         colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = BorderLight,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                             focusedBorderColor = Secondary,
-                            unfocusedContainerColor = BgLight,
-                            focusedContainerColor = BgLight
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
                         ),
                         shape = RoundedCornerShape(12.dp)
                     )
@@ -221,7 +221,7 @@ fun CreatePlaceStepFour(
                     shape = RoundedCornerShape(28.dp),
                     border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
                         brush = Brush.horizontalGradient(
-                            colors = listOf(BorderLight, BorderLight)
+                            colors = listOf(MaterialTheme.colorScheme.outline, MaterialTheme.colorScheme.outline)
                         )
                     )
                 ) {
@@ -229,7 +229,7 @@ fun CreatePlaceStepFour(
                         text = stringResource(R.string.txt_previous),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = TextMuted
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 

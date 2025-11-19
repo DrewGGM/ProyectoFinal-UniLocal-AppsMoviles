@@ -39,6 +39,7 @@ class PlacesViewModel(application: Application) : AndroidViewModel(application) 
     val createPlaceState: StateFlow<CreatePlaceState> = _createPlaceState.asStateFlow()
 
     private var reviewViewModel: ReviewViewModel? = null
+    private var usersViewModel: UsersViewModel? = null
     private var placesListener: ListenerRegistration? = null
 
     init {
@@ -47,6 +48,10 @@ class PlacesViewModel(application: Application) : AndroidViewModel(application) 
 
     fun setReviewViewModel(reviewViewModel: ReviewViewModel) {
         this.reviewViewModel = reviewViewModel
+    }
+
+    fun setUsersViewModel(usersViewModel: UsersViewModel) {
+        this.usersViewModel = usersViewModel
     }
 
     fun getReviewsForPlace(placeId: String): List<Review> {
@@ -88,7 +93,10 @@ class PlacesViewModel(application: Application) : AndroidViewModel(application) 
             _placeResult.value = RequestResult.Loading
             _placeResult.value = runCatching { createFirebase(place) }
                 .fold(
-                    onSuccess = { RequestResult.Success(message = app.getString(R.string.msg_place_created)) },
+                    onSuccess = {
+                        usersViewModel?.incrementPlacesCreated()
+                        RequestResult.Success(message = app.getString(R.string.msg_place_created))
+                    },
                     onFailure = { RequestResult.Failure(errorMessage = it.message ?: app.getString(R.string.error_creating_place)) }
                 )
         }

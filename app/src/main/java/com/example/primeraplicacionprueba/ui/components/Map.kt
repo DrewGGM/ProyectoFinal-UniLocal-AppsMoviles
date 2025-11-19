@@ -38,7 +38,8 @@ places :List<Place> = emptyList(),
 onMapClickListener :(Point) -> Unit ={},
 onPlaceSelected: (Place) -> Unit = {},
 centerPoint: Point? = null,
-centerZoom: Double? = null
+centerZoom: Double? = null,
+selectedPoint: Point? = null
 
 ){
     val context = LocalContext.current
@@ -122,6 +123,13 @@ centerZoom: Double? = null
                         true
                     }
                 }
+            }
+        }
+
+        // Mostrar marcador para punto seleccionado (por ejemplo, en CreatePlace)
+        selectedPoint?.let {
+            PointAnnotation(point = it) {
+                iconImage = marker
             }
         }
     }

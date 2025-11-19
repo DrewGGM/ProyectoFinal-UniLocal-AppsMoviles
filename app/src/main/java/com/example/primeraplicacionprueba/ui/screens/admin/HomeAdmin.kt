@@ -24,8 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
+import com.example.primeraplicacionprueba.viewmodel.ReportViewModel
 import com.example.primeraplicacionprueba.model.Place
 import com.example.primeraplicacionprueba.model.PlaceStatus
+import com.example.primeraplicacionprueba.model.ReportStatus
 import com.example.primeraplicacionprueba.ui.theme.AdminBackground
 import com.example.primeraplicacionprueba.ui.theme.AdminPrimary
 import com.example.primeraplicacionprueba.ui.theme.AdminSuccess
@@ -34,14 +36,21 @@ import com.example.primeraplicacionprueba.ui.theme.AdminWarning
 import com.example.primeraplicacionprueba.ui.theme.AdminTextDark
 import com.example.primeraplicacionprueba.ui.theme.AdminTextMuted
 import com.example.primeraplicacionprueba.ui.theme.AdminTextLight
+import com.example.primeraplicacionprueba.ui.screens.LocalMainViewModel
+import androidx.compose.ui.text.style.TextOverflow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeAdmin(
     placesViewModel: PlacesViewModel,
     onNavigateToDetail: (String) -> Unit = {},
-    onNavigateToProfile: () -> Unit = {}
+    onNavigateToProfile: () -> Unit = {},
+    onNavigateToReports: () -> Unit = {}
 ) {
+    val mainViewModel = LocalMainViewModel.current
+    val reportViewModel = mainViewModel.reportViewModel
+    val reports by reportViewModel.reports.collectAsState()
+
     val places by placesViewModel.places.collectAsState()
     val pendingCount = places.count { it.placeStatus == PlaceStatus.PENDING }
     val approvedCount = places.count { it.placeStatus == PlaceStatus.APPROVED }
@@ -73,7 +82,7 @@ fun HomeAdmin(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(AdminBackground)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(padding)
                 .padding(horizontal = 23.dp)
                 .padding(vertical = 12.dp),
@@ -83,7 +92,24 @@ fun HomeAdmin(
 
             // Statistics Cards
             item {
-                StatisticsCards(pendingCount, approvedCount, rejectedCount)
+                val reportsCount = reportViewModel.getPendingReportsCount()
+                val problemsCount = reportViewModel.getProblematicPlacesCount()
+                StatisticsCards(
+                    pendingCount = pendingCount,
+                    approvedCount = approvedCount,
+                    rejectedCount = rejectedCount,
+                    reportsCount = reportsCount,
+                    problemsCount = problemsCount,
+                    onReportsClick = onNavigateToReports
+                )
+            }
+
+            // Reports Section - Nueva sección de reportes
+            item {
+                ReportsSection(
+                    reportViewModel = reportViewModel,
+                    onViewAllReports = onNavigateToReports
+                )
             }
 
             // Review Queue Section
@@ -103,11 +129,12 @@ fun HomeAdmin(
 fun StatisticsCards(
     pendingCount: Int,
     approvedCount: Int,
-    rejectedCount: Int
+    rejectedCount: Int,
+    reportsCount: Int,
+    problemsCount: Int,
+    onReportsClick: () -> Unit = {}
 ) {
-    val reportsCount = 0 // Por simplicidad, no tenemos lugares reportados
-    val problemsCount = 0 // Por simplicidad, no tenemos lugares problemáticos
-    
+
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -127,7 +154,7 @@ fun StatisticsCards(
                 modifier = Modifier.weight(1f)
             )
         }
-        
+
         // Second row
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -136,7 +163,8 @@ fun StatisticsCards(
             AdminStatCard(
                 value = reportsCount.toString(),
                 label = stringResource(R.string.txt_reports),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = onReportsClick
             )
             AdminStatCard(
                 value = problemsCount.toString(),
@@ -151,10 +179,15 @@ fun StatisticsCards(
 fun AdminStatCard(
     modifier: Modifier = Modifier,
     value: String,
-    label: String
+    label: String,
+    onClick: (() -> Unit)? = null
 ) {
     Card(
-        modifier = modifier,
+        modifier = if (onClick != null) {
+            modifier.clickable(onClick = onClick)
+        } else {
+            modifier
+        },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -170,7 +203,7 @@ fun AdminStatCard(
                 text = value,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = AdminPrimary
+                color = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -213,14 +246,12 @@ fun ReviewQueueSection(placesViewModel: PlacesViewModel, onItemClick: (String) -
         if (pendingPlaces.isNotEmpty()) {
             pendingPlaces.forEach { place ->
                 ReviewItem(
-                    placeName = place.title,
-                    createdBy = stringResource(R.string.txt_user_prefix, place.ownerId),
-                    timeAgo = stringResource(R.string.txt_time_ago_minutes),
+                    place = place,
                     onApprove = { placesViewModel.approvePlace(place.id) },
                     onReject = { placesViewModel.rejectPlace(place.id) },
                     onClick = { onItemClick(place.id) }
                 )
-                
+
                 Spacer(modifier = Modifier.height(8.dp))
             }
         } else {
@@ -244,13 +275,16 @@ fun ReviewQueueSection(placesViewModel: PlacesViewModel, onItemClick: (String) -
 
 @Composable
 fun ReviewItem(
-    placeName: String,
-    createdBy: String,
-    timeAgo: String,
+    place: Place,
     onApprove: () -> Unit,
     onReject: () -> Unit,
     onClick: () -> Unit = {}
 ) {
+    val mainViewModel = LocalMainViewModel.current
+    val usersViewModel = mainViewModel.usersViewModel
+    val users by usersViewModel.users.collectAsState()
+    val owner = users.find { it.id == place.ownerId }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -259,58 +293,97 @@ fun ReviewItem(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .padding(16.dp)
         ) {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = placeName,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = createdBy,
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = timeAgo,
-                    fontSize = 12.sp,
-                    color = AdminTextLight
-                )
-            }
-            
+            // Información del lugar
             Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = place.title,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    // Nombre del usuario
+                    if (owner != null) {
+                        Text(
+                            text = owner.nombre,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    // ID del usuario
+                    Text(
+                        text = stringResource(R.string.txt_user_prefix, place.ownerId.take(8) + "..."),
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Text(
+                        text = stringResource(R.string.txt_time_ago_minutes),
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Botones de acción
+            Row(
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                OutlinedButton(
+                    onClick = onReject,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(40.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = AdminError
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.txt_reject),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
                 Button(
                     onClick = onApprove,
-                    colors = ButtonDefaults.buttonColors(containerColor = AdminSuccess),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(40.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = AdminSuccess
+                    ),
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
                         text = stringResource(R.string.txt_approve),
                         color = Color.White,
-                        fontSize = 12.sp
-                    )
-                }
-                Button(
-                    onClick = onReject,
-                    colors = ButtonDefaults.buttonColors(containerColor = AdminError),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.txt_reject),
-                        color = Color.White,
-                        fontSize = 12.sp
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium
                     )
                 }
             }
@@ -441,10 +514,10 @@ fun HistoryItem(
                 Text(
                     text = timeAgo,
                     fontSize = 12.sp,
-                    color = AdminTextLight
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            
+
             // Status badge
             Box(
                 modifier = Modifier
@@ -464,6 +537,92 @@ fun HistoryItem(
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun ReportsSection(
+    reportViewModel: ReportViewModel,
+    onViewAllReports: () -> Unit
+) {
+    val reports by reportViewModel.reports.collectAsState()
+    val pendingReports = reports.filter { it.status == ReportStatus.PENDING }
+
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.txt_pending_reports),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            TextButton(onClick = onViewAllReports) {
+                Text(
+                    text = stringResource(R.string.txt_view_all),
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        if (pendingReports.isEmpty()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        tint = AdminSuccess,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.txt_no_pending_reports),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 14.sp
+                    )
+                }
+            }
+        } else {
+            Text(
+                text = stringResource(R.string.txt_reports_summary, pendingReports.size),
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+
+            Button(
+                onClick = onViewAllReports,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = AdminWarning
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Flag,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(stringResource(R.string.txt_manage_reports))
             }
         }
     }

@@ -20,6 +20,7 @@ class MainActivity : ComponentActivity() {
     private val placesViewModel: PlacesViewModel by viewModels()
     private val achievementViewModel: AchievementViewModel by viewModels()
     private val commentsViewModel: CommentsViewModel by viewModels()
+    private val reportViewModel: ReportViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -41,7 +42,8 @@ class MainActivity : ComponentActivity() {
             reviewsViewModel = reviewsViewModel,
             usersViewModel = usersViewModel,
             achievementViewModel = achievementViewModel,
-            commentsViewModel = commentsViewModel
+            commentsViewModel = commentsViewModel,
+            reportViewModel = reportViewModel
         )
 
         setContent (

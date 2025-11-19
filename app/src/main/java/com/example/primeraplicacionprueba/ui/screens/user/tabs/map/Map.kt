@@ -13,8 +13,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import coil.compose.AsyncImage
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FilterAlt
@@ -52,6 +55,7 @@ import com.example.primeraplicacionprueba.ui.screens.LocalMainViewModel
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.ui.components.Map as PlacesMap
 import com.example.primeraplicacionprueba.model.Place
+import com.example.primeraplicacionprueba.model.PlaceStatus
 import com.example.primeraplicacionprueba.ui.theme.Accent
 import com.mapbox.geojson.Point
 import com.mapbox.maps.extension.compose.MapEffect
@@ -68,7 +72,8 @@ import com.mapbox.maps.plugin.viewport.data.DefaultViewportTransitionOptions
 @OptIn(ExperimentalMaterial3Api::class)
 fun Map(
     onMapToFilter: () -> Unit = {},
-    onNavigateToDetail: (String) -> Unit = {}
+    onNavigateToDetail: (String) -> Unit = {},
+    focusedPlaceId: String? = null
 ){
 
     var query by remember { mutableStateOf("") }
@@ -77,9 +82,26 @@ fun Map(
     val places by placesViewModel.places.collectAsState()
     val filtered by placesViewModel.filteredPlaces.collectAsState()
 
+    // Filtrar solo lugares aprobados para mostrar en el mapa
+    val approvedPlaces = remember(places) {
+        places.filter { it.placeStatus == PlaceStatus.APPROVED }
+    }
+
     var selectedPlace by remember { mutableStateOf<Place?>(null) }
     var centerPointState by remember { mutableStateOf<Point?>(null) }
     var centerZoomState by remember { mutableStateOf<Double?>(null) }
+
+    // Centrar en el lugar enfocado cuando se proporciona focusedPlaceId
+    LaunchedEffect(focusedPlaceId) {
+        if (focusedPlaceId != null) {
+            val focusedPlace = places.find { it.id == focusedPlaceId }
+            if (focusedPlace != null) {
+                centerPointState = Point.fromLngLat(focusedPlace.location.longitude, focusedPlace.location.latitude)
+                centerZoomState = 15.0
+                selectedPlace = focusedPlace
+            }
+        }
+    }
 
     Box(
 
@@ -87,7 +109,7 @@ fun Map(
     ) {
         //  Imagen de fondo (mapa)
          PlacesMap (
-            places= places,
+            places= approvedPlaces,
              modifierr = Modifier.fillMaxSize(),
             activateClick = false,
              onMapClickListener = { selectedPlace = null },
@@ -113,8 +135,10 @@ fun Map(
             expanded = expanded,
             onExpandedChange = { expanded = it },
             onItemClick = { place ->
-                // Navegar al detalle del lugar
-                onNavigateToDetail(place.id)
+                // Centrar el mapa en el lugar seleccionado
+                centerPointState = Point.fromLngLat(place.location.longitude, place.location.latitude)
+                centerZoomState = 15.0
+                selectedPlace = place
             },
             itemContent = { place, onClick ->
                 PlaceSearchItem(
@@ -177,11 +201,30 @@ fun Map(
                     .clickable { onNavigateToDetail(place.id) }
                     .padding(16.dp)
             ) {
-                Column {
-                    Text(place.title, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
-                    Text(place.type.name.lowercase().replaceFirstChar { it.titlecase() }, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
-                    Row (verticalAlignment = Alignment.CenterVertically) {
-                        Text(stringResource(R.string.txt_rating_star, rating), color = Color(0xFFFFC107), fontSize = 16.sp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Imagen del lugar
+                    if (place.imagenes.isNotEmpty()) {
+                        AsyncImage(
+                            model = place.imagenes.first(),
+                            contentDescription = stringResource(R.string.txt_place_image),
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(70.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                        )
+                    }
+
+                    // Información del lugar
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(place.title, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
+                        Text(place.type.name.lowercase().replaceFirstChar { it.titlecase() }, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
+                        Row (verticalAlignment = Alignment.CenterVertically) {
+                            Text(stringResource(R.string.txt_rating_star, rating), color = Color(0xFFFFC107), fontSize = 16.sp)
+                        }
                     }
                 }
             }

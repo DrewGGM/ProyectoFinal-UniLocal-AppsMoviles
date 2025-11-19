@@ -28,9 +28,14 @@ class ReviewViewModel(application: Application) : AndroidViewModel(application) 
     val reviewResult: StateFlow<RequestResult?> = _reviewResult.asStateFlow()
 
     private var reviewsListener: ListenerRegistration? = null
+    private var usersViewModel: UsersViewModel? = null
 
     init {
         loadReviews()
+    }
+
+    fun setUsersViewModel(usersViewModel: UsersViewModel) {
+        this.usersViewModel = usersViewModel
     }
 
     fun loadReviews() {
@@ -56,7 +61,10 @@ class ReviewViewModel(application: Application) : AndroidViewModel(application) 
             _reviewResult.value = RequestResult.Loading
             _reviewResult.value = runCatching { createFirebase(review) }
                 .fold(
-                    onSuccess = { RequestResult.Success(message = app.getString(R.string.msg_review_created)) },
+                    onSuccess = {
+                        usersViewModel?.incrementReviewsWritten()
+                        RequestResult.Success(message = app.getString(R.string.msg_review_created))
+                    },
                     onFailure = { RequestResult.Failure(errorMessage = it.message ?: app.getString(R.string.error_creating_review)) }
                 )
         }

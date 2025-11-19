@@ -8,6 +8,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import kotlin.math.*
 
 data class Place(
     var id: String = "",
@@ -65,8 +66,38 @@ data class Place(
         placeStatus = status
     }
 
-    fun getDistanceFromUser(): String {
-        return "5 km"
+    fun getDistanceFromUser(userLocation: Location? = null): String {
+        if (userLocation == null || (userLocation.latitude == 0.0 && userLocation.longitude == 0.0)) {
+            return "-- km"
+        }
+
+        val distance = calculateDistance(
+            userLocation.latitude,
+            userLocation.longitude,
+            this.location.latitude,
+            this.location.longitude
+        )
+
+        return if (distance < 1) {
+            "${(distance * 1000).roundToInt()} m"
+        } else {
+            String.format("%.1f km", distance)
+        }
+    }
+
+    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val earthRadius = 6371.0 // Radio de la Tierra en kilómetros
+
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLon = Math.toRadians(lon2 - lon1)
+
+        val a = sin(dLat / 2) * sin(dLat / 2) +
+                cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) *
+                sin(dLon / 2) * sin(dLon / 2)
+
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        return earthRadius * c
     }
     
     fun isCurrentlyOpen(): Boolean {
@@ -116,6 +147,7 @@ data class CreatePlaceState(
 
     // Step 2: Contacto y ubicación
     val phones: List<String> = emptyList(),
+    val email: String? = null,
     val website: String? = null,
     val socialMedia: String? = null,
     val location: Location? = null,

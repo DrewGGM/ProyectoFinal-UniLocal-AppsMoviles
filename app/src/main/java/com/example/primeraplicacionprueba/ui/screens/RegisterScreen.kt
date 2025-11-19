@@ -283,7 +283,6 @@ fun RegisterScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Card principal
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -295,7 +294,6 @@ fun RegisterScreen(
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    // Header con gradiente curvo
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -324,10 +322,9 @@ fun RegisterScreen(
                                 contentDescription = stringResource(R.string.cd_unilocal_logo),
                                 modifier = Modifier.size(120.dp)
                             )
-                        
+
                     }
 
-                    // Contenido del formulario
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -335,8 +332,6 @@ fun RegisterScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-
-                        // Título
                         Text(
                             text = stringResource(R.string.txt_register_title),
                             fontSize = 24.sp,
@@ -345,7 +340,6 @@ fun RegisterScreen(
                             textAlign = TextAlign.Center
                         )
 
-                        // Subtítulo
                         Text(
                             text = stringResource(R.string.txt_register_subtitle),
                             fontSize = 14.sp,
@@ -356,7 +350,6 @@ fun RegisterScreen(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Campos del formulario
                         OutlinedTextField(
                             value = nombreCompleto,
                             onValueChange = {
@@ -411,7 +404,6 @@ fun RegisterScreen(
 
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        // Dropdown para País con búsqueda
                         SearchableDropdown(
                             label = stringResource(R.string.txt_country),
                             selectedValue = pais,
@@ -429,7 +421,6 @@ fun RegisterScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Dropdown para Ciudad con búsqueda
                         SearchableDropdown(
                             label = stringResource(R.string.txt_city),
                             selectedValue = ciudad,
@@ -439,7 +430,7 @@ fun RegisterScreen(
                                 if (ciudadError.isNotEmpty()) ciudadError = ""
                             },
                             modifier = Modifier.fillMaxWidth(),
-                            enabled = pais.isNotEmpty(), // Solo habilitado si hay país seleccionado
+                            enabled = pais.isNotEmpty(),
                             isLoading = isLoadingCities,
                             placeholder = if (pais.isEmpty()) stringResource(R.string.txt_select_country_first) else stringResource(R.string.txt_select_city),
                             isError = ciudadError.isNotEmpty(),
@@ -534,7 +525,6 @@ fun RegisterScreen(
                             }
                         )
 
-                        // Botón de crear cuenta
                         Button(
                             onClick = {
                                 if (validarCampos()) {
@@ -586,7 +576,6 @@ fun RegisterScreen(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        // Separador "O continúa con"
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
@@ -609,13 +598,11 @@ fun RegisterScreen(
 
                         Spacer(modifier = Modifier.height(20.dp))
 
-                        // Opciones de registro social con iconos mejorados
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // Botón de Google
                             Icon(
                                 painter = painterResource(id = R.drawable.google_logo),
                                 contentDescription = stringResource(R.string.txt_continue_with_google),
@@ -627,7 +614,6 @@ fun RegisterScreen(
 
                             Spacer(modifier = Modifier.width(20.dp))
 
-                            // Botón de Facebook
                             Icon(
                                 painter = painterResource(id = R.drawable.facebook_logo),
                                 contentDescription = stringResource(R.string.txt_continue_with_facebook),
@@ -640,7 +626,6 @@ fun RegisterScreen(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        // Link para iniciar sesión
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center

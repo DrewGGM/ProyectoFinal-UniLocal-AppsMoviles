@@ -37,6 +37,8 @@
     <string name="txt_phone_number">Número de teléfono</string>
     <string name="txt_city">Seleccione la ciudad</string>
     <string name="txt_country">Seleccione el país</string>
+    <string name="txt_select_country_placeholder">Selecciona un país</string>
+    <string name="txt_select_city_placeholder">Selecciona una ciudad</string>
     <string name="txt_confirm_password">Confirmar contraseña</string>
     <string name="txt_errorGeneral">Este espacio es obligatorio</string>
     <string name="btn_Register">Registrarse</string>
@@ -183,6 +185,8 @@
     <string name="txt_select_location_required">Seleccione una ubicación en el mapa</string>
     <string name="txt_contact_phone">Teléfono de Contacto</string>
     <string name="txt_phone_placeholder">Ej: +57 320 123 4567</string>
+    <string name="txt_contact_email">Email de Contacto</string>
+    <string name="txt_email_placeholder">Ej: contacto@ejemplo.com</string>
     <string name="txt_website">Sitio Web</string>
     <string name="txt_website_placeholder">Ej: www.ejemplo.com</string>
     <string name="txt_social_media">Redes Sociales</string>
@@ -409,6 +413,10 @@
     <!-- MY COMMENT SCREEN -->
     <string name="txt_write_reply_placeholder">Escribe tu respuesta...</string>
 
+    <!-- SEARCHABLE DROPDOWN -->
+    <string name="txt_no_search_results">No se encontraron resultados</string>
+    <string name="txt_no_options_available">No hay opciones disponibles</string>
+
     <!-- MAP SCREEN -->
     <string name="txt_rating_star">⭐ %1$.1f</string>
 
@@ -523,5 +531,49 @@
     <string name="txt_comments_of_place">Comentarios de \'%1$s\'</string>
     <string name="cd_clear">Limpiar</string>
     <string name="cd_dropdown">Menú desplegable</string>
+
+    <!-- REPORTS -->
+    <string name="msg_report_created">Reporte creado exitosamente</string>
+    <string name="error_creating_report">Error al crear el reporte</string>
+    <string name="txt_report_place">Reportar lugar</string>
+    <string name="txt_reporting_place">Reportando lugar</string>
+    <string name="txt_report_reason">¿Cuál es el problema?</string>
+    <string name="txt_inappropriate_content">Contenido inapropiado</string>
+    <string name="txt_wrong_information">Información incorrecta</string>
+    <string name="txt_duplicate">Lugar duplicado</string>
+    <string name="txt_spam">Spam</string>
+    <string name="txt_closed_permanently">Cerrado permanentemente</string>
+    <string name="txt_other">Otro</string>
+    <string name="txt_select_reason_error">Por favor selecciona una razón</string>
+    <string name="txt_description_optional">Descripción</string>
+    <string name="txt_report_description_hint">Proporciona más detalles sobre el problema…</string>
+    <string name="txt_description_required_error">La descripción es obligatoria</string>
+    <string name="txt_send_report">Enviar reporte</string>
+    <string name="txt_report_sent">Reporte enviado</string>
+    <string name="txt_report_sent_description">Tu reporte ha sido enviado exitosamente. Lo revisaremos pronto.</string>
+    <string name="txt_ok">Aceptar</string>
+    <string name="txt_reports_management">Gestión de reportes</string>
+    <string name="txt_resolved">Resueltos</string>
+    <string name="txt_dismissed">Descartados</string>
+    <string name="txt_no_pending_reports">No hay reportes pendientes</string>
+    <string name="txt_no_resolved_reports">No hay reportes resueltos</string>
+    <string name="txt_no_dismissed_reports">No hay reportes descartados</string>
+    <string name="txt_unknown_user">Usuario desconocido</string>
+    <string name="txt_reported_by">Reportado por %1$s</string>
+    <string name="txt_confirm_action">Confirmar acción</string>
+    <string name="txt_report_action_confirm">¿Cómo deseas manejar este reporte?</string>
+    <string name="txt_dismiss_report">Descartar</string>
+    <string name="txt_resolve_report">Resolver</string>
+    <string name="txt_view_place">Ver lugar</string>
+    <string name="txt_handle">Gestionar</string>
+    <string name="txt_pending_reports">Reportes Pendientes</string>
+    <string name="txt_view_all">Ver todos</string>
+    <string name="txt_reports_summary">Tienes %1$d reportes pendientes de revisión</string>
+    <string name="txt_manage_reports">Gestionar Reportes</string>
+    <string name="txt_delete_place">Eliminar Lugar</string>
+    <string name="txt_delete_place_confirm">¿Estás seguro de que deseas eliminar este lugar? Esta acción no se puede deshacer.</string>
+    <string name="txt_delete">Eliminar</string>
+    <string name="txt_cancel">Cancelar</string>
+    <string name="txt_place_deleted">Lugar eliminado correctamente</string>
 
 </resources>

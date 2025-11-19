@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
@@ -55,17 +56,24 @@ fun CreatePlaceStepThree(
     val fridayText = stringResource(R.string.txt_friday)
     val saturdayText = stringResource(R.string.txt_saturday)
     val sundayText = stringResource(R.string.txt_sunday)
-    
-    val schedules = remember {
-        mutableStateListOf(
-            DaySchedule(mondayText),
-            DaySchedule(tuesdayText),
-            DaySchedule(wednesdayText),
-            DaySchedule(thursdayText),
-            DaySchedule(fridayText),
-            DaySchedule(saturdayText),
-            DaySchedule(sundayText)
-        )
+
+    // Cargar horarios existentes del estado (para modo edición)
+    val schedules = remember(state.schedule) {
+        val dayTexts = listOf(mondayText, tuesdayText, wednesdayText, thursdayText, fridayText, saturdayText, sundayText)
+        val days = listOf(Day.MONDAY, Day.TUESDAY, Day.WEDNESDAY, Day.THURSDAY, Day.FRIDAY, Day.SATURDAY, Day.SUNDAY)
+
+        mutableStateListOf<DaySchedule>().apply {
+            dayTexts.forEachIndexed { index, dayText ->
+                val existingSchedule = state.schedule.find { it.day == days[index] }
+                add(
+                    DaySchedule(
+                        day = dayText,
+                        openTime = mutableStateOf(existingSchedule?.openHour ?: ""),
+                        closeTime = mutableStateOf(existingSchedule?.closeHour ?: "")
+                    )
+                )
+            }
+        }
     }
 
     Column(
@@ -86,7 +94,7 @@ fun CreatePlaceStepThree(
                 text = stringResource(R.string.txt_add_new_place),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextDark,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )
@@ -94,12 +102,12 @@ fun CreatePlaceStepThree(
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.txt_close),
-                    tint = TextDark
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
 
-        HorizontalDivider(thickness = 1.dp, color = BorderLight)
+        HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline)
 
         Column(
             modifier = Modifier
@@ -114,7 +122,7 @@ fun CreatePlaceStepThree(
                     .fillMaxWidth()
                     .height(8.dp)
                     .clip(RoundedCornerShape(4.dp))
-                    .background(BgLight)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 Box(
                     modifier = Modifier
@@ -137,13 +145,13 @@ fun CreatePlaceStepThree(
                 text = stringResource(R.string.txt_step_three_title),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextDark
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Text(
                 text = stringResource(R.string.txt_schedule_description),
                 fontSize = 14.sp,
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 20.sp
             )
 
@@ -187,7 +195,7 @@ fun CreatePlaceStepThree(
                     shape = RoundedCornerShape(28.dp),
                     border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
                         brush = Brush.horizontalGradient(
-                            colors = listOf(BorderLight, BorderLight)
+                            colors = listOf(MaterialTheme.colorScheme.outline, MaterialTheme.colorScheme.outline)
                         )
                     )
                 ) {
@@ -195,7 +203,7 @@ fun CreatePlaceStepThree(
                         text = stringResource(R.string.txt_previous),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = TextMuted
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -284,6 +292,7 @@ fun CreatePlaceStepThree(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleCard(
     schedule: DaySchedule,
@@ -291,10 +300,86 @@ fun ScheduleCard(
     onCloseTimeChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showOpenTimePicker by remember { mutableStateOf(false) }
+    var showCloseTimePicker by remember { mutableStateOf(false) }
+
+    // Parse existing time or use current time
+    val parseTime = { timeStr: String ->
+        if (timeStr.isNotBlank() && timeStr.contains(":")) {
+            val parts = timeStr.split(":")
+            Pair(parts[0].toIntOrNull() ?: 9, parts[1].toIntOrNull() ?: 0)
+        } else {
+            Pair(9, 0)
+        }
+    }
+
+    val (openHour, openMinute) = parseTime(schedule.openTime.value)
+    val (closeHour, closeMinute) = parseTime(schedule.closeTime.value)
+
+    val openTimePickerState = rememberTimePickerState(
+        initialHour = openHour,
+        initialMinute = openMinute,
+        is24Hour = true
+    )
+
+    val closeTimePickerState = rememberTimePickerState(
+        initialHour = closeHour,
+        initialMinute = closeMinute,
+        is24Hour = true
+    )
+
+    // Diálogo para hora de apertura
+    if (showOpenTimePicker) {
+        AlertDialog(
+            onDismissRequest = { showOpenTimePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    val time = String.format("%02d:%02d", openTimePickerState.hour, openTimePickerState.minute)
+                    onOpenTimeChange(time)
+                    showOpenTimePicker = false
+                }) {
+                    Text(stringResource(R.string.txt_ok))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showOpenTimePicker = false }) {
+                    Text(stringResource(R.string.txt_cancel))
+                }
+            },
+            text = {
+                TimePicker(state = openTimePickerState)
+            }
+        )
+    }
+
+    // Diálogo para hora de cierre
+    if (showCloseTimePicker) {
+        AlertDialog(
+            onDismissRequest = { showCloseTimePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    val time = String.format("%02d:%02d", closeTimePickerState.hour, closeTimePickerState.minute)
+                    onCloseTimeChange(time)
+                    showCloseTimePicker = false
+                }) {
+                    Text(stringResource(R.string.txt_ok))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showCloseTimePicker = false }) {
+                    Text(stringResource(R.string.txt_cancel))
+                }
+            },
+            text = {
+                TimePicker(state = closeTimePickerState)
+            }
+        )
+    }
+
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        color = BgLight
+        color = MaterialTheme.colorScheme.surfaceVariant
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -304,66 +389,72 @@ fun ScheduleCard(
                 text = schedule.day,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextDark
+                color = MaterialTheme.colorScheme.onSurface
             )
 
-            // Campo de hora de apertura
-            val openInvalid = schedule.openTime.value.isNotBlank() && !schedule.openTime.value.matches(Regex("^([01]\\d|2[0-3]):[0-5]\\d$")) && schedule.openTime.value.length >= 4
-            OutlinedTextField(
-                value = schedule.openTime.value,
-                onValueChange = { newValue ->
-                    // Filtrar para solo permitir números y :
-                    val filtered = newValue.filter { it.isDigit() || it == ':' }
-                    // Limitar a formato HH:mm (5 caracteres)
-                    if (filtered.length <= 5) {
-                        onOpenTimeChange(filtered)
-                    }
-                },
-                placeholder = { Text(stringResource(R.string.placeholder_time_hhmm), fontSize = 12.sp) },
+            // Botón para hora de apertura
+            OutlinedButton(
+                onClick = { showOpenTimePicker = true },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = BorderLight,
-                    focusedBorderColor = Secondary,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                    focusedContainerColor = MaterialTheme.colorScheme.surface
-                ),
                 shape = RoundedCornerShape(8.dp),
-                textStyle = LocalTextStyle.current.copy(fontSize = 13.sp),
-                isError = openInvalid,
-                supportingText = if (openInvalid) {
-                    { Text(text = stringResource(R.string.placeholder_time_hhmm), color = MaterialTheme.colorScheme.error, fontSize = 11.sp) }
-                } else null
-            )
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = if (schedule.openTime.value.isBlank())
+                            stringResource(R.string.txt_opening_time)
+                        else schedule.openTime.value,
+                        fontSize = 13.sp,
+                        color = if (schedule.openTime.value.isBlank())
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        else MaterialTheme.colorScheme.onSurface
+                    )
+                    Icon(
+                        imageVector = Icons.Default.Schedule,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = Secondary
+                    )
+                }
+            }
 
-            // Campo de hora de cierre
-            val closeInvalid = schedule.closeTime.value.isNotBlank() && !schedule.closeTime.value.matches(Regex("^([01]\\d|2[0-3]):[0-5]\\d$")) && schedule.closeTime.value.length >= 4
-            OutlinedTextField(
-                value = schedule.closeTime.value,
-                onValueChange = { newValue ->
-                    // Filtrar para solo permitir números y :
-                    val filtered = newValue.filter { it.isDigit() || it == ':' }
-                    // Limitar a formato HH:mm (5 caracteres)
-                    if (filtered.length <= 5) {
-                        onCloseTimeChange(filtered)
-                    }
-                },
-                placeholder = { Text(stringResource(R.string.placeholder_time_hhmm), fontSize = 12.sp) },
+            // Botón para hora de cierre
+            OutlinedButton(
+                onClick = { showCloseTimePicker = true },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = BorderLight,
-                    focusedBorderColor = Secondary,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                    focusedContainerColor = MaterialTheme.colorScheme.surface
-                ),
                 shape = RoundedCornerShape(8.dp),
-                textStyle = LocalTextStyle.current.copy(fontSize = 13.sp),
-                isError = closeInvalid,
-                supportingText = if (closeInvalid) {
-                    { Text(text = stringResource(R.string.placeholder_time_hhmm), color = MaterialTheme.colorScheme.error, fontSize = 11.sp) }
-                } else null
-            )
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = if (schedule.closeTime.value.isBlank())
+                            stringResource(R.string.txt_closing_time)
+                        else schedule.closeTime.value,
+                        fontSize = 13.sp,
+                        color = if (schedule.closeTime.value.isBlank())
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        else MaterialTheme.colorScheme.onSurface
+                    )
+                    Icon(
+                        imageVector = Icons.Default.Schedule,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = Secondary
+                    )
+                }
+            }
         }
     }
 }

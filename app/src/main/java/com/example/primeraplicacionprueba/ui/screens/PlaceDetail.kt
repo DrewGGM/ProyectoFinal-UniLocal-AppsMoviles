@@ -1,6 +1,7 @@
 package com.example.primeraplicacionprueba.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,6 +39,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.primeraplicacionprueba.viewmodel.ReviewViewModel
 import com.example.primeraplicacionprueba.model.ReviewReply
+import com.example.primeraplicacionprueba.ui.components.Map as PlacesMap
+import com.mapbox.geojson.Point
 
 @Composable
 fun PlaceDetail(
@@ -45,8 +48,9 @@ fun PlaceDetail(
     reviewViewModel: ReviewViewModel,
     id: String,
     onNavigateBack: () -> Unit = {},
-    onNavigateToComment: (String) -> Unit = {}
-
+    onNavigateToComment: (String) -> Unit = {},
+    onNavigateToMap: (String) -> Unit = {},
+    onNavigateToReport: (String) -> Unit = {}
 ) {
     val place = LocalMainViewModel.current.placesViewModel.findById(id)
     val reviews by reviewViewModel.reviews.collectAsState()
@@ -77,7 +81,7 @@ fun PlaceDetail(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .background(BgLight)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             Row(
                 modifier = Modifier
@@ -91,7 +95,7 @@ fun PlaceDetail(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.txt_back),
-                        tint = TextDark
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
                 
@@ -104,9 +108,15 @@ fun PlaceDetail(
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center
                 )
-                
-                // Espacio para balancear el layout
-                Spacer(modifier = Modifier.size(48.dp))
+
+                // Botón de reportar
+                IconButton(onClick = { onNavigateToReport(id) }) {
+                    Icon(
+                        imageVector = Icons.Default.Flag,
+                        contentDescription = stringResource(R.string.txt_report_place),
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
             }
             
             // Línea divisoria
@@ -188,7 +198,21 @@ fun PlaceDetail(
                     // Ubicación
                     SectionTitle(title = stringResource(R.string.txt_location))
                     Spacer(modifier = Modifier.height(12.dp))
-                    MapPlaceholder()
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .clickable { onNavigateToMap(place.id) }
+                    ) {
+                        PlacesMap(
+                            modifierr = Modifier.fillMaxSize(),
+                            activateClick = false,
+                            places = listOf(place),
+                            centerPoint = Point.fromLngLat(place.location.longitude, place.location.latitude),
+                            centerZoom = 15.0
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(24.dp))
 
@@ -239,14 +263,14 @@ fun PlaceDetail(
                     usersViewModel.toggleFavorite(place.id)
                 },
                 containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = if (isFavorite) Primary else TextDark,
+                contentColor = if (isFavorite) Primary else MaterialTheme.colorScheme.onSurface,
                 shape = CircleShape,
                 modifier = Modifier.size(56.dp)
             ) {
                 Icon(
                     imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = stringResource(R.string.txt_favorites),
-                    tint = if (isFavorite) Primary else TextDark
+                    tint = if (isFavorite) Primary else MaterialTheme.colorScheme.onSurface
                 )
             }
             FloatingActionButton(
@@ -346,7 +370,7 @@ fun PlaceHeader(
                 Icon(
                     imageVector = Icons.Default.Star,
                     contentDescription = stringResource(R.string.txt_rating),
-                    tint = TextDark,
+                    tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -425,7 +449,7 @@ fun ContactItem(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        color = BgLight
+        color = MaterialTheme.colorScheme.surfaceVariant
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -456,7 +480,7 @@ fun MapPlaceholder() {
             .fillMaxWidth()
             .height(200.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(BgLight),
+            .background(MaterialTheme.colorScheme.surfaceVariant),
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -479,7 +503,7 @@ fun ReviewCard(
 ) {
     Surface(
         shape = RoundedCornerShape(16.dp),
-        color = BgLight,
+        color = MaterialTheme.colorScheme.surfaceVariant,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
@@ -644,7 +668,7 @@ fun AmenitiesGrid(amenities: List<String>) {
                     Surface(
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(12.dp),
-                        color = BgLight
+                        color = MaterialTheme.colorScheme.surfaceVariant
                     ) {
                         Row(
                             modifier = Modifier.padding(12.dp),
@@ -694,7 +718,7 @@ fun ScheduleSection(schedules: List<com.example.primeraplicacionprueba.model.She
             val entry = scheduleByDay[day]
             Surface(
                 shape = RoundedCornerShape(12.dp),
-                color = BgLight
+                color = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 Row(
                     modifier = Modifier

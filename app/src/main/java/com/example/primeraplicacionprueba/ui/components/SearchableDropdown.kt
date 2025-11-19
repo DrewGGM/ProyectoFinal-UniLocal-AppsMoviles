@@ -9,6 +9,8 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
@@ -30,17 +32,18 @@ fun SearchableDropdown(
     isError: Boolean = false,
     errorMessage: String? = null
 ) {
-    var searchQuery by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) }
-    var textFieldValue by remember { mutableStateOf("") }
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var textFieldValue by rememberSaveable { mutableStateOf(selectedValue) }
 
-    // Sincronizar el valor del campo de texto con el estado
-    LaunchedEffect(expanded, selectedValue) {
-        textFieldValue = if (expanded) searchQuery else selectedValue
+    LaunchedEffect(selectedValue) {
+        if (!expanded) {
+            textFieldValue = selectedValue
+            searchQuery = ""
+        }
     }
 
-    // Filtrar opciones basado en la búsqueda
-    val filteredOptions = remember(searchQuery, options) {
+    val filteredOptions by derivedStateOf {
         if (searchQuery.isBlank()) {
             options
         } else {
@@ -68,8 +71,6 @@ fun SearchableDropdown(
                     .onFocusChanged { focusState ->
                         if (focusState.isFocused && !expanded) {
                             expanded = true
-                            searchQuery = ""
-                            textFieldValue = ""
                         }
                     },
                 trailingIcon = {
@@ -112,7 +113,6 @@ fun SearchableDropdown(
                 singleLine = true
             )
 
-            // Mensaje de error
             if (isError && errorMessage != null) {
                 Text(
                     text = errorMessage,
@@ -123,13 +123,11 @@ fun SearchableDropdown(
             }
         }
 
-        // Dropdown menu con lista filtrada
         DropdownMenu(
-            expanded = expanded && filteredOptions.isNotEmpty(),
+            expanded = expanded,
             onDismissRequest = {
                 expanded = false
                 searchQuery = ""
-                textFieldValue = selectedValue
             },
             properties = PopupProperties(focusable = false),
             modifier = Modifier.fillMaxWidth(0.9f)
@@ -139,32 +137,55 @@ fun SearchableDropdown(
                     .heightIn(max = 300.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                if (filteredOptions.isEmpty() && searchQuery.isNotEmpty()) {
-                    // Mensaje si no hay resultados
-                    Text(
-                        text = "No se encontraron resultados",
-                        modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                } else {
-                    filteredOptions.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(option) },
-                            onClick = {
-                                onValueChange(option)
-                                expanded = false
-                                searchQuery = ""
-                                textFieldValue = option
-                            },
-                            colors = MenuDefaults.itemColors(
-                                textColor = if (option == selectedValue) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.onSurface
-                                }
+                when {
+                    isLoading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(32.dp),
+                                strokeWidth = 3.dp
                             )
+                        }
+                    }
+                    filteredOptions.isEmpty() && searchQuery.isNotEmpty() -> {
+                        Text(
+                            text = stringResource(R.string.txt_no_search_results),
+                            modifier = Modifier.padding(16.dp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium
                         )
+                    }
+                    filteredOptions.isEmpty() -> {
+                        Text(
+                            text = stringResource(R.string.txt_no_options_available),
+                            modifier = Modifier.padding(16.dp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    else -> {
+                        filteredOptions.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(option) },
+                                onClick = {
+                                    onValueChange(option)
+                                    expanded = false
+                                    searchQuery = ""
+                                    textFieldValue = option
+                                },
+                                colors = MenuDefaults.itemColors(
+                                    textColor = if (option == selectedValue) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurface
+                                    }
+                                )
+                            )
+                        }
                     }
                 }
             }

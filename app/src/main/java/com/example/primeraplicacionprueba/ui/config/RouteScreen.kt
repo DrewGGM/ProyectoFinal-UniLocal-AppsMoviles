@@ -49,7 +49,7 @@ sealed class RouteScreen{
     data object FilterBusqueda: RouteScreen();
 
     @Serializable
-    data object Map: RouteScreen();
+    data class Map(val placeId: String? = null): RouteScreen()
 
     @Serializable
     data class CommentScream(val id: String): RouteScreen();
@@ -63,5 +63,11 @@ sealed class RouteScreen{
 
     @Serializable
     data class MyComments(val placeId: String): RouteScreen();
+
+    @Serializable
+    data class CreateReport(val placeId: String): RouteScreen();
+
+    @Serializable
+    data object ReportsManagement: RouteScreen();
 
 }

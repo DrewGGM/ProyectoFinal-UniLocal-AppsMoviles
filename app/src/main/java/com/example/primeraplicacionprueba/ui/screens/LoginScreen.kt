@@ -81,7 +81,6 @@ fun LoginScreen(
     var contrasena by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
-    // Estados para validación
     var emailError by remember { mutableStateOf("") }
     var contrasenaError by remember { mutableStateOf("") }
 
@@ -90,7 +89,6 @@ fun LoginScreen(
 
     val context = LocalContext.current
 
-    // Google Sign-In launcher
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -105,7 +103,6 @@ fun LoginScreen(
         }
     }
 
-    // Función de Google Sign-In
     fun signInWithGoogle() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(context.getString(R.string.default_web_client_id))
@@ -116,17 +113,14 @@ fun LoginScreen(
         googleSignInLauncher.launch(googleSignInClient.signInIntent)
     }
 
-    // Facebook CallbackManager
     val callbackManager = remember { CallbackManager.Factory.create() }
 
-    // Facebook Sign-In launcher
     val facebookLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
         callbackManager.onActivityResult(result.resultCode, result.resultCode, result.data)
     }
 
-    // Función de Facebook Sign-In
     fun signInWithFacebook() {
         val loginManager = LoginManager.getInstance()
         loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
@@ -150,11 +144,9 @@ fun LoginScreen(
         )
     }
 
-    // Función de validación
     fun validarCampos(): Boolean {
         var isValid = true
 
-        // Validar email
         if (email.isBlank()) {
             emailError = context.getString(R.string.txt_errorGeneral)
             isValid = false
@@ -162,7 +154,6 @@ fun LoginScreen(
             emailError = ""
         }
 
-        // Validar contraseña
         if (contrasena.isBlank()) {
             contrasenaError = context.getString(R.string.txt_password_error_required)
             isValid = false
@@ -189,7 +180,6 @@ fun LoginScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-            // Card principal
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -203,7 +193,6 @@ fun LoginScreen(
                         .fillMaxWidth()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    // Header con gradiente curvo
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -232,10 +221,9 @@ fun LoginScreen(
                                 contentDescription = stringResource(R.string.cd_unilocal_logo),
                                 modifier = Modifier.size(120.dp)
                             )
-                        
+
                     }
 
-                    // Contenido del formulario
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -243,8 +231,6 @@ fun LoginScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-
-                        // Título
                         Text(
                             text = stringResource(R.string.txt_welcome_back),
                             fontSize = 24.sp,
@@ -253,7 +239,6 @@ fun LoginScreen(
                             textAlign = TextAlign.Center
                         )
 
-                        // Subtítulo
                         Text(
                             text = stringResource(R.string.txt_welcome_subtitle),
                             fontSize = 14.sp,
@@ -264,7 +249,6 @@ fun LoginScreen(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Campo Email/Usuario
                         OutlinedTextField(
                             value = email,
                             onValueChange = {
@@ -288,7 +272,6 @@ fun LoginScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Campo Contraseña
                         OutlinedTextField(
                             value = contrasena,
                             onValueChange = {
@@ -338,7 +321,6 @@ fun LoginScreen(
                             }
                         )
 
-                        // Botón de iniciar sesión
                         Button(
                             onClick = {
                                 if (validarCampos()) {
@@ -379,13 +361,11 @@ fun LoginScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Opciones de login social
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // Botón de Google
                             Icon(
                                 painter = painterResource(id = R.drawable.google_logo),
                                 contentDescription = stringResource(R.string.txt_continue_with_google),
@@ -397,7 +377,6 @@ fun LoginScreen(
 
                             Spacer(modifier = Modifier.width(20.dp))
 
-                            // Botón de Facebook
                             Icon(
                                 painter = painterResource(id = R.drawable.facebook_logo),
                                 contentDescription = stringResource(R.string.txt_continue_with_facebook),
@@ -410,7 +389,6 @@ fun LoginScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Link para registro
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
@@ -431,9 +409,8 @@ fun LoginScreen(
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
 
-                        // Link "¿Olvidaste tu contraseña?"
+
                         Text(
                             text = stringResource(R.string.txt_forgot_password),
                             color = Secondary,

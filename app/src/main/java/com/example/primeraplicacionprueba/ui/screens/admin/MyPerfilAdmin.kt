@@ -34,6 +34,7 @@ import com.example.primeraplicacionprueba.ui.theme.Secondary
 import com.example.primeraplicacionprueba.ui.theme.TextLight
 import com.example.primeraplicacionprueba.ui.theme.TextMuted
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
+import com.example.primeraplicacionprueba.ui.screens.LocalMainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,13 +44,17 @@ fun MyPerfilAdmin(
     onNavigateBack: () -> Unit,
     onNavigateToLogin: () -> Unit = {}
 ) {
+    val mainViewModel = LocalMainViewModel.current
+    val reportViewModel = mainViewModel.reportViewModel
+    val reports by reportViewModel.reports.collectAsState()
+
     val places by placesViewModel.places.collectAsState()
-    
+
     // Estadísticas reales del administrador
     val approvedCount = places.count { it.placeStatus == PlaceStatus.APPROVED }
     val rejectedCount = places.count { it.placeStatus == PlaceStatus.REJECTED }
     val pendingCount = places.count { it.placeStatus == PlaceStatus.PENDING }
-    val reportsHandled = 3 // Por simplicidad, mantengo fijo
+    val reportsHandled = reportViewModel.getReportsHandledByAdmin(user.id)
     val reputationPoints = (approvedCount * 2) + (rejectedCount * 1) + (reportsHandled * 5) // Cálculo basado en actividad
 
     Scaffold(
@@ -78,7 +83,7 @@ fun MyPerfilAdmin(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(BgLight)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
@@ -155,14 +160,14 @@ fun AdminProfileHeader(user: User) {
                     text = user.nombre,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextLight
+                    color = Color.White
                 )
 
                 // Rol
                 Text(
                     text = user.rol.name,
                     fontSize = 16.sp,
-                    color = TextLight.copy(alpha = 0.9f)
+                    color = Color.White.copy(alpha = 0.9f)
                 )
             }
         }
@@ -295,7 +300,7 @@ fun AccountOptionsSection(
                 if (index < items.size - 1) {
                     HorizontalDivider(
                         modifier = Modifier.padding(horizontal = 16.dp),
-                        color = BgLight
+                        color = MaterialTheme.colorScheme.outline
                     )
                 }
             }

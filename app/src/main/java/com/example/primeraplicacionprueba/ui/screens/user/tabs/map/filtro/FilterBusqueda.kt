@@ -139,7 +139,7 @@ fun FilterBusqueda(
                         "Palabra clave",
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 15.sp,
-                        color = TextDark
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     OutlinedTextField(
                         value = palabraClave,
@@ -148,10 +148,10 @@ fun FilterBusqueda(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = BorderLight,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                             focusedBorderColor = Secondary,
-                            unfocusedContainerColor = BgLight,
-                            focusedContainerColor = BgLight
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
                         )
                     )
 
@@ -160,7 +160,7 @@ fun FilterBusqueda(
                         "Categorías",
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 15.sp,
-                        color = TextDark
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -171,10 +171,10 @@ fun FilterBusqueda(
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(20.dp))
-                                    .background(if (seleccionada) Primary else MaterialTheme.colorScheme.surface)
+                                    .background(if (seleccionada) Primary else MaterialTheme.colorScheme.surfaceVariant)
                                     .border(
                                         2.dp,
-                                        if (seleccionada) Primary else BorderLight,
+                                        if (seleccionada) Primary else MaterialTheme.colorScheme.outline,
                                         RoundedCornerShape(20.dp)
                                     )
                                     .clickable {
@@ -185,7 +185,7 @@ fun FilterBusqueda(
                             ) {
                                 Text(
                                     text = categoria,
-                                    color = if (seleccionada) MaterialTheme.colorScheme.onPrimary else TextDark,
+                                    color = if (seleccionada) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                                     fontSize = 14.sp,
                                     fontWeight = if (seleccionada) FontWeight.SemiBold else FontWeight.Normal
                                 )
@@ -198,7 +198,7 @@ fun FilterBusqueda(
                         "Distancia (km)",
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 15.sp,
-                        color = TextDark
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     OutlinedTextField(
                         value = distancia,
@@ -206,10 +206,10 @@ fun FilterBusqueda(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = BorderLight,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                             focusedBorderColor = Secondary,
-                            unfocusedContainerColor = BgLight,
-                            focusedContainerColor = BgLight
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
                         )
                     )
 
@@ -218,7 +218,7 @@ fun FilterBusqueda(
                         "Ciudad",
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 15.sp,
-                        color = TextDark
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     OutlinedTextField(
                         value = ciudad,
@@ -226,10 +226,10 @@ fun FilterBusqueda(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = BorderLight,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                             focusedBorderColor = Secondary,
-                            unfocusedContainerColor = BgLight,
-                            focusedContainerColor = BgLight
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
                         )
                     )
 
@@ -238,7 +238,7 @@ fun FilterBusqueda(
                         "Calificación mínima",
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 15.sp,
-                        color = TextDark
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     OutlinedTextField(
                         value = calificacion,
@@ -246,10 +246,10 @@ fun FilterBusqueda(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = BorderLight,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                             focusedBorderColor = Secondary,
-                            unfocusedContainerColor = BgLight,
-                            focusedContainerColor = BgLight
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
                         )
                     )
 
@@ -266,7 +266,7 @@ fun FilterBusqueda(
                         Text(
                             "Abierto ahora",
                             fontSize = 15.sp,
-                            color = TextDark
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -293,15 +293,15 @@ fun FilterBusqueda(
                             .weight(1f)
                             .height(56.dp),
                         shape = RoundedCornerShape(28.dp),
-                        border = ButtonDefaults.outlinedButtonBorder.copy(
+                        border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
                             brush = Brush.horizontalGradient(
-                                colors = listOf(BorderLight, BorderLight)
+                                colors = listOf(MaterialTheme.colorScheme.outline, MaterialTheme.colorScheme.outline)
                             )
                         )
                     ) {
                         Text(
                             "Limpiar",
-                            color = TextDark,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 16.sp
                         )

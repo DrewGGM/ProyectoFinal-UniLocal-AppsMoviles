@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
@@ -22,6 +23,8 @@ import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.ui.theme.SuccessGreen
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
+import com.example.primeraplicacionprueba.ui.components.Map as PlacesMap
+import com.mapbox.geojson.Point
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -182,16 +185,18 @@ fun DetailPlaceAdmin(
                     ) {
                         Column(Modifier.padding(25.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             Text(stringResource(R.string.txt_location), fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
-                            Surface(
+                            Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(140.dp),
-                                color = MaterialTheme.colorScheme.primaryContainer,
-                                shape = RoundedCornerShape(12.dp)
+                                    .height(200.dp)
+                                    .clip(RoundedCornerShape(12.dp))
                             ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.mapa),
-                                    contentDescription = null,
+                                PlacesMap(
+                                    modifierr = Modifier.fillMaxSize(),
+                                    activateClick = false,
+                                    places = listOf(place),
+                                    centerPoint = Point.fromLngLat(place.location.longitude, place.location.latitude),
+                                    centerZoom = 15.0
                                 )
                             }
                             Text(place.adress, color = MaterialTheme.colorScheme.onSurfaceVariant)

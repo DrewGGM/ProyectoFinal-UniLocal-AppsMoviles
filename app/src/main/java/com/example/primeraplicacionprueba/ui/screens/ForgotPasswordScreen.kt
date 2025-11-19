@@ -69,7 +69,6 @@ fun ForgotPasswordScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-            // Card principal
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -81,7 +80,6 @@ fun ForgotPasswordScreen(
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    // Header con gradiente curvo
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -104,7 +102,6 @@ fun ForgotPasswordScreen(
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        // Logo circular con backdrop blur effect
                         Image(
                             painter = painterResource(id = R.drawable.unilocal_logo),
                             contentDescription = stringResource(R.string.cd_unilocal_logo),
@@ -115,7 +112,6 @@ fun ForgotPasswordScreen(
                         )
                     }
 
-                    // Contenido del formulario
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -123,7 +119,6 @@ fun ForgotPasswordScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
-                        // Título
                         Text(
                             text = stringResource(R.string.txt_forgot_password_title),
                             fontSize = 24.sp,
@@ -132,7 +127,6 @@ fun ForgotPasswordScreen(
                             textAlign = TextAlign.Center
                         )
 
-                        // Subtítulo
                         Text(
                             text = stringResource(R.string.txt_forgot_password_subtitle),
                             fontSize = 14.sp,
@@ -143,7 +137,6 @@ fun ForgotPasswordScreen(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Campo de email
                         OutlinedTextField(
                             value = email,
                             onValueChange = {
@@ -167,7 +160,6 @@ fun ForgotPasswordScreen(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Botón de enviar
                         Button(
                             onClick = {
                                 if (validateEmail()) {
@@ -209,7 +201,6 @@ fun ForgotPasswordScreen(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Link para volver al login
                         Row(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically

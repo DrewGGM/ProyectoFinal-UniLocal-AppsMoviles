@@ -60,7 +60,7 @@ fun AchievementsScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.txt_back),
-                            tint = TextDark
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
@@ -73,7 +73,7 @@ fun AchievementsScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(BgLight)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
@@ -176,7 +176,7 @@ fun AchievementCard(achievement: Achievement) {
                             Brush.linearGradient(achievement.colorGradient)
                         } else {
                             Brush.linearGradient(
-                                listOf(TextSecondary, TextSecondary)
+                                listOf(MaterialTheme.colorScheme.onSurfaceVariant, MaterialTheme.colorScheme.onSurfaceVariant)
                             )
                         }
                     ),
@@ -215,14 +215,14 @@ fun AchievementCard(achievement: Achievement) {
                         .fillMaxWidth()
                         .height(8.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .background(BgLight)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(achievement.progress)
                             .fillMaxHeight()
                             .clip(RoundedCornerShape(4.dp))
-                            .background(Tertiary)
+                            .background(MaterialTheme.colorScheme.tertiary)
                     )
                 }
             }
@@ -268,8 +268,8 @@ fun AchievementProgressCard(
                     .fillMaxWidth()
                     .height(8.dp)
                     .clip(RoundedCornerShape(4.dp)),
-                color = Secondary,
-                trackColor = BgLight
+                color = MaterialTheme.colorScheme.secondary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant
             )
             
             Text(
@@ -294,7 +294,7 @@ fun EmptyAchievementsState() {
         Icon(
             imageVector = Icons.Default.EmojiEvents,
             contentDescription = null,
-            tint = TextSecondary,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(80.dp)
         )
         Text(

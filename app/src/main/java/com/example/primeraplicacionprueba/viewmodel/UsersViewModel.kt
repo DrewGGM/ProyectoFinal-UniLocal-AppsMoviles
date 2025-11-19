@@ -1,10 +1,14 @@
 package com.example.primeraplicacionprueba.viewmodel
 
+import android.Manifest
 import android.content.Context
 import android.app.Application
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.primeraplicacionprueba.R
+import com.example.primeraplicacionprueba.model.Location
 import com.example.primeraplicacionprueba.model.Role
 import com.example.primeraplicacionprueba.model.User
 import com.example.primeraplicacionprueba.utils.RequestResult
@@ -12,6 +16,9 @@ import com.example.primeraplicacionprueba.utils.SharedPrefsUtil
 import com.facebook.AccessToken
 import com.facebook.GraphRequest
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FacebookAuthProvider
@@ -25,6 +32,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONException
 import java.time.LocalDate
 import kotlin.coroutines.resume
@@ -51,7 +60,44 @@ class UsersViewModel(application: Application) : AndroidViewModel(application) {
     private val _needsProfileCompletion = MutableStateFlow(false)
     val needsProfileCompletion: StateFlow<Boolean> = _needsProfileCompletion.asStateFlow()
 
+    private val _userLocation = MutableStateFlow<Location?>(null)
+    val userLocation: StateFlow<Location?> = _userLocation.asStateFlow()
+
+    private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(application)
+
     private val visitedPlaceIds = mutableSetOf<String>()
+
+    init {
+        // Intentar obtener la ubicación del usuario al inicializar
+        updateUserLocation()
+    }
+
+    fun updateUserLocation() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (ContextCompat.checkSelfPermission(
+                        app,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    val location = fusedLocationClient.getCurrentLocation(
+                        Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+                        CancellationTokenSource().token
+                    ).await()
+
+                    location?.let {
+                        _userLocation.value = Location(
+                            latitude = it.latitude,
+                            longitude = it.longitude
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                // Si falla, mantener la ubicación como null
+                e.printStackTrace()
+            }
+        }
+    }
 
     fun resetOperationResult() {
         _userResult.value = null
@@ -391,6 +437,10 @@ class UsersViewModel(application: Application) : AndroidViewModel(application) {
             } ?: false
         } else {
             val firebaseUser = authResult.user!!
+
+            // Obtener foto de perfil de Facebook en alta calidad usando Graph API
+            val profilePictureUrl = getFacebookProfilePictureUrl(accessToken)
+
             val newUser = User(
                 id = uid,
                 nombre = firebaseUser.displayName ?: app.getString(R.string.default_user_name),
@@ -400,7 +450,7 @@ class UsersViewModel(application: Application) : AndroidViewModel(application) {
                 rol = Role.USER,
                 city = "",
                 country = "",
-                imageUrl = firebaseUser.photoUrl?.toString(),
+                imageUrl = profilePictureUrl ?: firebaseUser.photoUrl?.toString(),
                 favoriteIds = emptyList(),
                 placesVisited = 0,
                 placesCreated = 0,
@@ -417,6 +467,36 @@ class UsersViewModel(application: Application) : AndroidViewModel(application) {
 
             _currentUser.value = newUser
             _needsProfileCompletion.value = true
+        }
+    }
+
+    private suspend fun getFacebookProfilePictureUrl(accessToken: AccessToken): String? {
+        return withContext(Dispatchers.IO) {
+            try {
+                // Usar Graph API de Facebook para obtener foto de perfil en alta calidad
+                val graphRequest = GraphRequest.newMeRequest(
+                    accessToken
+                ) { _, _ ->
+                    // Este callback no se usa en la versión síncrona
+                }
+
+                // Configurar los campos que queremos obtener
+                val parameters = android.os.Bundle()
+                parameters.putString("fields", "picture.type(large)")
+                graphRequest.parameters = parameters
+
+                // Ejecutar la petición de forma síncrona
+                val response = graphRequest.executeAndWait()
+                val jsonObject = response.jsonObject
+
+                // Extraer la URL de la foto de perfil
+                jsonObject?.optJSONObject("picture")
+                    ?.optJSONObject("data")
+                    ?.optString("url")
+            } catch (e: Exception) {
+                android.util.Log.e("FacebookProfilePic", "Error getting profile picture: ${e.message}")
+                null
+            }
         }
     }
 
@@ -528,16 +608,60 @@ class UsersViewModel(application: Application) : AndroidViewModel(application) {
 
     fun registerVisited(placeId: String) {
         if (visitedPlaceIds.add(placeId)) {
-            _currentUser.value?.let { user ->
-                _currentUser.value = user.copy(placesVisited = user.placesVisited + 1)
+            viewModelScope.launch {
+                _currentUser.value?.let { user ->
+                    val updatedUser = user.copy(placesVisited = user.placesVisited + 1)
+                    _currentUser.value = updatedUser
+                    try {
+                        updateFirebase(updatedUser)
+                    } catch (e: Exception) {
+                        // Silently fail - achievement tracking is not critical
+                    }
+                }
             }
         }
     }
 
     fun updatePlacesCreated(count: Int) {
-        _currentUser.value?.let { user ->
-            if (user.placesCreated != count) {
-                _currentUser.value = user.copy(placesCreated = count)
+        viewModelScope.launch {
+            _currentUser.value?.let { user ->
+                if (user.placesCreated != count) {
+                    val updatedUser = user.copy(placesCreated = count)
+                    _currentUser.value = updatedUser
+                    try {
+                        updateFirebase(updatedUser)
+                    } catch (e: Exception) {
+                        // Silently fail - achievement tracking is not critical
+                    }
+                }
+            }
+        }
+    }
+
+    fun incrementPlacesCreated() {
+        viewModelScope.launch {
+            _currentUser.value?.let { user ->
+                val updatedUser = user.copy(placesCreated = user.placesCreated + 1)
+                _currentUser.value = updatedUser
+                try {
+                    updateFirebase(updatedUser)
+                } catch (e: Exception) {
+                    // Silently fail - achievement tracking is not critical
+                }
+            }
+        }
+    }
+
+    fun incrementReviewsWritten() {
+        viewModelScope.launch {
+            _currentUser.value?.let { user ->
+                val updatedUser = user.copy(reviewsWritten = user.reviewsWritten + 1)
+                _currentUser.value = updatedUser
+                try {
+                    updateFirebase(updatedUser)
+                } catch (e: Exception) {
+                    // Silently fail - achievement tracking is not critical
+                }
             }
         }
     }
@@ -646,6 +770,40 @@ class UsersViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         auth.sendPasswordResetEmail(email).await()
+    }
+
+    fun syncUserStats() {
+        viewModelScope.launch {
+            _currentUser.value?.let { user ->
+                try {
+                    // Count places created by user
+                    val placesSnapshot = db.collection("places")
+                        .whereEqualTo("ownerId", user.id)
+                        .get()
+                        .await()
+                    val placesCount = placesSnapshot.size()
+
+                    // Count reviews written by user
+                    val reviewsSnapshot = db.collection("reviews")
+                        .whereEqualTo("userID", user.id)
+                        .get()
+                        .await()
+                    val reviewsCount = reviewsSnapshot.size()
+
+                    // Update user with real counts
+                    val updatedUser = user.copy(
+                        placesCreated = placesCount,
+                        reviewsWritten = reviewsCount
+                    )
+
+                    _currentUser.value = updatedUser
+                    updateFirebase(updatedUser)
+                } catch (e: Exception) {
+                    // Silently fail - stats sync is not critical
+                    e.printStackTrace()
+                }
+            }
+        }
     }
 
 }

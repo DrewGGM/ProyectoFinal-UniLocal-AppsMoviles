@@ -60,7 +60,7 @@ fun MyPlacesScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.txt_back),
-                            tint = TextDark
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
@@ -95,7 +95,7 @@ fun MyPlacesScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(BgLight)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .padding(paddingValues),
                 contentPadding = PaddingValues(24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -140,7 +140,7 @@ fun MyPlaceCard(
                     modifier = Modifier
                         .size(80.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(BgLight),
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentAlignment = Alignment.Center
                 ) {
                     if (place.imagenes.isNotEmpty()) {
@@ -169,7 +169,7 @@ fun MyPlaceCard(
                         text = place.title,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextDark,
+                        color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -182,12 +182,12 @@ fun MyPlaceCard(
                             imageVector = Icons.Default.CalendarToday,
                             contentDescription = null,
                             modifier = Modifier.size(14.dp),
-                            tint = TextMuted
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
                             text = place.getFormattedCreatedDate(),
                             fontSize = 13.sp,
-                            color = TextMuted
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
@@ -259,7 +259,7 @@ fun ActionButton(
         modifier = Modifier
             .size(35.dp)
             .clip(CircleShape)
-            .background(BgLight)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(2.dp).fillMaxSize()
     ) {
         Icon(
@@ -314,19 +314,19 @@ fun EmptyState(modifier: Modifier = Modifier) {
             Icon(
                 imageVector = Icons.Default.StoreMallDirectory,
                 contentDescription = null,
-                tint = TextSecondary,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(80.dp)
             )
             Text(
                 text = stringResource(R.string.txt_no_places_created_yet),
                 fontSize = 16.sp,
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Medium
             )
             Text(
                 text = stringResource(R.string.txt_tap_plus_to_create_place),
                 fontSize = 14.sp,
-                color = TextMuted
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

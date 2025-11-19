@@ -36,7 +36,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,13 +57,11 @@ import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.model.MenuItemData
 import com.example.primeraplicacionprueba.model.StatData
 import com.example.primeraplicacionprueba.model.User
-import com.example.primeraplicacionprueba.ui.theme.BgLight
+import com.example.primeraplicacionprueba.ui.screens.LocalMainViewModel
 import com.example.primeraplicacionprueba.ui.theme.ErrorRed
 import com.example.primeraplicacionprueba.ui.theme.Primary
 import com.example.primeraplicacionprueba.ui.theme.Secondary
-import com.example.primeraplicacionprueba.ui.theme.TextDark
 import com.example.primeraplicacionprueba.ui.theme.TextLight
-import com.example.primeraplicacionprueba.ui.theme.TextMuted
 import com.example.primeraplicacionprueba.viewmodel.UsersViewModel
 
 @Composable
@@ -73,6 +73,17 @@ fun Profile(
     onNavigateToMyPlaces: () -> Unit = {},
     onNavigateToFavorites: () -> Unit = {}
 ) {
+    val mainViewModel = LocalMainViewModel.current
+    val usersViewModel = mainViewModel.usersViewModel
+    val currentUser by usersViewModel.currentUser.collectAsState()
+
+    // Sync user stats when profile is loaded
+    LaunchedEffect(user.id) {
+        usersViewModel.syncUserStats()
+    }
+
+    // Use currentUser from ViewModel for reactive updates, fallback to passed user
+    val displayUser = currentUser ?: user
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -80,15 +91,12 @@ fun Profile(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-        // Header con gradiente
-        ProfileHeader(user = user)
+        ProfileHeader(user = displayUser)
 
         Spacer(modifier = Modifier.height(5.dp))
 
-        // Estadísticas
-        StatsGrid(user = user)
+        StatsGrid(user = displayUser)
 
-        // Mi Contenido
         Spacer(modifier = Modifier.height(24.dp))
         SectionTitle(stringResource(R.string.txt_my_content))
         ContentSection(
@@ -98,12 +106,10 @@ fun Profile(
             onNavigateToFavorites = onNavigateToFavorites,
         )
 
-        // Opciones de la Cuenta
         Spacer(modifier = Modifier.height(24.dp))
         SectionTitle(stringResource(R.string.txt_account_options))
         AccountOptionsSection(onNavigateToLogin = onNavigateToLogin)
 
-        // Espaciado para el bottom navigation
         Spacer(modifier = Modifier.height(100.dp))
         }
     }
@@ -116,7 +122,6 @@ fun ProfileHeader(user: User?) {
             .fillMaxWidth()
             .height(250.dp)
     ) {
-        // Fondo con gradiente
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -134,7 +139,6 @@ fun ProfileHeader(user: User?) {
                     .padding(top = 40.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Avatar
                 Box(
                     modifier = Modifier
                         .size(100.dp)
@@ -162,7 +166,6 @@ fun ProfileHeader(user: User?) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Nombre
                 Text(
                     text = user?.nombre ?: "",
                     fontSize = 24.sp,
@@ -170,7 +173,6 @@ fun ProfileHeader(user: User?) {
                     color = TextLight
                 )
 
-                // Rol
                 Text(
                     text = user?.rol?.name ?: "",
                     fontSize = 16.sp,
@@ -252,7 +254,7 @@ fun StatCard(
             Text(
                 text = label,
                 fontSize = 13.sp,
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 lineHeight = 16.sp
             )
@@ -266,7 +268,7 @@ fun SectionTitle(title: String) {
         text = title,
         fontSize = 18.sp,
         fontWeight = FontWeight.SemiBold,
-        color = TextDark,
+        color = MaterialTheme.colorScheme.onSurface,
         modifier = Modifier.padding(horizontal = 24.dp)
     )
 }
@@ -323,7 +325,6 @@ fun AccountOptionsSection(
 ) {
     val logoutText = stringResource(R.string.txt_logout)
     val items = listOf(
-        MenuItemData(stringResource(R.string.txt_delete_account), Icons.Default.DeleteForever),
         MenuItemData(logoutText, Icons.AutoMirrored.Filled.Logout)
     )
 
@@ -380,7 +381,7 @@ fun MenuItem(
             Text(
                 text = text,
                 fontSize = 15.sp,
-                color = TextDark,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f)
             )
             Icon(
@@ -393,7 +394,7 @@ fun MenuItem(
         if (showDivider) {
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                color = BgLight,
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 thickness = 1.dp
             )
         }

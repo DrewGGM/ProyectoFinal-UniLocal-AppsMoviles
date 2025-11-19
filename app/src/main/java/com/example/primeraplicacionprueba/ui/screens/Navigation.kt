@@ -25,6 +25,7 @@ import java.time.LocalDate
 import com.example.primeraplicacionprueba.ui.screens.admin.HomeAdmin
 import com.example.primeraplicacionprueba.ui.screens.admin.DetailPlaceAdmin
 import com.example.primeraplicacionprueba.ui.screens.admin.MyPerfilAdmin
+import com.example.primeraplicacionprueba.ui.screens.admin.ReportsManagementScreen
 import com.example.primeraplicacionprueba.ui.screens.user.UserScreen
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.CreatePlaceStepFour
 import com.example.primeraplicacionprueba.ui.screens.user.tabs.home.createplace.CreatePlaceStepOne
@@ -204,6 +205,9 @@ fun Navigation(
                         },
                         onNavigateToProfile = {
                             navController.navigate(RouteScreen.MyPerfilAdmin)
+                        },
+                        onNavigateToReports = {
+                            navController.navigate(RouteScreen.ReportsManagement)
                         }
                     )
                 }
@@ -224,7 +228,7 @@ fun Navigation(
                     val usersViewModel = mainViewModel.usersViewModel
                     val placesViewModel = mainViewModel.placesViewModel
                     val currentUser by usersViewModel.currentUser.collectAsState()
-                    
+
                     currentUser?.let { user ->
                         MyPerfilAdmin(
                             user = user,
@@ -239,6 +243,15 @@ fun Navigation(
                             }
                         )
                     }
+                }
+
+                composable<RouteScreen.ReportsManagement> {
+                    ReportsManagementScreen(
+                        onNavigateBack = { navController.popBackStack() },
+                        onNavigateToPlaceDetail = { placeId ->
+                            navController.navigate(RouteScreen.AdminPlaceDetail(placeId))
+                        }
+                    )
                 }
 
                 composable<RouteScreen.MyComments> {
@@ -274,10 +287,17 @@ fun Navigation(
                     )
                 }
                 composable<RouteScreen.Map> {
+                    val args = it.toRoute<RouteScreen.Map>()
+                    val mainViewModel = LocalMainViewModel.current
+                    val placesViewModel = mainViewModel.placesViewModel
                     Map(
                         onMapToFilter = {
                             navController.navigate(RouteScreen.FilterBusqueda)
-                        }
+                        },
+                        onNavigateToDetail = { placeId ->
+                            navController.navigate(RouteScreen.PlaceDetail(placeId))
+                        },
+                        focusedPlaceId = args.placeId
                     )
                 }
 
@@ -384,7 +404,7 @@ fun Navigation(
                                     location = state.location ?: Location(0.0, 0.0),
                                     adress = if (state.address.isBlank()) context.getString(R.string.txt_not_specified) else state.address,
                                     website = state.website,
-                                    email = null,
+                                    email = state.email,
                                     socialMedia = state.socialMedia,
                                     city = currentUser?.city ?: context.getString(R.string.txt_not_specified),
                                     neighborhood = if (state.neighborhood.isBlank()) context.getString(R.string.txt_not_specified) else state.neighborhood,
@@ -405,7 +425,7 @@ fun Navigation(
                                     location = state.location ?: Location(0.0, 0.0),
                                     adress = if (state.address.isBlank()) context.getString(R.string.txt_not_specified) else state.address,
                                     website = state.website,
-                                    email = null,
+                                    email = state.email,
                                     socialMedia = state.socialMedia,
                                     city = currentUser?.city ?: context.getString(R.string.txt_not_specified),
                                     neighborhood = if (state.neighborhood.isBlank()) context.getString(R.string.txt_not_specified) else state.neighborhood,
@@ -437,6 +457,12 @@ fun Navigation(
                         },
                         onNavigateToComment = { placeId ->
                             navController.navigate(RouteScreen.CommentScream(placeId))
+                        },
+                        onNavigateToMap = { placeId ->
+                            navController.navigate(RouteScreen.Map(placeId))
+                        },
+                        onNavigateToReport = { placeId ->
+                            navController.navigate(RouteScreen.CreateReport(placeId))
                         }
                     )
 
@@ -453,6 +479,23 @@ fun Navigation(
                             userId = user.id,
                             username = user.username,
                             reviewViewModel = reviewViewModel,
+                            onNavigateBack = {
+                                navController.popBackStack()
+                            }
+                        )
+                    }
+                }
+
+                composable<RouteScreen.CreateReport> {
+                    val args = it.toRoute<RouteScreen.CreateReport>()
+                    val mainViewModel = LocalMainViewModel.current
+                    val placesViewModel = mainViewModel.placesViewModel
+                    val place = placesViewModel.findById(args.placeId)
+
+                    if (place != null) {
+                        ReportPlaceScreen(
+                            placeId = args.placeId,
+                            placeName = place.title,
                             onNavigateBack = {
                                 navController.popBackStack()
                             }

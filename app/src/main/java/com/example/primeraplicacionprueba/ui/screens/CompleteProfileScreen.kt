@@ -91,7 +91,7 @@ fun CompleteProfileScreen(
             usernameError = context.getString(R.string.txt_errorGeneral)
             isValid = false
         } else if (username.length < 3) {
-            usernameError = "El nombre de usuario debe tener al menos 3 caracteres"
+            usernameError = context.getString(R.string.txt_username_error_short)
             isValid = false
         } else {
             usernameError = ""
@@ -129,7 +129,6 @@ fun CompleteProfileScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-            // Card principal
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -143,7 +142,6 @@ fun CompleteProfileScreen(
                         .fillMaxWidth()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    // Header con gradiente
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -184,7 +182,6 @@ fun CompleteProfileScreen(
                         }
                     }
 
-                    // Contenido del formulario
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -192,7 +189,6 @@ fun CompleteProfileScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        // Información del usuario
                         Text(
                             text = stringResource(R.string.txt_welcome) + ", ${user.nombre}!",
                             fontSize = 20.sp,
@@ -210,7 +206,6 @@ fun CompleteProfileScreen(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Campo Email (mostrar solo si está vacío)
                         if (user.email.isBlank()) {
                             OutlinedTextField(
                                 value = email,
@@ -234,7 +229,6 @@ fun CompleteProfileScreen(
                             )
                         }
 
-                        // Campo Username
                         OutlinedTextField(
                             value = username,
                             onValueChange = {
@@ -255,7 +249,6 @@ fun CompleteProfileScreen(
                             shape = RoundedCornerShape(12.dp)
                         )
 
-                        // Dropdown para País con búsqueda
                         SearchableDropdown(
                             label = stringResource(R.string.txt_country),
                             selectedValue = country,
@@ -266,12 +259,11 @@ fun CompleteProfileScreen(
                             },
                             modifier = Modifier.fillMaxWidth(),
                             isLoading = isLoadingCountries,
-                            placeholder = "Selecciona un país",
+                            placeholder = stringResource(R.string.txt_select_country_placeholder),
                             isError = countryError.isNotEmpty(),
                             errorMessage = countryError.ifEmpty { null }
                         )
 
-                        // Dropdown para Ciudad con búsqueda
                         SearchableDropdown(
                             label = stringResource(R.string.txt_city),
                             selectedValue = city,
@@ -281,9 +273,9 @@ fun CompleteProfileScreen(
                                 if (cityError.isNotEmpty()) cityError = ""
                             },
                             modifier = Modifier.fillMaxWidth(),
-                            enabled = country.isNotEmpty(), // Solo habilitado si hay país seleccionado
+                            enabled = country.isNotEmpty(),
                             isLoading = isLoadingCities,
-                            placeholder = if (country.isEmpty()) "Primero selecciona un país" else "Selecciona una ciudad",
+                            placeholder = if (country.isEmpty()) stringResource(R.string.txt_select_country_first) else stringResource(R.string.txt_select_city_placeholder),
                             isError = cityError.isNotEmpty(),
                             errorMessage = cityError.ifEmpty { null }
                         )
@@ -303,7 +295,6 @@ fun CompleteProfileScreen(
                             }
                         )
 
-                        // Botón de completar perfil
                         Button(
                             onClick = {
                                 if (validarCampos()) {

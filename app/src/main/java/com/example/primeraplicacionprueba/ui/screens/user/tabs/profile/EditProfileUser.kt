@@ -92,16 +92,15 @@ fun EditProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BgLight)
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        // Top Bar
         TopAppBar(
             title = {
                 Text(
                     text = stringResource(R.string.txt_edit_profile),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextDark
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             navigationIcon = {
@@ -109,7 +108,7 @@ fun EditProfileScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.txt_back),
-                        tint = TextDark
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
             },
@@ -118,7 +117,6 @@ fun EditProfileScreen(
             )
         )
 
-        // Contenido principal
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -126,7 +124,6 @@ fun EditProfileScreen(
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Foto de perfil con SingleImageUploader
             Column(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -145,19 +142,17 @@ fun EditProfileScreen(
                 Text(
                     text = stringResource(R.string.txt_tap_to_change_photo),
                     fontSize = 12.sp,
-                    color = TextMuted
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // CAMPOS EDITABLES
-            // Nombre Completo
             Column {
                 Text(
                     text = stringResource(R.string.txt_full_name_label),
                     fontSize = 14.sp,
-                    color = TextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 OutlinedTextField(
@@ -172,21 +167,20 @@ fun EditProfileScreen(
                         { Text(nombreCompletoError, color = MaterialTheme.colorScheme.error) }
                     } else null,
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = BorderLight,
-                        focusedBorderColor = Secondary,
-                        unfocusedContainerColor = BgLight,
-                        focusedContainerColor = BgLight
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
             }
 
-            // Nombre de Usuario
             Column {
                 Text(
                     text = stringResource(R.string.txt_username_label),
                     fontSize = 14.sp,
-                    color = TextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 OutlinedTextField(
@@ -201,21 +195,20 @@ fun EditProfileScreen(
                         { Text(nombreUsuarioError, color = MaterialTheme.colorScheme.error) }
                     } else null,
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = BorderLight,
-                        focusedBorderColor = Secondary,
-                        unfocusedContainerColor = BgLight,
-                        focusedContainerColor = BgLight
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
             }
 
-            // Ciudad de Residencia
             Column {
                 Text(
                     text = stringResource(R.string.txt_city_residence),
                     fontSize = 14.sp,
-                    color = TextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 OutlinedTextField(
@@ -230,10 +223,10 @@ fun EditProfileScreen(
                         { Text(ciudadError, color = MaterialTheme.colorScheme.error) }
                     } else null,
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = BorderLight,
-                        focusedBorderColor = Secondary,
-                        unfocusedContainerColor = BgLight,
-                        focusedContainerColor = BgLight
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
@@ -241,20 +234,18 @@ fun EditProfileScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Sección no editable
             Text(
                 text = stringResource(R.string.txt_account_info_not_editable),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextDark
+                color = MaterialTheme.colorScheme.onSurface
             )
 
-            // Correo Electrónico (no editable)
             Column {
                 Text(
                     text = stringResource(R.string.txt_electronic_mail),
                     fontSize = 14.sp,
-                    color = TextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 OutlinedTextField(
@@ -263,20 +254,19 @@ fun EditProfileScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = false,
                     colors = OutlinedTextFieldDefaults.colors(
-                        disabledBorderColor = BorderLight,
-                        disabledContainerColor = BackgroundDisabled,
-                        disabledTextColor = TextMuted
+                        disabledBorderColor = MaterialTheme.colorScheme.outline,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                        disabledTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
             }
 
-            // Contraseña (no editable pero con opción ver)
             Column {
                 Text(
                     text = stringResource(R.string.txt_password_label),
                     fontSize = 14.sp,
-                    color = TextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 OutlinedTextField(
@@ -285,22 +275,10 @@ fun EditProfileScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = false,
                     visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    trailingIcon = {
-                        TextButton(onClick = { passwordVisible = !passwordVisible }) {
-                            Text(
-                                text = if (passwordVisible)
-                                    stringResource(R.string.txt_hide)
-                                else
-                                    stringResource(R.string.txt_show),
-                                color = Secondary,
-                                fontSize = 12.sp
-                            )
-                        }
-                    },
                     colors = OutlinedTextFieldDefaults.colors(
-                        disabledBorderColor = BorderLight,
-                        disabledContainerColor = BackgroundDisabled,
-                        disabledTextColor = TextMuted
+                        disabledBorderColor = MaterialTheme.colorScheme.outline,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                        disabledTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
@@ -308,7 +286,6 @@ fun EditProfileScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Botón Guardar Cambios
             Button(
                 onClick = {
                     if (validarCampos()) {
@@ -326,7 +303,7 @@ fun EditProfileScreen(
                     .height(56.dp),
                 shape = RoundedCornerShape(28.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Primary
+                    containerColor = MaterialTheme.colorScheme.primary
                 )
             ) {
                 Text(

@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
     implementation(libs.play.services.auth)
+    implementation(libs.play.services.location)
     implementation(libs.facebook.login)
     implementation(libs.cloudinary.android)
     implementation(libs.retrofit)
