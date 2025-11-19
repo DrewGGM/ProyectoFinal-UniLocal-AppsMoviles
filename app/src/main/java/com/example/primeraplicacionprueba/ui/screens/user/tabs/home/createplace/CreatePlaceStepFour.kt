@@ -59,7 +59,7 @@ fun CreatePlaceStepFour(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         // Header
         Row(

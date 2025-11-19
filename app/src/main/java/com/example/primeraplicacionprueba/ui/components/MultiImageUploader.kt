@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.primeraplicacionprueba.R
+import com.example.primeraplicacionprueba.ui.theme.SuccessGreen
 import com.example.primeraplicacionprueba.utils.CloudinaryHelper
 import kotlinx.coroutines.launch
 
@@ -81,7 +82,7 @@ fun MultiImageUploader(
                     .height(120.dp)
                     .border(
                         width = 2.dp,
-                        color = Color(0xFF4CAF50).copy(alpha = 0.5f),
+                        color = SuccessGreen.copy(alpha = 0.5f),
                         shape = RoundedCornerShape(12.dp)
                     )
                     .clickable(enabled = uploadingCount == 0) {
@@ -93,13 +94,13 @@ fun MultiImageUploader(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(36.dp),
-                            color = Color(0xFF4CAF50)
+                            color = SuccessGreen
                         )
                         Spacer(Modifier.height(8.dp))
                         Text(
                             text = stringResource(R.string.txt_uploading_images, uploadingCount),
                             fontSize = 12.sp,
-                            color = Color(0xFF4CAF50)
+                            color = SuccessGreen
                         )
                     }
                 } else {
@@ -107,14 +108,14 @@ fun MultiImageUploader(
                         Icon(
                             imageVector = Icons.Default.AddAPhoto,
                             contentDescription = null,
-                            tint = Color(0xFF4CAF50),
+                            tint = SuccessGreen,
                             modifier = Modifier.size(36.dp)
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
                             text = stringResource(R.string.txt_add_photos_count, currentImageUrls.size, maxImages),
                             fontSize = 14.sp,
-                            color = Color(0xFF4CAF50),
+                            color = SuccessGreen,
                             fontWeight = FontWeight.Medium
                         )
                     }
@@ -151,7 +152,7 @@ fun MultiImageUploader(
                                 .clip(RoundedCornerShape(8.dp))
                                 .border(
                                     width = 1.dp,
-                                    color = Color.LightGray,
+                                    color = MaterialTheme.colorScheme.outlineVariant,
                                     shape = RoundedCornerShape(8.dp)
                                 ),
                             contentScale = ContentScale.Crop

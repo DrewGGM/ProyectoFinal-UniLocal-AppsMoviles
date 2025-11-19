@@ -67,7 +67,7 @@ fun SingleImageUploader(
             .size(120.dp)
             .clip(CircleShape)
             .border(3.dp, Secondary, CircleShape)
-            .background(Color(0xFFE0E0E0))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .clickable(enabled = !isUploading) {
                 imagePickerLauncher.launch("image/*")
             },

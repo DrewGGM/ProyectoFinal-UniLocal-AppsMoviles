@@ -56,25 +56,26 @@ fun ForgotPasswordScreen(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BgLight)
+    Surface(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
             // Card principal
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(32.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
             ) {
                 Column(
@@ -127,7 +128,7 @@ fun ForgotPasswordScreen(
                             text = stringResource(R.string.txt_forgot_password_title),
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = TextDark,
+                            color = MaterialTheme.colorScheme.onSurface,
                             textAlign = TextAlign.Center
                         )
 
@@ -135,7 +136,7 @@ fun ForgotPasswordScreen(
                         Text(
                             text = stringResource(R.string.txt_forgot_password_subtitle),
                             fontSize = 14.sp,
-                            color = TextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
                             lineHeight = 20.sp
                         )
@@ -159,7 +160,7 @@ fun ForgotPasswordScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = Secondary,
                                 focusedLabelColor = Secondary,
-                                unfocusedBorderColor = BorderLight
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
                             ),
                             shape = RoundedCornerShape(12.dp)
                         )
@@ -244,6 +245,7 @@ fun ForgotPasswordScreen(
                 modifier = Modifier.fillMaxWidth(),
                 color = MaterialTheme.colorScheme.primary
             )
+        }
         }
     }
 }

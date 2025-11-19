@@ -31,6 +31,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.Icon
@@ -175,25 +176,26 @@ fun LoginScreen(
         return isValid
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BgLight)
+    Surface(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
             // Card principal
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(32.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
             ) {
                 Column(
@@ -247,7 +249,7 @@ fun LoginScreen(
                             text = stringResource(R.string.txt_welcome_back),
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = TextDark,
+                            color = MaterialTheme.colorScheme.onSurface,
                             textAlign = TextAlign.Center
                         )
 
@@ -255,7 +257,7 @@ fun LoginScreen(
                         Text(
                             text = stringResource(R.string.txt_welcome_subtitle),
                             fontSize = 14.sp,
-                            color = TextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
                             lineHeight = 20.sp
                         )
@@ -279,7 +281,7 @@ fun LoginScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = Secondary,
                                 focusedLabelColor = Secondary,
-                                unfocusedBorderColor = BorderLight
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
                             ),
                             shape = RoundedCornerShape(12.dp)
                         )
@@ -316,7 +318,7 @@ fun LoginScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = Secondary,
                                 focusedLabelColor = Secondary,
-                                unfocusedBorderColor = BorderLight
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
                             ),
                             shape = RoundedCornerShape(12.dp)
                         )
@@ -415,7 +417,7 @@ fun LoginScreen(
                         ) {
                             Text(
                                 text = stringResource(R.string.txt_no_account),
-                                color = TextMuted,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 15.sp
                             )
                             Text(
@@ -443,6 +445,7 @@ fun LoginScreen(
                     }
                 }
             }
+        }
         }
     }
 }

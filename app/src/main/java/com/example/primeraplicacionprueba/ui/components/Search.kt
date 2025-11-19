@@ -83,7 +83,7 @@ import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
                         placeholder = {
                             Text(
                                 text = placeholder,
-                                color = Color(0xFF9E9E9E), // gris suave
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 18.sp
                             )
                         },
@@ -91,7 +91,7 @@ import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = stringResource(R.string.cd_search),
-                                tint = Color(0xFFFFC1CC) // color rosado del icono
+                                tint = Secondary
                             )
                         }
                     )
@@ -99,8 +99,8 @@ import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
                 expanded = expanded,
                 onExpandedChange = onExpandedChange,
                 colors = SearchBarDefaults.colors(
-                    containerColor = Color.White,
-                    dividerColor = Color(0xFFE0E0E0),
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    dividerColor = MaterialTheme.colorScheme.outlineVariant,
                     inputFieldColors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent
@@ -113,7 +113,7 @@ import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color.White)
+                            .background(MaterialTheme.colorScheme.surface)
                             .padding(horizontal = 8.dp, vertical = 8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
@@ -137,11 +137,11 @@ import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
                                 ) {
                                     Text(
                                         text = itemText(item),
-                                        color = Color(0xFF4A4A4A),
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         fontSize = 16.sp
                                     )
                                     HorizontalDivider(
-                                        color = Color(0xFFF0F0F0),
+                                        color = MaterialTheme.colorScheme.outlineVariant,
                                         thickness = 1.dp,
                                         modifier = Modifier.padding(top = 4.dp)
                                     )
@@ -166,7 +166,7 @@ fun PlaceSearchItem(
             .fillMaxWidth()
             .clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -211,7 +211,7 @@ fun PlaceSearchItem(
                     text = place.title,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextDark,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1
                 )
 
@@ -219,7 +219,7 @@ fun PlaceSearchItem(
                 Text(
                     text = place.type.name.lowercase().replaceFirstChar { it.titlecase() },
                     fontSize = 13.sp,
-                    color = TextMuted
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 // Calificación
@@ -237,7 +237,7 @@ fun PlaceSearchItem(
                         text = String.format("%.1f", rating),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
-                        color = TextDark
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }

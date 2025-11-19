@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.primeraplicacionprueba.R
+import com.example.primeraplicacionprueba.ui.theme.SuccessGreen
 import com.example.primeraplicacionprueba.viewmodel.PlacesViewModel
 
 @Composable
@@ -41,7 +42,7 @@ fun DetailPlaceAdmin(
                         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.cd_back))
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         },
         bottomBar = {
@@ -57,18 +58,18 @@ fun DetailPlaceAdmin(
                         modifier = Modifier
                             .weight(1f)
                             .height(48.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                         shape = RoundedCornerShape(10.dp),
                         onClick = { placesViewModel.rejectPlace(place.id); onNavigateBack() }
                     ) {
-                        Text(stringResource(R.string.txt_reject), color = Color.White)
+                        Text(stringResource(R.string.txt_reject), color = MaterialTheme.colorScheme.onError)
                     }
 
                     Button(
                         modifier = Modifier
                             .weight(1f)
                             .height(48.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32)),
+                        colors = ButtonDefaults.buttonColors(containerColor = SuccessGreen),
                         shape = RoundedCornerShape(10.dp),
                         onClick = { placesViewModel.approvePlace(place.id); onNavigateBack() }
                     ) {
@@ -91,7 +92,7 @@ fun DetailPlaceAdmin(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xFFF4F4F4))
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(padding),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -103,7 +104,7 @@ fun DetailPlaceAdmin(
                             .fillMaxWidth()
                             .height(160.dp)
                             .background(
-                                Color(0xFFB2E6D4),
+                                MaterialTheme.colorScheme.tertiaryContainer,
                                 RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
                             )
                     ) {
@@ -117,12 +118,12 @@ fun DetailPlaceAdmin(
                                 text = place.title,
                                 fontSize = 22.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = MaterialTheme.colorScheme.onTertiaryContainer
                             )
                             Text(
                                 text = stringResource(R.string.txt_created_by, place.ownerId),
                                 fontSize = 13.sp,
-                                color = Color.White.copy(alpha = 0.9f)
+                                color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f)
                             )
                         }
                     }
@@ -134,7 +135,7 @@ fun DetailPlaceAdmin(
                         modifier = Modifier.fillMaxWidth()
                             .padding(10.dp, bottom = 10.dp, end =  10.dp, top = 10.dp),
                         shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                     ) {
                         Column(Modifier.padding(25.dp)) {
@@ -143,7 +144,7 @@ fun DetailPlaceAdmin(
                             Text(
                                 text = place.description,
                                 fontSize = 15.sp,
-                                color = Color.DarkGray
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -155,7 +156,7 @@ fun DetailPlaceAdmin(
                         modifier = Modifier.fillMaxWidth()
                             .padding(10.dp, bottom = 10.dp, end =  10.dp),
                         shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
 
                     ) {
@@ -176,7 +177,7 @@ fun DetailPlaceAdmin(
                         modifier = Modifier.fillMaxWidth()
                             .padding(10.dp, bottom = 10.dp, end =  10.dp),
                         shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                     ) {
                         Column(Modifier.padding(25.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -185,7 +186,7 @@ fun DetailPlaceAdmin(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(140.dp),
-                                color = Color(0xFFE3F2FD),
+                                color = MaterialTheme.colorScheme.primaryContainer,
                                 shape = RoundedCornerShape(12.dp)
                             ) {
                                 Image(
@@ -193,7 +194,7 @@ fun DetailPlaceAdmin(
                                     contentDescription = null,
                                 )
                             }
-                            Text(place.adress, color = Color.Gray)
+                            Text(place.adress, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
@@ -205,8 +206,8 @@ fun DetailPlaceAdmin(
 @Composable
 fun InfoRow(icon: ImageVector, text: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Icon(icon, contentDescription = null, tint = Color(0xFF4CAF50))
+        Icon(icon, contentDescription = null, tint = SuccessGreen)
         Spacer(Modifier.width(8.dp))
-        Text(text, color = Color.DarkGray)
+        Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

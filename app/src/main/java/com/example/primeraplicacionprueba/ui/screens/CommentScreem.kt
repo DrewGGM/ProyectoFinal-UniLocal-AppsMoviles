@@ -61,7 +61,7 @@ fun CommentScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5)) // Fondo oscuro como en la imagen
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier
@@ -74,7 +74,7 @@ fun CommentScreen(
                     .height(150.dp)
                     .padding(bottom = 20.dp)
                     .clip(RoundedCornerShape(20.dp)),
-                color = Color.White
+                color = MaterialTheme.colorScheme.surface
             ) {
                 Row(
                     modifier = Modifier
@@ -87,7 +87,7 @@ fun CommentScreen(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = stringResource(R.string.txt_go_back),
-                            tint = Color(0xFF333333)
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
 
@@ -95,7 +95,7 @@ fun CommentScreen(
                         text = stringResource(R.string.txt_write_comment_title),
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF333333),
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Center
                     )
@@ -104,7 +104,7 @@ fun CommentScreen(
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = stringResource(R.string.cd_close),
-                            tint = Color(0xFF333333)
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -118,7 +118,7 @@ fun CommentScreen(
                     .padding(bottom = 50.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Column(
                     modifier = Modifier
@@ -190,7 +190,7 @@ fun RatingSection(
             text = stringResource(R.string.txt_rate_this_place),
             fontSize = 25.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF333333)
+            color = MaterialTheme.colorScheme.onSurface
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -202,7 +202,7 @@ fun RatingSection(
                 Icon(
                     imageVector = if (index < rating) Icons.Default.Star else Icons.Default.StarBorder,
                     contentDescription = null,
-                    tint = if (index < rating) Color(0xFFFFB800) else Color(0xFFBDBDBD),
+                    tint = if (index < rating) Color(0xFFFFB800) else MaterialTheme.colorScheme.outlineVariant,
                     modifier = Modifier
                         .size(40.dp)
                         .clickable { onRatingChanged(index + 1) }
@@ -222,7 +222,7 @@ fun CommentSection(
             text = stringResource(R.string.txt_your_experience),
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF333333)
+            color = MaterialTheme.colorScheme.onSurface
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -231,7 +231,7 @@ fun CommentSection(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             BasicTextField(
                 value = comment,
@@ -242,14 +242,14 @@ fun CommentSection(
                     .height(120.dp),
                 textStyle = TextStyle(
                     fontSize = 14.sp,
-                    color = Color(0xFF333333)
+                    color = MaterialTheme.colorScheme.onSurface
                 ),
                 decorationBox = { innerTextField ->
                     if (comment.isEmpty()) {
                         Text(
                             text = stringResource(R.string.txt_share_opinion_placeholder),
                             fontSize = 14.sp,
-                            color = Color.Gray
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     innerTextField()

@@ -28,6 +28,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -90,7 +91,7 @@ fun FilterBusqueda(
                 .fillMaxWidth(0.95f)
                 .fillMaxSize(0.9f),
             shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
             Column(
@@ -170,7 +171,7 @@ fun FilterBusqueda(
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(20.dp))
-                                    .background(if (seleccionada) Primary else Color.White)
+                                    .background(if (seleccionada) Primary else MaterialTheme.colorScheme.surface)
                                     .border(
                                         2.dp,
                                         if (seleccionada) Primary else BorderLight,
@@ -184,7 +185,7 @@ fun FilterBusqueda(
                             ) {
                                 Text(
                                     text = categoria,
-                                    color = if (seleccionada) Color.White else TextDark,
+                                    color = if (seleccionada) MaterialTheme.colorScheme.onPrimary else TextDark,
                                     fontSize = 14.sp,
                                     fontWeight = if (seleccionada) FontWeight.SemiBold else FontWeight.Normal
                                 )
@@ -274,7 +275,7 @@ fun FilterBusqueda(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.surface)
                         .padding(20.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {

@@ -50,11 +50,11 @@ fun HomeAdmin(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { 
+                title = {
                     Text(
                         stringResource(R.string.txt_moderation_panel_title),
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 },
                 actions = {
@@ -62,11 +62,11 @@ fun HomeAdmin(
                         Icon(
                             imageVector = Icons.Default.Person,
                             contentDescription = stringResource(R.string.txt_profile),
-                            tint = Color.Black
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         }
     ) { padding ->
@@ -156,7 +156,7 @@ fun AdminStatCard(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
@@ -176,7 +176,7 @@ fun AdminStatCard(
             Text(
                 text = label,
                 fontSize = 12.sp,
-                color = AdminTextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
         }
@@ -198,12 +198,12 @@ fun ReviewQueueSection(placesViewModel: PlacesViewModel, onItemClick: (String) -
                 text = stringResource(R.string.txt_review_queue),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = AdminTextDark
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = stringResource(R.string.txt_pending_count, pendingPlaces.size, stringResource(R.string.txt_pending)),
                 fontSize = 14.sp,
-                color = AdminTextMuted
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         
@@ -228,13 +228,13 @@ fun ReviewQueueSection(placesViewModel: PlacesViewModel, onItemClick: (String) -
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Text(
                     text = stringResource(R.string.txt_no_pending_places),
                     modifier = Modifier.padding(16.dp),
-                    color = AdminTextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp
                 )
             }
@@ -256,7 +256,7 @@ fun ReviewItem(
             .fillMaxWidth()
             .clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -273,13 +273,13 @@ fun ReviewItem(
                     text = placeName,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = AdminTextDark
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = createdBy,
                     fontSize = 14.sp,
-                    color = AdminTextMuted
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = timeAgo,
@@ -352,12 +352,12 @@ fun ModerationHistorySection(placesViewModel: PlacesViewModel) {
                 text = stringResource(R.string.txt_moderation_history),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = AdminTextDark
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = stringResource(R.string.txt_moderated_places_count, allModeratedPlaces.size),
                 fontSize = 14.sp,
-                color = AdminTextMuted
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         
@@ -403,7 +403,7 @@ fun ModerationHistorySection(placesViewModel: PlacesViewModel) {
             Text(
                 text = stringResource(R.string.txt_no_moderation_history),
                 fontSize = 14.sp,
-                color = AdminTextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(16.dp)
             )
         }
@@ -419,7 +419,7 @@ fun HistoryItem(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -436,7 +436,7 @@ fun HistoryItem(
                     text = placeName,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
-                    color = AdminTextDark
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = timeAgo,

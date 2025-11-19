@@ -32,9 +32,12 @@ fun SearchableDropdown(
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
+    var textFieldValue by remember { mutableStateOf("") }
 
-    // Mostrar el valor seleccionado o el texto de búsqueda
-    val displayText = if (expanded) searchQuery else selectedValue
+    // Sincronizar el valor del campo de texto con el estado
+    LaunchedEffect(expanded, selectedValue) {
+        textFieldValue = if (expanded) searchQuery else selectedValue
+    }
 
     // Filtrar opciones basado en la búsqueda
     val filteredOptions = remember(searchQuery, options) {
@@ -45,20 +48,16 @@ fun SearchableDropdown(
         }
     }
 
-    // Actualizar displayText cuando cambia selectedValue
-    LaunchedEffect(selectedValue) {
-        if (!expanded) {
-            searchQuery = ""
-        }
-    }
-
     Box(modifier = modifier) {
         Column {
             OutlinedTextField(
-                value = displayText,
+                value = textFieldValue,
                 onValueChange = { newValue ->
+                    textFieldValue = newValue
                     searchQuery = newValue
-                    expanded = true
+                    if (!expanded) {
+                        expanded = true
+                    }
                 },
                 label = { Text(label) },
                 placeholder = { Text(placeholder) },
@@ -70,6 +69,7 @@ fun SearchableDropdown(
                         if (focusState.isFocused && !expanded) {
                             expanded = true
                             searchQuery = ""
+                            textFieldValue = ""
                         }
                     },
                 trailingIcon = {
@@ -85,6 +85,7 @@ fun SearchableDropdown(
                                     onClick = {
                                         onValueChange("")
                                         searchQuery = ""
+                                        textFieldValue = ""
                                     }
                                 ) {
                                     Icon(
@@ -128,6 +129,7 @@ fun SearchableDropdown(
             onDismissRequest = {
                 expanded = false
                 searchQuery = ""
+                textFieldValue = selectedValue
             },
             properties = PopupProperties(focusable = false),
             modifier = Modifier.fillMaxWidth(0.9f)
@@ -153,6 +155,7 @@ fun SearchableDropdown(
                                 onValueChange(option)
                                 expanded = false
                                 searchQuery = ""
+                                textFieldValue = option
                             },
                             colors = MenuDefaults.itemColors(
                                 textColor = if (option == selectedValue) {

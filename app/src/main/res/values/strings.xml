@@ -16,12 +16,12 @@
 
 //TEXTOS LOGIN
 
-    <string name="txt_email">Correo electorinico</string>
+    <string name="txt_email">Correo electrónico</string>
     <string name="txtPassword">Contraseña</string>
-    <string name="btn_login">Iniciar seccion</string>
+    <string name="btn_login">iniciar sesión</string>
     <string name="img_imagen">Imagen</string>
-    <string name="txt_email_error">El correo no es valido</string>
-    <string name="txt_password_error">La contraseña no es valido</string>
+    <string name="txt_email_error">El correo no es válido</string>
+    <string name="txt_password_error">La contraseña no es válida</string>
     <string name="txt_Register">Crear cuenta</string>
     <string name="txt_welcome_back">¡Bienvenido de vuelta!</string>
     <string name="txt_welcome_subtitle">Tu ciudad te espera.</string>
@@ -32,11 +32,11 @@
     <string name="txt_register_link">Regístrate</string>
 
 
-    //TEXTOS RESGISTRO
+    //TEXTOS REGISTRO
     <string name="txt_name">Ingrese un nombre</string>
-    <string name="txt_phone_number">Numero de telefono</string>
-    <string name="txt_city">Selecione la ciudad</string>
-    <string name="txt_country">Selecione el pais</string>
+    <string name="txt_phone_number">Número de teléfono</string>
+    <string name="txt_city">Seleccione la ciudad</string>
+    <string name="txt_country">Seleccione el país</string>
     <string name="txt_confirm_password">Confirmar contraseña</string>
     <string name="txt_errorGeneral">Este espacio es obligatorio</string>
     <string name="btn_Register">Registrarse</string>
@@ -45,7 +45,7 @@
     <string name="txt_username_error">El nombre de usuario es obligatorio</string>
     <string name="txt_username_error_short">El nombre de usuario debe tener al menos 3 caracteres</string>
     <string name="txt_city_error">La ciudad es obligatoria</string>
-    <string name="txt_country_error">El pais es obligatorio</string>
+    <string name="txt_country_error">El país es obligatorio</string>
     <string name="txt_email_error_invalid">Ingresa un correo válido</string>
     <string name="txt_password_error_short">La contraseña debe tener al menos 6 caracteres</string>
     <string name="txt_password_error_required">La contraseña es obligatoria</string>
@@ -286,9 +286,9 @@
     <string name="txt_continue_with_facebook">Continuar con Facebook</string>
 
     <!-- MAPS -->
-    <string name="txt_search_placeholder">Buscar lugares o categorias...</string>
+    <string name="txt_search_placeholder">Buscar lugares o categorías...</string>
     <!-- FILTROS -->
-    <string name="txt_filtrosplace">Filtros de busqueda</string>
+    <string name="txt_filtrosplace">Filtros de búsqueda</string>
     <string name="txt_find">Buscar...</string>
     <string name="txt_no_places_found_filters">No se encontraron lugares con esos filtros</string>
 
@@ -398,8 +398,8 @@
     <string name="toast_facebook_signin_cancelled">Inicio de sesión con Facebook cancelado</string>
     <string name="toast_location_permission_granted">Ha concedido permiso para acceder a su ubicación</string>
     <string name="toast_location_permission_denied">No concedió permisos</string>
-    <string name="toast_location_permission_granted_alt">Ha concedido permiso para accerder a su ubicacion</string>
-    <string name="toast_location_permission_denied_alt">No concedio permisos</string>
+    <string name="toast_location_permission_granted_alt">Ha concedido permiso para acceder a su ubicación</string>
+    <string name="toast_location_permission_denied_alt">No concedió permisos</string>
 
     <!-- MY PLACES SCREEN -->
     <string name="txt_comments_label">Comentarios</string>

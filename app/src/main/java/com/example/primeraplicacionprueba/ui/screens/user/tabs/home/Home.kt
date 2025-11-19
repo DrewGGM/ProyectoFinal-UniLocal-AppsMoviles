@@ -61,12 +61,11 @@ fun Home(
                 .distinct()
         )
     }
-    Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(BgLight)
-        ) {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
             item {
                 HeaderSection(
                     userName = user.nombre,
@@ -97,7 +96,7 @@ fun Home(
                     text = stringResource(R.string.txt_categories),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextDark,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
                 )
                 CategoriesSection(
@@ -115,7 +114,7 @@ fun Home(
                     text = stringResource(R.string.txt_popular_places),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextDark,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
                 )
             }
@@ -156,6 +155,7 @@ fun Home(
                 imageVector = Icons.Default.Add,
                 contentDescription = stringResource(R.string.txt_add_new_place)
             )
+        }
         }
     }
 }
@@ -283,7 +283,7 @@ fun CategoriesSection(
                 Text(
                     text = label,
                     fontSize = 12.sp,
-                    color = TextMuted,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     maxLines = 2
                 )
@@ -326,7 +326,7 @@ fun CategoryItem(
         Text(
             text = name,
             fontSize = 12.sp,
-            color = TextMuted,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
             maxLines = 2
         )
@@ -349,7 +349,7 @@ fun PlaceCard(
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 12.dp),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column {
@@ -372,13 +372,13 @@ fun PlaceCard(
                     text = name,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextDark
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = category.toString(),
                     fontSize = 14.sp,
-                    color = TextMuted
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(

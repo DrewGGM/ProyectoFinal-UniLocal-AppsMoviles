@@ -36,6 +36,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.Icon
@@ -268,17 +269,18 @@ fun RegisterScreen(
         return isValid
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BgLight)
+    Surface(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             // Card principal
@@ -287,7 +289,7 @@ fun RegisterScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(32.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
             ) {
                 Column(
@@ -339,7 +341,7 @@ fun RegisterScreen(
                             text = stringResource(R.string.txt_register_title),
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = TextDark,
+                            color = MaterialTheme.colorScheme.onSurface,
                             textAlign = TextAlign.Center
                         )
 
@@ -347,7 +349,7 @@ fun RegisterScreen(
                         Text(
                             text = stringResource(R.string.txt_register_subtitle),
                             fontSize = 14.sp,
-                            color = TextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
                             lineHeight = 20.sp
                         )
@@ -375,7 +377,7 @@ fun RegisterScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = Secondary,
                                 focusedLabelColor = Secondary,
-                                unfocusedBorderColor = BorderLight
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
                             ),
                             shape = RoundedCornerShape(12.dp)
                         )
@@ -402,7 +404,7 @@ fun RegisterScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = Secondary,
                                 focusedLabelColor = Secondary,
-                                unfocusedBorderColor = BorderLight
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
                             ),
                             shape = RoundedCornerShape(12.dp)
                         )
@@ -462,7 +464,7 @@ fun RegisterScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = Secondary,
                                 focusedLabelColor = Secondary,
-                                unfocusedBorderColor = BorderLight
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
                             ),
                             shape = RoundedCornerShape(12.dp)
                         )
@@ -498,7 +500,7 @@ fun RegisterScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = Secondary,
                                 focusedLabelColor = Secondary,
-                                unfocusedBorderColor = BorderLight
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
                             ),
                             shape = RoundedCornerShape(12.dp)
                         )
@@ -595,7 +597,7 @@ fun RegisterScreen(
                             )
                             Text(
                                 text = " ${stringResource(R.string.txt_or_continue_with)} ",
-                                color = TextMuted,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 14.sp,
                                 modifier = Modifier.padding(horizontal = 8.dp)
                             )
@@ -645,7 +647,7 @@ fun RegisterScreen(
                         ) {
                             Text(
                                 text = stringResource(R.string.txt_already_have_account),
-                                color = TextMuted,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 15.sp
                             )
                             Text(
@@ -661,6 +663,7 @@ fun RegisterScreen(
                     }
                 }
             }
+        }
         }
     }
 }

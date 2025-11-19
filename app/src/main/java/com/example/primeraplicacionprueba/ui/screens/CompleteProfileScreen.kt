@@ -116,25 +116,26 @@ fun CompleteProfileScreen(
         return isValid
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BgLight)
+    Surface(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
             // Card principal
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(32.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
             ) {
                 Column(
@@ -196,13 +197,13 @@ fun CompleteProfileScreen(
                             text = stringResource(R.string.txt_welcome) + ", ${user.nombre}!",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = TextDark
+                            color = MaterialTheme.colorScheme.onSurface
                         )
 
                         Text(
                             text = stringResource(R.string.txt_complete_profile_message),
                             fontSize = 14.sp,
-                            color = TextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
                             lineHeight = 20.sp
                         )
@@ -227,7 +228,7 @@ fun CompleteProfileScreen(
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = Secondary,
                                     focusedLabelColor = Secondary,
-                                    unfocusedBorderColor = BorderLight
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
                                 ),
                                 shape = RoundedCornerShape(12.dp)
                             )
@@ -348,6 +349,7 @@ fun CompleteProfileScreen(
                     }
                 }
             }
+        }
         }
     }
 }

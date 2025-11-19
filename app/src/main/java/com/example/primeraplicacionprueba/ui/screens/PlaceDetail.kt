@@ -60,7 +60,7 @@ fun PlaceDetail(
             Text(
                 text = stringResource(R.string.txt_place_not_found),
                 fontSize = 18.sp,
-                color = TextMuted
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         return
@@ -100,7 +100,7 @@ fun PlaceDetail(
                     text = place.title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextDark,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center
                 )
@@ -111,7 +111,7 @@ fun PlaceDetail(
             
             // Línea divisoria
             HorizontalDivider(
-                color = BorderLight,
+                color = MaterialTheme.colorScheme.outline,
                 thickness = 1.dp
             )
             
@@ -131,7 +131,7 @@ fun PlaceDetail(
                         .fillMaxWidth()
                         .offset(y = (-32).dp)
                         .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.surface)
                         .padding(24.dp)
                 ) {
                     // Place Header
@@ -150,7 +150,7 @@ fun PlaceDetail(
                     Text(
                         text = place.description,
                         fontSize = 14.sp,
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 22.sp
                     )
 
@@ -214,7 +214,7 @@ fun PlaceDetail(
                         Text(
                             text = stringResource(R.string.txt_no_reviews),
                             fontSize = 14.sp,
-                            color = TextMuted,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(16.dp)
                         )
                     }
@@ -238,7 +238,7 @@ fun PlaceDetail(
                 onClick = {
                     usersViewModel.toggleFavorite(place.id)
                 },
-                containerColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = if (isFavorite) Primary else TextDark,
                 shape = CircleShape,
                 modifier = Modifier.size(56.dp)
@@ -316,13 +316,13 @@ fun PlaceHeader(
                 text = title,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextDark
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = if (isOpen) stringResource(R.string.txt_open) + " • " + stringResource(R.string.txt_closes_at, closeTime) else stringResource(R.string.txt_closed),
                 fontSize = 14.sp,
-                color = TextMuted
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -341,7 +341,7 @@ fun PlaceHeader(
                     text = rating.toString(),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextDark
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Icon(
                     imageVector = Icons.Default.Star,
@@ -360,7 +360,7 @@ fun SectionTitle(title: String) {
         text = title,
         fontSize = 20.sp,
         fontWeight = FontWeight.SemiBold,
-        color = TextDark
+        color = MaterialTheme.colorScheme.onSurface
     )
 }
 
@@ -441,7 +441,7 @@ fun ContactItem(
             Text(
                 text = text,
                 fontSize = 13.sp,
-                color = TextDark,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -462,7 +462,7 @@ fun MapPlaceholder() {
         Text(
             text = stringResource(R.string.txt_menumap),
             fontSize = 14.sp,
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontStyle = FontStyle.Italic
         )
     }
@@ -510,7 +510,7 @@ fun ReviewCard(
                         text = userName,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = TextDark
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -541,7 +541,7 @@ fun ReviewCard(
             Text(
                 text = comment,
                 fontSize = 14.sp,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 20.sp
             )
 
@@ -587,7 +587,7 @@ fun ReviewCard(
 fun ReplyCard(reply: ReviewReply) {
     Surface(
         shape = RoundedCornerShape(12.dp),
-        color = Color.White,
+        color = MaterialTheme.colorScheme.surface,
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -616,13 +616,13 @@ fun ReplyCard(reply: ReviewReply) {
                     text = reply.username,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = TextDark
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = reply.replyText,
                     fontSize = 12.sp,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     lineHeight = 16.sp
                 )
             }
@@ -660,7 +660,7 @@ fun AmenitiesGrid(amenities: List<String>) {
                             Text(
                                 text = amenity,
                                 fontSize = 12.sp,
-                                color = TextDark,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 maxLines = 1
                             )
                         }
@@ -705,13 +705,13 @@ fun ScheduleSection(schedules: List<com.example.primeraplicacionprueba.model.She
                 ) {
                     Text(
                         text = day.name.lowercase().replaceFirstChar { it.titlecase() },
-                        color = TextDark,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 14.sp
                     )
                     Text(
                         text = entry?.let { stringResource(R.string.txt_schedule_format, it.open.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm")), it.close.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))) }
                             ?: stringResource(id = R.string.txt_closed),
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 13.sp
                     )
                 }

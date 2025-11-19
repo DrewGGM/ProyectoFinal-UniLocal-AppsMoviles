@@ -65,7 +65,7 @@ fun AchievementsScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.surface
                 )
             )
         }
@@ -96,7 +96,7 @@ fun AchievementsScreen(
                         text = stringResource(R.string.txt_achievements_obtained),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = TextDark
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
@@ -121,7 +121,7 @@ fun AchievementsScreen(
                         text = stringResource(R.string.txt_achievements_pending),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = TextDark
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
@@ -156,7 +156,7 @@ fun AchievementCard(achievement: Achievement) {
             .fillMaxWidth()
             .alpha(if (achievement.isUnlocked) 1f else 0.6f),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
@@ -195,7 +195,7 @@ fun AchievementCard(achievement: Achievement) {
                 text = achievement.title,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextDark,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center
             )
 
@@ -203,7 +203,7 @@ fun AchievementCard(achievement: Achievement) {
             Text(
                 text = achievement.description,
                 fontSize = 12.sp,
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 lineHeight = 16.sp
             )
@@ -239,7 +239,7 @@ fun AchievementProgressCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
@@ -253,13 +253,13 @@ fun AchievementProgressCard(
                 text = stringResource(R.string.txt_achievement_progress),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextDark
+                color = MaterialTheme.colorScheme.onSurface
             )
             
             Text(
                 text = stringResource(R.string.txt_achievements_progress, unlockedCount, totalCount, stringResource(R.string.txt_achievements_unlocked)),
                 fontSize = 14.sp,
-                color = TextMuted
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             
             LinearProgressIndicator(
@@ -275,7 +275,7 @@ fun AchievementProgressCard(
             Text(
                 text = stringResource(R.string.txt_percentage, (progressPercentage * 100).toInt()),
                 fontSize = 12.sp,
-                color = TextMuted,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Medium
             )
         }
@@ -300,13 +300,13 @@ fun EmptyAchievementsState() {
         Text(
             text = stringResource(R.string.txt_no_achievements_yet),
             fontSize = 16.sp,
-            color = TextMuted,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Medium
         )
         Text(
             text = stringResource(R.string.txt_explore_to_earn_badge),
             fontSize = 14.sp,
-            color = TextMuted,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
     }

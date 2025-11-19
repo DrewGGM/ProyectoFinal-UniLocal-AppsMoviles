@@ -50,11 +50,11 @@ fun MyCommentScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { 
+                title = {
                     Text(
                         stringResource(R.string.txt_comments_of_place, place?.title ?: stringResource(R.string.default_place_name)),
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 },
                 navigationIcon = {
@@ -62,18 +62,18 @@ fun MyCommentScreen(
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.cd_back),
-                            tint = Color.Black
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         }
     ) { padding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF5F5F5))
+                .background(MaterialTheme.colorScheme.background)
                 .padding(padding),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -101,13 +101,13 @@ fun MyCommentScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.txt_no_comments),
                             modifier = Modifier.padding(16.dp),
-                            color = Color.Gray,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center
                         )
@@ -128,7 +128,7 @@ fun CommentCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
@@ -150,13 +150,13 @@ fun CommentCard(
                         modifier = Modifier
                             .size(40.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFFE3F2FD)),
+                            .background(MaterialTheme.colorScheme.primaryContainer),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Person,
                             contentDescription = stringResource(R.string.cd_avatar),
-                            tint = Color(0xFF1976D2),
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -166,7 +166,7 @@ fun CommentCard(
                         text = review.username,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
                 
@@ -178,7 +178,7 @@ fun CommentCard(
                         Icon(
                             imageVector = Icons.Filled.Star,
                             contentDescription = null,
-                            tint = if (index < review.rating) Color(0xFFFFB800) else Color(0xFFE0E0E0),
+                            tint = if (index < review.rating) Color(0xFFFFB800) else MaterialTheme.colorScheme.outlineVariant,
                             modifier = Modifier.size(16.dp)
                         )
                     }
@@ -189,15 +189,15 @@ fun CommentCard(
             Text(
                 text = review.comment,
                 fontSize = 14.sp,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onSurface,
                 lineHeight = 20.sp
             )
-            
+
             // Timestamp
             Text(
                 text = stringResource(R.string.txt_time_ago_2min),
                 fontSize = 12.sp,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             
             // Mostrar respuestas existentes
@@ -207,7 +207,7 @@ fun CommentCard(
                     text = stringResource(R.string.txt_replies_count, review.replyIds.size),
                     modifier = Modifier.padding(start = 16.dp),
                     fontSize = 12.sp,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 // Note: Replies need to be loaded from Firebase separately
                 // Use reviewViewModel.loadRepliesForReview(review.id) { replies -> ... }
@@ -222,17 +222,17 @@ fun CommentCard(
                 OutlinedTextField(
                     value = replyText,
                     onValueChange = { replyText = it },
-                    placeholder = { Text(stringResource(R.string.txt_write_reply_placeholder), color = Color.Gray) },
+                    placeholder = { Text(stringResource(R.string.txt_write_reply_placeholder), color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color.Gray,
-                        unfocusedBorderColor = Color.LightGray
+                        focusedBorderColor = MaterialTheme.colorScheme.outline,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
                     )
                 )
                 
                 IconButton(
-                    onClick = { 
+                    onClick = {
                         if (replyText.isNotBlank()) {
                             onReply(replyText)
                             replyText = ""
@@ -240,12 +240,12 @@ fun CommentCard(
                     },
                     modifier = Modifier
                         .size(40.dp)
-                        .background(Color(0xFFE53E3E), CircleShape)
+                        .background(MaterialTheme.colorScheme.errorContainer, CircleShape)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.cd_send),
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onErrorContainer,
                         modifier = Modifier.size(20.dp)
                     )
                 }

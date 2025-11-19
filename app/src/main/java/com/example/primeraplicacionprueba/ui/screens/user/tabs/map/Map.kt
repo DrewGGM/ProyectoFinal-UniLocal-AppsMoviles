@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.LocalOffer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -151,12 +152,12 @@ fun Map(
                     .padding(bottom = 16.dp)
                     .fillMaxWidth(0.9f)
                     .clip(RoundedCornerShape(14.dp))
-                    .background(Color(0xFFFFF3E0))
+                    .background(MaterialTheme.colorScheme.tertiaryContainer)
                     .padding(14.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.txt_no_places_found_filters),
-                    color = Color(0xFF8D6E63),
+                    color = MaterialTheme.colorScheme.onTertiaryContainer,
                     fontSize = 14.sp
                 )
             }
@@ -172,13 +173,13 @@ fun Map(
                     .padding(bottom = 9.dp)
                     .fillMaxWidth(0.9f)
                     .clip(RoundedCornerShape(25.dp))
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.surface)
                     .clickable { onNavigateToDetail(place.id) }
                     .padding(16.dp)
             ) {
                 Column {
-                    Text(place.title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Text(place.type.name.lowercase().replaceFirstChar { it.titlecase() }, color = Color.Gray, fontSize = 14.sp)
+                    Text(place.title, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
+                    Text(place.type.name.lowercase().replaceFirstChar { it.titlecase() }, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                     Row (verticalAlignment = Alignment.CenterVertically) {
                         Text(stringResource(R.string.txt_rating_star, rating), color = Color(0xFFFFC107), fontSize = 16.sp)
                     }
