@@ -2,8 +2,10 @@ package com.example.primeraplicacionprueba.ui.screens.admin
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -14,8 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import coil.compose.AsyncImage
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -132,6 +136,47 @@ fun DetailPlaceAdmin(
                     }
                 }
 
+                // Imágenes del lugar
+                if (place.imagenes.isNotEmpty()) {
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(10.dp, bottom = 10.dp, end = 10.dp, top = 10.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                        ) {
+                            Column(Modifier.padding(25.dp, bottom = 15.dp, end = 25.dp, top = 25.dp)) {
+                                Text(
+                                    text = stringResource(R.string.txt_images),
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier.padding(bottom = 12.dp)
+                                )
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(200.dp)
+                                        .horizontalScroll(rememberScrollState()),
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    place.imagenes.forEach { imageUrl ->
+                                        AsyncImage(
+                                            model = imageUrl,
+                                            contentDescription = stringResource(R.string.txt_place_image),
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier
+                                                .width(250.dp)
+                                                .fillMaxHeight()
+                                                .clip(RoundedCornerShape(12.dp))
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 item {
                     // Descripción
                     Card(
@@ -166,7 +211,24 @@ fun DetailPlaceAdmin(
                         Column(Modifier.padding(25.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             Text(stringResource(R.string.txt_information_contact), fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
 
-                            InfoRow(Icons.Filled.Category, stringResource(R.string.txt_category_label, place.type))
+                            val categoryText = when (place.type) {
+                                com.example.primeraplicacionprueba.model.PlaceType.RESTAURANT -> stringResource(R.string.category_restaurant)
+                                com.example.primeraplicacionprueba.model.PlaceType.CAFE -> stringResource(R.string.category_cafe)
+                                com.example.primeraplicacionprueba.model.PlaceType.FAST_FOOD -> stringResource(R.string.category_fastfood)
+                                com.example.primeraplicacionprueba.model.PlaceType.MUSEUM -> stringResource(R.string.category_museum)
+                                com.example.primeraplicacionprueba.model.PlaceType.HOTEL -> stringResource(R.string.category_hotel)
+                                com.example.primeraplicacionprueba.model.PlaceType.BAR -> stringResource(R.string.place_type_bar)
+                                com.example.primeraplicacionprueba.model.PlaceType.PARK -> stringResource(R.string.category_park)
+                                com.example.primeraplicacionprueba.model.PlaceType.SHOPPING -> stringResource(R.string.category_shopping)
+                                com.example.primeraplicacionprueba.model.PlaceType.GAS_STATION -> stringResource(R.string.place_type_gas_station)
+                                com.example.primeraplicacionprueba.model.PlaceType.PHARMACY -> stringResource(R.string.place_type_pharmacy)
+                                com.example.primeraplicacionprueba.model.PlaceType.HOSPITAL -> stringResource(R.string.place_type_hospital)
+                                com.example.primeraplicacionprueba.model.PlaceType.BANK -> stringResource(R.string.place_type_bank)
+                                com.example.primeraplicacionprueba.model.PlaceType.GYM -> stringResource(R.string.place_type_gym)
+                                com.example.primeraplicacionprueba.model.PlaceType.CINEMA -> stringResource(R.string.place_type_cinema)
+                                com.example.primeraplicacionprueba.model.PlaceType.OTHER -> stringResource(R.string.category_other)
+                            }
+                            InfoRow(Icons.Filled.Category, stringResource(R.string.txt_category_label, categoryText))
                             InfoRow(Icons.Filled.Call, stringResource(R.string.txt_phone_label, place.phones.firstOrNull() ?: stringResource(R.string.txt_not_available_short)))
                             InfoRow(Icons.Filled.Public, stringResource(R.string.txt_web_label, place.website ?: stringResource(R.string.txt_not_available_short)))
                             InfoRow(Icons.Filled.Schedule, stringResource(R.string.txt_open_today, "7:00 AM - 8:00 PM"))

@@ -123,9 +123,8 @@ fun Home(
                 )
             }
 
-            // Lista filtrada por query y categoría (solo lugares aprobados)
-            val base = places.filter { it.city.equals(user.city, ignoreCase = true) && it.placeStatus == PlaceStatus.APPROVED }
-            val byType = selectedType?.let { t -> base.filter { it.type == t } } ?: base
+            // Lista filtrada por query y categoría (ordenada por popularidad - favoriteCount)
+            val byType = selectedType?.let { t -> mostPopularPlaces.filter { it.type == t } } ?: mostPopularPlaces
             val listToShow = if (query.isNotBlank()) {
                 byType.filter { p ->
                     p.title.contains(query, ignoreCase = true) ||

@@ -16,6 +16,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -55,6 +57,18 @@ fun PlaceDetail(
     val place = LocalMainViewModel.current.placesViewModel.findById(id)
     val reviews by reviewViewModel.reviews.collectAsState()
     val placeReviews = remember(reviews, id) { reviews.filter { it.placeID == id } }
+
+    // Estado para almacenar las respuestas de cada review
+    var repliesMap by remember { mutableStateOf<Map<String, List<ReviewReply>>>(emptyMap()) }
+
+    // Cargar respuestas para todos los reviews
+    LaunchedEffect(placeReviews) {
+        placeReviews.forEach { review ->
+            reviewViewModel.loadRepliesForReview(review.id) { replies ->
+                repliesMap = repliesMap + (review.id to replies)
+            }
+        }
+    }
 
     if (place == null) {
         Box(
@@ -229,7 +243,7 @@ fun PlaceDetail(
                                     comment = review.comment,
                                     avatarColor = if (review.rating >= 4) Tertiary else Primary,
                                     imageUrls = review.imageUrls,
-                                    replies = emptyList() // TODO: Load from Firebase using review.replyIds
+                                    replies = repliesMap[review.id] ?: emptyList()
                                 )
                             }
                         }

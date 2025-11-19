@@ -217,7 +217,23 @@ fun PlaceSearchItem(
 
                 // Tipo/Categoría
                 Text(
-                    text = place.type.name.lowercase().replaceFirstChar { it.titlecase() },
+                    text = when (place.type) {
+                        PlaceType.RESTAURANT -> stringResource(R.string.category_restaurant)
+                        PlaceType.CAFE -> stringResource(R.string.category_cafe)
+                        PlaceType.FAST_FOOD -> stringResource(R.string.category_fastfood)
+                        PlaceType.MUSEUM -> stringResource(R.string.category_museum)
+                        PlaceType.HOTEL -> stringResource(R.string.category_hotel)
+                        PlaceType.BAR -> stringResource(R.string.place_type_bar)
+                        PlaceType.PARK -> stringResource(R.string.category_park)
+                        PlaceType.SHOPPING -> stringResource(R.string.category_shopping)
+                        PlaceType.GAS_STATION -> stringResource(R.string.place_type_gas_station)
+                        PlaceType.PHARMACY -> stringResource(R.string.place_type_pharmacy)
+                        PlaceType.HOSPITAL -> stringResource(R.string.place_type_hospital)
+                        PlaceType.BANK -> stringResource(R.string.place_type_bank)
+                        PlaceType.GYM -> stringResource(R.string.place_type_gym)
+                        PlaceType.CINEMA -> stringResource(R.string.place_type_cinema)
+                        PlaceType.OTHER -> stringResource(R.string.category_other)
+                    },
                     fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

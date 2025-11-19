@@ -132,4 +132,8 @@ class ReportViewModel(application: Application) : AndroidViewModel(application) 
 
         return placeReportCounts.count { it.value >= 2 }
     }
+
+    fun clearReportResult() {
+        _reportResult.value = null
+    }
 }

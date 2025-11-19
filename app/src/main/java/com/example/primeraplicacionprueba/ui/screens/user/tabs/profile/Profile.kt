@@ -173,8 +173,13 @@ fun ProfileHeader(user: User?) {
                     color = TextLight
                 )
 
+                val roleText = when (user?.rol) {
+                    com.example.primeraplicacionprueba.model.Role.ADMIN -> stringResource(R.string.txt_role_admin)
+                    com.example.primeraplicacionprueba.model.Role.USER -> stringResource(R.string.txt_role_user)
+                    else -> ""
+                }
                 Text(
-                    text = user?.rol?.name ?: "",
+                    text = roleText,
                     fontSize = 16.sp,
                     color = TextLight.copy(alpha = 0.9f)
                 )

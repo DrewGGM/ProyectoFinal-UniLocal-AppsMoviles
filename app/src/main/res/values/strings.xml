@@ -117,6 +117,8 @@
     <string name="txt_avatar">Avatar</string>
     <string name="txt_user_name_sample">Carlos Rodríguez</string>
     <string name="txt_role_explorer">Explorador</string>
+    <string name="txt_role_user">Usuario</string>
+    <string name="txt_role_admin">Administrador</string>
     <string name="txt_my_content">Mi Contenido</string>
     <string name="txt_account_options">Opciones de la Cuenta</string>
     <string name="txt_my_places">Mis Lugares</string>
@@ -215,6 +217,7 @@
     <string name="txt_add_photo">Agregar foto</string>
     <string name="txt_add_more_photos">Agregar más fotos</string>
     <string name="txt_place_image">Imagen del lugar</string>
+    <string name="txt_images">Imágenes</string>
     <string name="txt_remove">Eliminar</string>
     <string name="txt_or_add_urls">O agrega URLs de imágenes</string>
     <string name="txt_image_url">URL de imagen</string>

@@ -44,6 +44,14 @@ fun ReportPlaceScreen(
     var showDescriptionError by remember { mutableStateOf(false) }
     var showSuccessDialog by remember { mutableStateOf(false) }
 
+    // Limpiar el resultado cuando se abre la pantalla
+    DisposableEffect(Unit) {
+        reportViewModel.clearReportResult()
+        onDispose {
+            reportViewModel.clearReportResult()
+        }
+    }
+
     // Observar resultado del reporte
     LaunchedEffect(reportResult) {
         when (reportResult) {

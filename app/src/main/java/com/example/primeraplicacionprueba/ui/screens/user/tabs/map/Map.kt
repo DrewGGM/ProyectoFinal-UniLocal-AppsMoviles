@@ -56,6 +56,7 @@ import com.example.primeraplicacionprueba.R
 import com.example.primeraplicacionprueba.ui.components.Map as PlacesMap
 import com.example.primeraplicacionprueba.model.Place
 import com.example.primeraplicacionprueba.model.PlaceStatus
+import com.example.primeraplicacionprueba.model.PlaceType
 import com.example.primeraplicacionprueba.ui.theme.Accent
 import com.mapbox.geojson.Point
 import com.mapbox.maps.extension.compose.MapEffect
@@ -221,7 +222,27 @@ fun Map(
                     // Información del lugar
                     Column(modifier = Modifier.weight(1f)) {
                         Text(place.title, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
-                        Text(place.type.name.lowercase().replaceFirstChar { it.titlecase() }, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
+                        Text(
+                            text = when (place.type) {
+                                PlaceType.RESTAURANT -> stringResource(R.string.category_restaurant)
+                                PlaceType.CAFE -> stringResource(R.string.category_cafe)
+                                PlaceType.FAST_FOOD -> stringResource(R.string.category_fastfood)
+                                PlaceType.MUSEUM -> stringResource(R.string.category_museum)
+                                PlaceType.HOTEL -> stringResource(R.string.category_hotel)
+                                PlaceType.BAR -> stringResource(R.string.place_type_bar)
+                                PlaceType.PARK -> stringResource(R.string.category_park)
+                                PlaceType.SHOPPING -> stringResource(R.string.category_shopping)
+                                PlaceType.GAS_STATION -> stringResource(R.string.place_type_gas_station)
+                                PlaceType.PHARMACY -> stringResource(R.string.place_type_pharmacy)
+                                PlaceType.HOSPITAL -> stringResource(R.string.place_type_hospital)
+                                PlaceType.BANK -> stringResource(R.string.place_type_bank)
+                                PlaceType.GYM -> stringResource(R.string.place_type_gym)
+                                PlaceType.CINEMA -> stringResource(R.string.place_type_cinema)
+                                PlaceType.OTHER -> stringResource(R.string.category_other)
+                            },
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 14.sp
+                        )
                         Row (verticalAlignment = Alignment.CenterVertically) {
                             Text(stringResource(R.string.txt_rating_star, rating), color = Color(0xFFFFC107), fontSize = 16.sp)
                         }

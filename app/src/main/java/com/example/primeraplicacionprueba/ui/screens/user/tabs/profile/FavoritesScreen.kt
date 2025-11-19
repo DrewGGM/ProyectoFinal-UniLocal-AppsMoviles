@@ -154,8 +154,25 @@ fun FavoriteCard(
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+                val categoryText = when (place.type) {
+                    com.example.primeraplicacionprueba.model.PlaceType.RESTAURANT -> stringResource(R.string.category_restaurant)
+                    com.example.primeraplicacionprueba.model.PlaceType.CAFE -> stringResource(R.string.category_cafe)
+                    com.example.primeraplicacionprueba.model.PlaceType.FAST_FOOD -> stringResource(R.string.category_fastfood)
+                    com.example.primeraplicacionprueba.model.PlaceType.MUSEUM -> stringResource(R.string.category_museum)
+                    com.example.primeraplicacionprueba.model.PlaceType.HOTEL -> stringResource(R.string.category_hotel)
+                    com.example.primeraplicacionprueba.model.PlaceType.BAR -> stringResource(R.string.place_type_bar)
+                    com.example.primeraplicacionprueba.model.PlaceType.PARK -> stringResource(R.string.category_park)
+                    com.example.primeraplicacionprueba.model.PlaceType.SHOPPING -> stringResource(R.string.category_shopping)
+                    com.example.primeraplicacionprueba.model.PlaceType.GAS_STATION -> stringResource(R.string.place_type_gas_station)
+                    com.example.primeraplicacionprueba.model.PlaceType.PHARMACY -> stringResource(R.string.place_type_pharmacy)
+                    com.example.primeraplicacionprueba.model.PlaceType.HOSPITAL -> stringResource(R.string.place_type_hospital)
+                    com.example.primeraplicacionprueba.model.PlaceType.BANK -> stringResource(R.string.place_type_bank)
+                    com.example.primeraplicacionprueba.model.PlaceType.GYM -> stringResource(R.string.place_type_gym)
+                    com.example.primeraplicacionprueba.model.PlaceType.CINEMA -> stringResource(R.string.place_type_cinema)
+                    com.example.primeraplicacionprueba.model.PlaceType.OTHER -> stringResource(R.string.category_other)
+                }
                 Text(
-                    text = stringResource(R.string.txt_place_type_distance, place.type, place.getDistanceFromUser(userLocation)),
+                    text = stringResource(R.string.txt_place_type_distance, categoryText, place.getDistanceFromUser(userLocation)),
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
